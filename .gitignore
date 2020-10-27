@@ -1,0 +1,6 @@
+values.yml
+terraform.tfvars*
+kubeconfig_*
+consul.yml
+vault.yml
+!kubernetes/vault.yml

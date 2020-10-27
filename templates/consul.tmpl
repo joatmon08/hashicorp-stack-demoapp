@@ -1,0 +1,31 @@
+global:
+  enabled: false
+  name: consul
+  datacenter: dc1
+  acls:
+    manageSystemACLs: true
+    bootstrapToken:
+      secretName: hcp-consul-bootstrap-token
+      secretKey: token
+  gossipEncryption:
+    secretName: hcp-consul
+    secretKey: gossipEncryptionKey
+  tls:
+    enabled: true
+    enableAutoEncrypt: true
+    caCert:
+      secretName: hcp-consul
+      secretKey: caCert
+externalServers:
+  enabled: true
+  hosts: ['${consul_host}']
+  httpsPort: 443
+  useSystemRoots: true
+  k8sAuthMethodHost: ${cluster_endpoint}:443
+client:
+  enabled: true
+  join: ['${consul_host}']
+connectInject:
+  enabled: true
+controller:
+  enabled: true
