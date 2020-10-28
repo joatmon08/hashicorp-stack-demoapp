@@ -19,10 +19,14 @@ configure-consul: kubeconfig
 
 configure-vault:
 	export VAULT_NAMESPACE=admin
-	vault auth enable kubernetes || true
-	vault secrets enable database || true
 	helm upgrade -i vault hashicorp/vault -f vault.yml
-	bash kubernetes/vault-auth.sh
+	cd kubernetes && terraform init -backend-config=backend
+	cd kubernetes && terraform apply
+	cd vault && terraform init -backend-config=backend
+	echo "kubernetes_ca_cert = \"$(shell kubectl config view --raw --minify --flatten -o jsonpath='{.clusters[].cluster.certificate-authority-data}')\"" > vault/terraform.tfvars
+	echo "kubernetes_host = \"$(shell kubectl config view --raw --minify --flatten -o jsonpath='{.clusters[].cluster.server}')\"" >> vault/terraform.tfvars
+	echo "postgres_hostname = \"\"" >> vault/terraform.tfvars
+	cd vault && terraform apply
 
 configure-waypoint: kubeconfig
 	waypoint install --platform=kubernetes -accept-tos
@@ -48,27 +52,9 @@ configure-db:
 	waypoint up -app database
 
 configure-db-creds:
-	POSTGRES_PORT=5432
-	vault write database/config/products \
-    plugin_name=postgresql-database-plugin \
-    allowed_roles="*" \
-    connection_url="postgresql://{{username}}:{{password}}@$(shell kubectl get services database -o jsonpath="{.status.loadBalancer.ingress[0].hostname}"):$(POSTGRES_PORT)/products?sslmode=disable" \
-    username="postgres" \
-    password="password"
-	vault write database/roles/products \
-    db_name=products \
-    creation_statements="CREATE ROLE \"{{name}}\" WITH LOGIN PASSWORD '{{password}}' VALID UNTIL '{{expiration}}'; \
-        GRANT SELECT ON ALL TABLES IN SCHEMA public TO \"{{name}}\";" \
-    revocation_statements="ALTER ROLE \"{{name}}\" NOLOGIN;"\
-    default_ttl="1h" \
-    max_ttl="24h"
-	vault read database/creds/products
-	vault policy write products vault/products.hcl
-	vault write auth/kubernetes/role/products \
-    bound_service_account_names=products \
-    bound_service_account_namespaces=default \
-    policies=products \
-    ttl=1h
+	@sed -i '.bak' 's/postgres_hostname =.*/postgres_hostname = "$(shell kubectl get services database -o jsonpath="{.status.loadBalancer.ingress[0].hostname}")"/g' vault/terraform.tfvars
+	cd vault && terraform init -backend-config=backend
+	cd vault && terraform apply
 
 configure-products:
 	waypoint up -app products
@@ -83,17 +69,9 @@ configure-frontend:
 	waypoint up -app frontend
 
 clean-vault:
-	vault policy delete products
-	vault delete auth/kubernetes/role/products
-	vault delete database/roles/products
-	vault delete database/config/products
-	kubectl delete serviceaccount products --ignore-not-found
-	kubectl delete serviceaccount/vault-auth --ignore-not-found
-	kubectl delete secret/vault-auth --ignore-not-found
-	kubectl delete clusterrolebinding.rbac.authorization.k8s.io/role-tokenreview-binding --ignore-not-found
+	cd vault && terraform destroy
+	cd kubernetes && terraform destroy
 	helm uninstall vault || true
-	vault secrets disable database
-	vault auth disable kubernetes
 
 clean-consul:
 	helm uninstall consul || true
