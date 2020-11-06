@@ -1,4 +1,4 @@
-project = "hashicups"
+project = "coffee"
 
 app "database" {
   url {
