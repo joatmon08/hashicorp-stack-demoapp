@@ -14,7 +14,7 @@ resource "boundary_scope" "org" {
 // create a project for core infrastructure
 resource "boundary_scope" "core_infra" {
   name                     = "core_infra"
-  description              = "Backend infrastrcture project"
+  description              = "Operations infrastructure project"
   scope_id                 = boundary_scope.org.id
   auto_create_admin_role   = true
   auto_create_default_role = true

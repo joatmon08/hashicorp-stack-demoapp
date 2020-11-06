@@ -24,8 +24,8 @@ resource "boundary_role" "org_anon_listing" {
   principal_ids = ["u_anon"]
 }
 
-# Creates a role in the global scope that's granting administrative access to 
-# resources in the org scope for all backend users
+# Creates a role in the global scope that's granting administrative access to
+# resources in the org scope for all operations users
 resource "boundary_role" "org_admin" {
   scope_id       = boundary_scope.global.id
   grant_scope_id = boundary_scope.org.id
@@ -33,7 +33,7 @@ resource "boundary_role" "org_admin" {
     "id=*;type=*;actions=*"
   ]
   principal_ids = concat(
-    [for user in boundary_user.backend : user.id],
+    [for user in boundary_user.operations : user.id],
   )
 }
 
@@ -63,6 +63,6 @@ resource "boundary_role" "project_admin" {
     "id=*;type=*;actions=*"
   ]
   principal_ids = concat(
-    [for user in boundary_user.backend : user.id],
+    [for user in boundary_user.operations : user.id],
   )
 }

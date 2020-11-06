@@ -43,10 +43,10 @@ output "boundary_auth_method_id" {
 }
 
 output "boundary_password" {
-  value     = module.boundary.backend_team_password
+  value     = module.boundary.operations_team_password
   sensitive = true
 }
 
 output "boundary_target" {
-  value = module.boundary.backend_target
+  value = module.boundary.eks_nodes_target
 }

@@ -7,7 +7,7 @@ variable "region" {
   type = string
 }
 
-variable "backend_team" {
+variable "operations_team" {
   type = set(string)
   default = [
     "rosemary"

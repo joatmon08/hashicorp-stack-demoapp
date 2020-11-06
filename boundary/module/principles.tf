@@ -1,8 +1,8 @@
-resource "boundary_user" "backend" {
-  for_each    = var.backend_team
+resource "boundary_user" "operations" {
+  for_each    = var.operations_team
   name        = each.key
-  description = "Backend user: ${each.key}"
-  account_ids = [boundary_account.backend_user_acct[each.value].id]
+  description = "Operations user: ${each.key}"
+  account_ids = [boundary_account.operations_user_acct[each.value].id]
   scope_id    = boundary_scope.org.id
 }
 
@@ -14,19 +14,19 @@ resource "boundary_user" "leadership" {
   scope_id    = boundary_scope.org.id
 }
 
-resource "random_password" "backend_team" {
+resource "random_password" "operations_team" {
   length           = 16
   special          = true
   override_special = "_%@"
 }
 
-resource "boundary_account" "backend_user_acct" {
-  for_each       = var.backend_team
+resource "boundary_account" "operations_user_acct" {
+  for_each       = var.operations_team
   name           = each.key
   description    = "User account for ${each.key}"
   type           = "password"
   login_name     = lower(each.key)
-  password       = random_password.backend_team.result
+  password       = random_password.operations_team.result
   auth_method_id = boundary_auth_method.password.id
 }
 
@@ -48,10 +48,10 @@ resource "boundary_group" "leadership" {
   scope_id    = boundary_scope.org.id
 }
 
-// project level group for backend and frontend management of core infra
-resource "boundary_group" "backend_core_infra" {
-  name        = "backend"
-  description = "Backend team group"
-  member_ids  = [for user in boundary_user.backend : user.id]
+// project level group for operations management of core infra
+resource "boundary_group" "operations_team" {
+  name        = "operations"
+  description = "Operations team group"
+  member_ids  = [for user in boundary_user.operations : user.id]
   scope_id    = boundary_scope.core_infra.id
 }
