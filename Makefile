@@ -1,4 +1,4 @@
-setup: secrets-consul
+setup:
 	terraform init -backend-config=backend
 	terraform apply
 
@@ -9,9 +9,8 @@ secrets-consul:
 	@printf "${CONSUL_HTTP_TOKEN}" > secrets/token
 	@cat secrets/client_config.json | jq -j -r .encrypt > secrets/gossipEncryption
 	@$(eval CONSUL_HOST := $(shell cat secrets/client_config.json | jq -r -j '.retry_join[0]'))
-	@sed -i '.bak' 's/hcp_consul_host =.*/hcp_consul_host = "$(CONSUL_HOST)"/g' terraform.tfvars
 
-configure-consul: kubeconfig
+configure-consul: kubeconfig secrets-consul
 	kubectl create secret generic hcp-consul --from-file='caCert=./secrets/ca.pem' --from-file='gossipEncryptionKey=./secrets/gossipEncryption' || true
 	kubectl create secret generic hcp-consul-bootstrap-token --from-file='token=./secrets/token' || true
 	kubectl create secret generic consul-client-acl-token --from-file='token=./secrets/token' || true
