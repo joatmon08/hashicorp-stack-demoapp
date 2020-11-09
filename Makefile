@@ -46,7 +46,11 @@ ssh:
 	BOUNDARY_ADDR=$(shell cd boundary && terraform output boundary_endpoint) \
 		boundary connect ssh --username ec2-user -target-id $(shell cd boundary && terraform output boundary_target)
 
-configure-db:
+configure-consul-intentions:
+	cd consul && terraform init -backend-config=backend
+	cd consul && terraform apply
+
+configure-db: configure-consul-intentions
 	waypoint init
 	waypoint up -app database
 
@@ -61,9 +65,6 @@ configure-products:
 configure-public:
 	waypoint up -app public
 
-configure-resolvers:
-	kubectl apply -f consul/
-
 configure-frontend:
 	waypoint up -app frontend
 
@@ -73,6 +74,7 @@ clean-vault:
 	helm uninstall vault || true
 
 clean-consul:
+	cd consul && terraform destroy
 	helm uninstall consul || true
 	kubectl delete jobs consul-server-acl-init consul-server-acl-init-cleanup || true
 	kubectl delete secret hcp-consul hcp-consul-bootstrap-token consul-client-acl-token
@@ -82,7 +84,6 @@ clean-waypoint:
 	waypoint destroy -app public
 	waypoint destroy -app products
 	waypoint destroy -app database
-	kubectl delete -f consul/
 	kubectl delete service waypoint --ignore-not-found
 	kubectl delete statefulset waypoint-server --ignore-not-found
 
