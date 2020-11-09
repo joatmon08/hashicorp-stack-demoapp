@@ -24,7 +24,7 @@ tools:
    1. HCP Vault admin token, set as `export VAULT_TOKEN=<Vault token>`.
 1. `jq` installed
 
-## Usage
+## Deploy & Configure the Kubernetes Cluster
 
 1. Add the Consul and Vault addresses to `terraform.tfvars`.
    ```hcl
@@ -60,6 +60,23 @@ tools:
 1. Run `make configure-consul-intentions` to set up Consul intentions and allow traffic
    between services.
 
+## Control & Audit your SSH sessions with Boundary
+
+Using Boundary, you can audit and control the SSH sessions to the Kubernetes nodes.
+
+1. Run `make ssh`. This will authenticate to Boundary and start an SSH session
+   with the EKS nodes.
+
+1. Go to the Boundary UI and examine the "Sessions".
+   ![List of active sessions in Boundary](./assets/boundary_sessions.png)
+
+## Build, Release, & Deploy Applications with Waypoint
+
+The demo application for a coffee shop uses four services: a frontend, a public API,
+a products API for a database, and a database.
+
+![Diagram of Coffee Shop](./assets/coffee.png)
+
 1. Run `waypoint init` to create the Waypoint project.
 
 1. Run `waypoint up -app database` to create a PostgreSQL database.
@@ -72,6 +89,11 @@ tools:
 
 1. Run `waypoint up -app frontend` to create the demo application frontend. Access
    the URL output by Waypoint.
+
+After you deploy, you will be able to access the deployment URL for the frontend
+service and examine a product catalog for the coffee shop.
+
+![Scrolling coffee shop catalog](./assets/hashicups.gif)
 
 ## Credits
 
