@@ -23,6 +23,16 @@ tools:
    1. You will need the namespace set as `export VAULT_NAMESPACE=admin`.
    1. HCP Vault admin token, set as `export VAULT_TOKEN=<Vault token>`.
 1. `jq` installed
+1. Install HashiCorp Boundary and an SSH key to `~/projects/boundary`.
+   1. Download Boundary to `~/projects/boundary/bin`.
+      ```shell
+      mkdir -p ~/projects/boundary/bin
+      cd ~/projects/boundary/bin
+      wget https://releases.hashicorp.com/boundary/0.1.1/boundary_0.1.1_linux_amd64.zip -O boundary.zip
+      unzip boundary.zip
+      rm boundary.zip
+      ```
+   1. Add an SSH key named `id_rsa` to `~/projects/boundary`.
 
 ## Deploy & Configure the Kubernetes Cluster
 
