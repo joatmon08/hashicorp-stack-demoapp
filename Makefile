@@ -1,3 +1,12 @@
+fmt:
+	cd vault && terraform fmt
+	cd consul && terraform fmt
+	cd boundary && terraform fmt
+	cd boundary/module && terraform fmt
+	cd boundary-infra && terraform fmt
+	cd kubernetes && terraform fmt
+	terraform fmt
+
 setup:
 	terraform init -backend-config=backend
 	terraform apply
