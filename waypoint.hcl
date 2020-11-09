@@ -132,8 +132,6 @@ app "public" {
         "consul.hashicorp.com/connect-inject"            = "true"
         "consul.hashicorp.com/connect-service"           = "public"
         "consul.hashicorp.com/connect-service-upstreams" = "products:9090"
-        "consul.hashicorp.com/service-meta-version"      = "v1"
-        "consul.hashicorp.com/service-tags"              = "v1"
       }
     }
   }

@@ -92,4 +92,4 @@ clean-boundary:
 clean-setup:
 	terraform destroy
 
-clean: clean-waypoint clean-consul clean-vault clean-setup
+clean: clean-waypoint clean-boundary clean-consul clean-vault clean-setup
