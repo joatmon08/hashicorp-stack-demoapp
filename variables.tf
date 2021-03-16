@@ -1,46 +1,48 @@
-variable "hcp_consul_host" {
-  description = "HCP Consul Host for retry_join parameter"
-  type        = string
-}
-
-variable "hcp_vault_private_addr" {
-  description = "HCP Vault private IP address"
-  type        = string
-}
-
 variable "name" {
   description = "Name of the EKS cluster"
   type        = string
 }
 
 variable "region" {
-  default     = "us-west-2"
   description = "AWS Region"
   type        = string
 }
 
-variable "hcp_consul_cidr_block" {
-  default     = "172.25.16.0/20"
-  description = "CIDR Block for HCP Consul"
+variable "private_ssh_key" {
+  description = "Base64 encoded contents of private SSH key for Boundary and EKS nodes"
+  type        = string
+  sensitive   = true
+}
+
+variable "hcp_consul_datacenter" {
+  default     = ""
+  description = "HCP Consul datacenter name"
   type        = string
 }
 
-variable "peering_connection_has_been_added_to_hvn" {
+variable "hcp_consul_cidr_block" {
+  type        = string
+  default     = "172.25.16.0/20"
+  description = "CIDR block of the HashiCorp Virtual Network"
+}
+
+variable "hcp_consul_public_endpoint" {
+  type        = string
   default     = false
-  type        = bool
-  description = "HVN Peering Connection pending confirmatin"
+  description = "Enable HCP Consul public endpoint for cluster"
 }
 
 variable "tags" {
   default = {
-    Environment = "around-the-hashistack"
+    Environment = "rosemary-zero-trust-demo"
+    Automation  = "terraform"
   }
-  type        = map
+  type        = map(any)
   description = "Tags to add resources"
 }
 
 variable "additional_tags" {
   default     = {}
-  type        = map
+  type        = map(any)
   description = "Tags to add resources"
 }

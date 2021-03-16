@@ -1,13 +1,14 @@
 module "eks" {
   source          = "terraform-aws-modules/eks/aws"
-  version         = "13.0.0"
+  version         = "14.0.0"
   cluster_name    = var.name
-  cluster_version = "1.17"
+  cluster_version = "1.18"
   subnets         = module.vpc.private_subnets
 
   tags = var.tags
 
-  vpc_id = module.vpc.vpc_id
+  vpc_id           = module.vpc.vpc_id
+  write_kubeconfig = false
 
   node_groups_defaults = {
     ami_type  = "AL2_x86_64"
@@ -23,8 +24,8 @@ module "eks" {
       instance_type             = "t2.small"
       k8s_labels                = var.tags
       additional_tags           = var.additional_tags
-      key_name                  = module.boundary.boundary_key_pair
-      source_security_group_ids = module.boundary.boundary_security_groups
+      key_name                  = module.boundary.boundary_key_name
+      source_security_group_ids = [module.boundary.boundary_security_group]
     }
   }
 }
