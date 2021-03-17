@@ -1,105 +1,68 @@
 fmt:
 	cd vault && terraform fmt
-	cd consul && terraform fmt
-	cd boundary && terraform fmt
-	cd boundary/module && terraform fmt
-	cd boundary-infra && terraform fmt
+	cd consul-deployment && terraform fmt
+	cd boundary-configuration && terraform fmt
+	cd boundary-deployment && terraform fmt
+	cd infrastructure && terraform fmt
 	cd kubernetes && terraform fmt
 	terraform fmt
 
-setup:
-	terraform init -backend-config=backend
-	terraform apply
-
 kubeconfig:
-	aws eks --region $(shell terraform output region) update-kubeconfig --name $(shell terraform output eks_cluster_name)
+	aws eks --region $(shell cd infrastructure && terraform output region) update-kubeconfig --name $(shell cd infrastructure && terraform output eks_cluster_name)
 
-secrets-consul:
-	@printf "${CONSUL_HTTP_TOKEN}" > secrets/token
-	@cat secrets/client_config.json | jq -j -r .encrypt > secrets/gossipEncryption
-	@$(eval CONSUL_HOST := $(shell cat secrets/client_config.json | jq -r -j '.retry_join[0]'))
+get-db:
+	dig +short $(shell cd infrastructure && terraform output -raw product_database_address)
 
-configure-consul: kubeconfig secrets-consul
-	kubectl create secret generic hcp-consul --from-file='caCert=./secrets/ca.pem' --from-file='gossipEncryptionKey=./secrets/gossipEncryption' || true
-	kubectl create secret generic hcp-consul-bootstrap-token --from-file='token=./secrets/token' || true
-	kubectl create secret generic consul-client-acl-token --from-file='token=./secrets/token' || true
-	helm upgrade -i consul hashicorp/consul -f consul.yml
+configure-db: kubeconfig
+	kubectl apply -f database-service/kubernetes.yaml
+	boundary authenticate password -login-name=rob \
+		-password $(shell cd boundary-configuration && terraform output boundary_products_password) \
+		-auth-method-id=$(shell cd boundary-configuration && terraform output boundary_auth_method_id)
+	boundary connect postgres -username=postgres -target-id \
+		$(shell cd boundary-configuration && terraform output boundary_target_postgres) -- -d products -f database-service/products.sql
 
 configure-vault:
 	export VAULT_NAMESPACE=admin
-	helm upgrade -i vault hashicorp/vault -f vault.yml
-	cd kubernetes && terraform init -backend-config=backend
-	cd kubernetes && terraform apply
-	cd vault && terraform init -backend-config=backend
+	helm upgrade --install vault hashicorp/vault --set injector.enabled=true --set injector.externalVaultAddr=${VAULT_PRIVATE_ADDR}
+	cd kubernetes && terraform init && terraform apply
+	cd vault && terraform init
 	echo "kubernetes_ca_cert = \"$(shell kubectl config view --raw --minify --flatten -o jsonpath='{.clusters[].cluster.certificate-authority-data}')\"" > vault/terraform.tfvars
 	echo "kubernetes_host = \"$(shell kubectl config view --raw --minify --flatten -o jsonpath='{.clusters[].cluster.server}')\"" >> vault/terraform.tfvars
-	echo "postgres_hostname = \"\"" >> vault/terraform.tfvars
-	cd vault && terraform apply
+	cd vault && terraform init && terraform apply -var postgres_hostname=$(shell cd infrastructure && terraform output -raw product_database_address) -var postgres_password=${PGPASSWORD}
 
-configure-waypoint: kubeconfig
-	waypoint install --platform=kubernetes -accept-tos
+ssh-operations:
+	boundary authenticate password -login-name=rosemary \
+		-password $(shell cd boundary-configuration && terraform output boundary_operations_password) \
+		-auth-method-id=$(shell cd boundary-configuration && terraform output boundary_auth_method_id)
+	boundary connect ssh -username=ec2-user -target-id $(shell cd boundary-configuration && terraform output boundary_target_eks) -- -i boundary-deployment/bin/id_rsa
 
-configure-boundary:
-	echo "boundary_endpoint = \"$(shell terraform output boundary_endpoint)\"" > boundary/terraform.tfvars
-	echo "boundary_kms_recovery_key_id = \"$(shell terraform output boundary_kms_recovery_key_id)\"" >> boundary/terraform.tfvars
-	echo "eks_cluster_name = \"$(shell terraform output eks_cluster_name)\"" >> boundary/terraform.tfvars
-	echo "region = \"$(shell terraform output region)\"" >> boundary/terraform.tfvars
-	cd boundary && terraform init -backend-config=backend
-	cd boundary && terraform apply
+ssh-products:
+	boundary authenticate password -login-name=rob \
+		-password $(shell cd boundary-configuration && terraform output boundary_products_password) \
+		-auth-method-id=$(shell cd boundary-configuration && terraform output boundary_auth_method_id)
+	boundary connect ssh -username=ec2-user -target-id $(shell cd boundary-configuration && terraform output boundary_target_eks) -- -i boundary-deployment/bin/id_rsa
 
-ssh:
-	BOUNDARY_ADDR=$(shell cd boundary && terraform output boundary_endpoint) \
-		boundary authenticate password -login-name=rosemary \
-		-password $(shell cd boundary && terraform output boundary_password) \
-		-auth-method-id=$(shell cd boundary && terraform output boundary_auth_method_id)
-	BOUNDARY_ADDR=$(shell cd boundary && terraform output boundary_endpoint) \
-		boundary connect ssh --username ec2-user -target-id $(shell cd boundary && terraform output boundary_target)
+postgres-operations:
+	boundary authenticate password -login-name=rosemary \
+		-password $(shell cd boundary-configuration && terraform output boundary_operations_password) \
+		-auth-method-id=$(shell cd boundary-configuration && terraform output boundary_auth_method_id)
+	boundary connect postgres -username=postgres -target-id $(shell cd boundary-configuration && terraform output boundary_target_postgres)
 
-configure-consul-intentions:
-	cd consul && terraform init -backend-config=backend
-	cd consul && terraform apply
+postgres-products:
+	boundary authenticate password -login-name=rob \
+		-password $(shell cd boundary-configuration && terraform output boundary_products_password) \
+		-auth-method-id=$(shell cd boundary-configuration && terraform output boundary_auth_method_id)
+	boundary connect postgres -username=postgres -target-id $(shell cd boundary-configuration && terraform output boundary_target_postgres)
 
-configure-db: configure-consul-intentions
-	waypoint init
-	waypoint up -app database
+configure-application:
+	kubectl apply -f application/
 
-configure-db-creds:
-	@sed -i '.bak' 's/postgres_hostname =.*/postgres_hostname = "$(shell kubectl get services database -o jsonpath="{.status.loadBalancer.ingress[0].hostname}")"/g' vault/terraform.tfvars
-	cd vault && terraform init -backend-config=backend
-	cd vault && terraform apply
-
-configure-products:
-	waypoint up -app products
-
-configure-public:
-	waypoint up -app public
-
-configure-frontend:
-	waypoint up -app frontend
+clean-application:
+	kubectl delete -f application/
 
 clean-vault:
 	cd vault && terraform destroy
 	cd kubernetes && terraform destroy
 	helm uninstall vault || true
 
-clean-consul:
-	cd consul && terraform destroy
-	helm uninstall consul || true
-	kubectl delete jobs consul-server-acl-init consul-server-acl-init-cleanup || true
-	kubectl delete secret hcp-consul hcp-consul-bootstrap-token consul-client-acl-token
-
-clean-waypoint:
-	waypoint destroy -app frontend
-	waypoint destroy -app public
-	waypoint destroy -app products
-	waypoint destroy -app database
-	kubectl delete service waypoint --ignore-not-found
-	kubectl delete statefulset waypoint-server --ignore-not-found
-
-clean-boundary:
-	cd boundary && terraform destroy
-
-clean-setup:
-	terraform destroy
-
-clean: clean-waypoint clean-boundary clean-consul clean-vault clean-setup
+clean: clean-application clean-vault

@@ -66,3 +66,31 @@ resource "boundary_role" "project_admin" {
     [for user in boundary_user.operations : user.id],
   )
 }
+
+# Adds an org-level role granting administrative permissions within the products_infra project
+resource "boundary_role" "project_admin_products" {
+  name           = "products_infra_admin"
+  description    = "Administrator role for products infra"
+  scope_id       = boundary_scope.org.id
+  grant_scope_id = boundary_scope.products_infra.id
+  grant_strings = [
+    "id=*;type=*;actions=*"
+  ]
+  principal_ids = concat(
+    [for user in boundary_user.operations : user.id],
+  )
+}
+
+# Adds an org-level role granting target permissions within the products_infra project
+resource "boundary_role" "project_targets_products" {
+  name           = "products_targets"
+  description    = "Targets-only role for products infra"
+  scope_id       = boundary_scope.org.id
+  grant_scope_id = boundary_scope.products_infra.id
+  grant_strings = [
+    "id=*;type=target;actions=*"
+  ]
+  principal_ids = concat(
+    [for user in boundary_user.products : user.id],
+  )
+}

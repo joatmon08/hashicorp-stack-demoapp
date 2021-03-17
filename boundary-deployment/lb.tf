@@ -55,6 +55,6 @@ resource "aws_security_group_rule" "allow_9200" {
   from_port         = 9200
   to_port           = 9200
   protocol          = "tcp"
-  cidr_blocks       = ["0.0.0.0/0"]
+  cidr_blocks       = [var.client_cidr_block]
   security_group_id = aws_security_group.controller_lb.id
 }

@@ -46,3 +46,21 @@ variable "additional_tags" {
   type        = map(any)
   description = "Tags to add resources"
 }
+
+variable "database_username" {
+  default     = "postgres"
+  type        = string
+  description = "Username for postgresql"
+}
+
+variable "database_password" {
+  type        = string
+  description = "Password for postgresql"
+  sensitive   = true
+}
+
+variable "client_cidr_block" {
+  type        = string
+  description = "Client CIDR block"
+  sensitive   = true
+}

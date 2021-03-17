@@ -6,8 +6,8 @@ locals {
   tags = merge({
     Name = "${var.name}-${random_pet.test.id}"
   }, var.tags)
-  boundary_bin         = var.boundary_bin == "" ? "${path.module}/bin" : var.boundary_bin
-  public_ssh_key_path  = var.public_ssh_key_path == "" ? "${path.module}/bin/id_rsa.pub" : var.public_ssh_key_path
+  boundary_bin        = var.boundary_bin == "" ? "${path.module}/bin" : var.boundary_bin
+  public_ssh_key_path = var.public_ssh_key_path == "" ? "${path.module}/bin/id_rsa.pub" : var.public_ssh_key_path
 }
 
 variable "vpc_id" {
@@ -64,4 +64,9 @@ variable "kms_type" {
 variable "tags" {
   description = "Tags for resources"
   type        = map(string)
+}
+
+variable "client_cidr_block" {
+  description = "IP address to allow Boundary connection"
+  type        = string
 }

@@ -1,0 +1,33 @@
+---
+apiVersion: consul.hashicorp.com/v1alpha1
+kind: ServiceIntentions
+metadata:
+  name: product-to-database
+spec:
+  destination:
+    name: database
+  sources:
+    - name: product
+      action: allow
+---
+apiVersion: consul.hashicorp.com/v1alpha1
+kind: ServiceIntentions
+metadata:
+  name: public-to-product
+spec:
+  destination:
+    name: product
+  sources:
+    - name: public
+      action: allow
+---
+apiVersion: consul.hashicorp.com/v1alpha1
+kind: ServiceIntentions
+metadata:
+  name: frontend-to-public
+spec:
+  destination:
+    name: public
+  sources:
+    - name: frontend
+      action: allow

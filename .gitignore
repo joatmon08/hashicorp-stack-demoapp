@@ -5,3 +5,7 @@ consul.yml
 vault.yml
 !kubernetes/vault.yml
 id_rsa
+
+kubernetes/terraform.auto.tfvars
+vault/terraform.auto.tfvars
+database-service/terraform.auto.tfvars

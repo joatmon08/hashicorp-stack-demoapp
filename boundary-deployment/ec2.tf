@@ -34,7 +34,7 @@ resource "aws_instance" "worker" {
   connection {
     type         = "ssh"
     user         = "ubuntu"
-    private_key  = var.private_ssh_key
+    private_key  = base64decode(var.private_ssh_key)
     host         = self.private_ip
     bastion_host = aws_instance.controller[count.index].public_ip
   }
