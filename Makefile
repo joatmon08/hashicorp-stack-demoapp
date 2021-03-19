@@ -13,8 +13,7 @@ kubeconfig:
 get-db:
 	dig +short $(shell cd infrastructure && terraform output -raw product_database_address)
 
-configure-db: kubeconfig
-	kubectl apply -f database-service/kubernetes.yaml
+configure-db:
 	boundary authenticate password -login-name=rob \
 		-password $(shell cd boundary-configuration && terraform output boundary_products_password) \
 		-auth-method-id=$(shell cd boundary-configuration && terraform output boundary_auth_method_id)

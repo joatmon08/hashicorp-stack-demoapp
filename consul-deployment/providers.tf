@@ -66,6 +66,10 @@ data "hcp_consul_cluster" "cluster" {
   cluster_id = local.hcp_consul_cluster_id
 }
 
+resource "hcp_consul_cluster_root_token" "token" {
+  cluster_id = local.hcp_consul_cluster_id
+}
+
 provider "consul" {
   address    = "https://${data.hcp_consul_cluster.cluster.consul_public_endpoint_url}"
   datacenter = data.hcp_consul_cluster.cluster.datacenter
