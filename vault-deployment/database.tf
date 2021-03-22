@@ -5,7 +5,6 @@ resource "vault_mount" "postgres" {
 }
 
 resource "vault_database_secret_backend_connection" "postgres" {
-  depends_on    = [helm_release.vault]
   backend       = vault_mount.postgres.path
   name          = "product"
   allowed_roles = ["*"]
@@ -16,7 +15,6 @@ resource "vault_database_secret_backend_connection" "postgres" {
 }
 
 resource "vault_database_secret_backend_role" "postgres" {
-  depends_on            = [helm_release.vault]
   backend               = vault_mount.postgres.path
   name                  = "product"
   db_name               = vault_database_secret_backend_connection.postgres.name
