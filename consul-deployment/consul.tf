@@ -1,29 +1,21 @@
-resource "consul_service" "database" {
-  depends_on = [helm_release.consul]
-  name       = "database"
-  node       = consul_node.database.name
-  port       = 5432
-  tags       = ["external"]
-  check {
-    check_id = "service:database"
-    name     = "Postgres health check"
-    status   = "passing"
-    tcp      = "${local.products_database}:5432"
-    interval = "30s"
-    timeout  = "3s"
-  }
-}
+# resource "consul_service" "database" {
+#   depends_on = [helm_release.consul]
+#   name       = "database"
+#   node       = consul_node.database.name
+#   port       = 5432
+#   tags       = ["external"]
+# }
 
-resource "consul_node" "database" {
-  depends_on = [helm_release.consul]
-  name       = "database"
-  address    = local.products_database
+# resource "consul_node" "database" {
+#   depends_on = [helm_release.consul]
+#   name       = "database"
+#   address    = local.products_database
 
-  meta = {
-    "external-node"  = "true"
-    "external-probe" = "true"
-  }
-}
+#   meta = {
+#     "external-node"  = "true"
+#     "external-probe" = "true"
+#   }
+# }
 
 resource "consul_config_entry" "database" {
   name = "database"
