@@ -33,3 +33,12 @@ output "kubernetes_endpoint" {
 output "product_database_address" {
   value = aws_db_instance.products.address
 }
+
+output "product_database_username" {
+  value     = aws_db_instance.products.username
+}
+
+output "product_database_password" {
+  value     = aws_db_instance.products.password
+  sensitive = true
+}
