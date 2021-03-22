@@ -1,0 +1,23 @@
+# name your datacenter
+global:
+  enabled: true
+  name: consul
+  datacenter: zero
+
+  acls:
+    manageSystemACLs: false
+
+connectInject:
+  enabled: true
+
+ui:
+  enabled: true
+
+controller:
+  enabled: true
+
+terminatingGateways:
+  enabled: true
+  gateways:
+    - name: terminating-gateway
+      replicas: 1

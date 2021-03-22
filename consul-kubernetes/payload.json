@@ -1,27 +1,3 @@
 {
-    "Node": "database",
-    "Address": "10.0.3.27",
-    "Datacenter": "zero",
-    "NodeMeta": {
-        "external-node": "true",
-        "external-probe": "true"
-    },
-    "Check": {
-        "Node": "database",
-        "CheckID": "service:database",
-        "Name": "Postgres health check",
-        "Status": "passing",
-        "ServiceID": "database-1",
-        "Definition": {
-          "TCP": "10.0.3.27:5432",
-          "Interval": "5s",
-          "Timeout": "1s",
-          "DeregisterCriticalServiceAfter": "30s"
-        }
-    },
-    "Service": {
-        "ID": "database-1",
-        "Service": "database",
-        "Port": 5432
-    }
+    "Node": "database"
 }

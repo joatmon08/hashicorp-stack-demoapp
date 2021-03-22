@@ -47,6 +47,13 @@ postgres-operations:
 		-auth-method-id=$(shell cd boundary-configuration && terraform output boundary_auth_method_id)
 	boundary connect postgres -username=postgres -target-id $(shell cd boundary-configuration && terraform output boundary_target_postgres)
 
+fix:
+	@boundary authenticate password -login-name=rosemary \
+		-password $(shell cd boundary-configuration && terraform output boundary_operations_password) \
+		-auth-method-id=$(shell cd boundary-configuration && terraform output boundary_auth_method_id)
+	boundary connect ssh -username=ec2-user -target-id $(shell cd boundary-configuration && terraform output boundary_target_eks) -host-id hst_V3j981ln6V -- -i boundary-deployment/bin/id_rsa
+
+
 postgres-products:
 	@boundary authenticate password -login-name=rob \
 		-password $(shell cd boundary-configuration && terraform output boundary_products_password) \

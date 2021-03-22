@@ -25,6 +25,18 @@ metadata:
 spec:
   protocol: "http"
 ---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: db-configmap
+data:
+  config: |
+    {
+      "db_connection": "host=localhost port=5432 user=postgres password=AiOmHGPdaU dbname=products sslmode=disable",
+      "bind_address": ":9090",
+      "metrics_address": ":9103"
+    }
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -42,28 +54,28 @@ spec:
         app: product
       annotations:
         consul.hashicorp.com/connect-inject: "true"
-        # consul.hashicorp.com/connect-service-upstreams: "database:5432"
-        vault.hashicorp.com/agent-inject: "true"
-        vault.hashicorp.com/role: "product"
-        vault.hashicorp.com/namespace: "admin"
-        vault.hashicorp.com/agent-inject-secret-conf.json: "database/creds/product"
-        vault.hashicorp.com/agent-inject-template-conf.json: |
-          {
-            "bind_address": ":9090",
-            "metrics_address": ":9103",
-            {{ with secret "database/creds/product" -}}
-            "db_connection": "host=terraform-2021032210382205310000000d.cl3xt9calu0m.us-east-1.rds.amazonaws.com port=5432 user={{ .Data.username }} password={{ .Data.password }} dbname=products sslmode=disable"
-            {{- end }}
-          }
+        consul.hashicorp.com/connect-service-upstreams: "database:5432"
+        # vault.hashicorp.com/agent-inject: "true"
+        # vault.hashicorp.com/role: "product"
+        # vault.hashicorp.com/namespace: "admin"
+        # vault.hashicorp.com/agent-inject-secret-conf.json: "database/creds/product"
+        # vault.hashicorp.com/agent-inject-template-conf.json: |
+        #   {
+        #     "bind_address": ":9090",
+        #     "metrics_address": ":9103",
+        #     {{ with secret "database/creds/product" -}}
+        #     "db_connection": "host=terraform-2021032210382205310000000d.cl3xt9calu0m.us-east-1.rds.amazonaws.com port=5432 user={{ .Data.username }} password={{ .Data.password }} dbname=products sslmode=disable"
+        #     {{- end }}
+        #   }
     spec:
       serviceAccountName: product
-      # volumes:
-      # - name: config
-      #   configMap:
-      #     name: db-configmap
-      #     items:
-      #     - key: config
-      #       path: conf.json
+      volumes:
+      - name: config
+        configMap:
+          name: db-configmap
+          items:
+          - key: config
+            path: conf.json
       containers:
         - name: product
           image: hashicorpdemoapp/product-api:v0.0.12
@@ -72,7 +84,7 @@ spec:
             - containerPort: 9103
           env:
             - name: "CONFIG_FILE"
-              value: "/vault/secrets/conf.json"
+              value: "/config/conf.json"
           livenessProbe:
             httpGet:
               path: /health
@@ -81,7 +93,7 @@ spec:
             timeoutSeconds: 1
             periodSeconds: 10
             failureThreshold: 30
-          # volumeMounts:
-          #   - name: config
-          #     mountPath: /config
-          #     readOnly: true
+          volumeMounts:
+            - name: config
+              mountPath: /config
+              readOnly: true
