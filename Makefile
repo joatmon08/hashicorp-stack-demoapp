@@ -10,15 +10,15 @@ fmt:
 kubeconfig:
 	aws eks --region $(shell cd infrastructure && terraform output region) update-kubeconfig --name $(shell cd infrastructure && terraform output eks_cluster_name)
 
-get-db:
-	dig +short $(shell cd infrastructure && terraform output -raw product_database_address)
-
 configure-db:
 	boundary authenticate password -login-name=rob \
 		-password $(shell cd boundary-configuration && terraform output boundary_products_password) \
 		-auth-method-id=$(shell cd boundary-configuration && terraform output boundary_auth_method_id)
 	boundary connect postgres -username=postgres -target-id \
 		$(shell cd boundary-configuration && terraform output boundary_target_postgres) -- -d products -f database-service/products.sql
+
+configure-consul:
+	bash consul-deployment/terminating-gateway/update.sh
 
 helm-vault:
 	export VAULT_NAMESPACE=admin
@@ -46,13 +46,6 @@ postgres-operations:
 		-password $(shell cd boundary-configuration && terraform output boundary_operations_password) \
 		-auth-method-id=$(shell cd boundary-configuration && terraform output boundary_auth_method_id)
 	boundary connect postgres -username=postgres -target-id $(shell cd boundary-configuration && terraform output boundary_target_postgres)
-
-fix:
-	@boundary authenticate password -login-name=rosemary \
-		-password $(shell cd boundary-configuration && terraform output boundary_operations_password) \
-		-auth-method-id=$(shell cd boundary-configuration && terraform output boundary_auth_method_id)
-	boundary connect ssh -username=ec2-user -target-id $(shell cd boundary-configuration && terraform output boundary_target_eks) -host-id hst_V3j981ln6V -- -i boundary-deployment/bin/id_rsa
-
 
 postgres-products:
 	@boundary authenticate password -login-name=rob \
