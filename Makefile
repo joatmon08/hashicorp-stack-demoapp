@@ -21,17 +21,6 @@ configure-db:
 configure-consul:
 	bash consul-deployment/terminating-gateway/update.sh
 
-helm-vault:
-	export VAULT_NAMESPACE=admin
-	helm upgrade --install vault hashicorp/vault --set injector.enabled=true --set injector.externalVaultAddr=${VAULT_PRIVATE_ADDR}
-
-configure-vault:
-	cd vault && terraform init
-	echo "kubernetes_host = \"$(shell kubectl config view --raw --minify --flatten -o jsonpath='{.clusters[].cluster.server}')\"" >> vault/terraform.tfvars
-	cd vault && terraform init && terraform apply cd vault && terraform init \
-		&& terraform apply -var postgres_hostname=$(shell cd infrastructure && terraform output -raw product_database_address) \
-		-var postgres_password=${PGPASSWORD}
-
 ssh-operations:
 	@boundary authenticate password -login-name=rosemary \
 		-password $(shell cd boundary-configuration && terraform output boundary_operations_password) \
@@ -51,14 +40,14 @@ postgres-operations:
 		-password $(shell cd boundary-configuration && terraform output boundary_operations_password) \
 		-auth-method-id=$(shell cd boundary-configuration && terraform output boundary_auth_method_id)
 	boundary connect postgres -username=postgres -target-id \
-		$(shell cd boundary-configuration && terraform output boundary_target_postgres)
+		$(shell cd boundary-configuration && terraform output boundary_target_postgres) -- -d products
 
 postgres-products:
 	@boundary authenticate password -login-name=rob \
 		-password $(shell cd boundary-configuration && terraform output boundary_products_password) \
 		-auth-method-id=$(shell cd boundary-configuration && terraform output boundary_auth_method_id)
 	boundary connect postgres -username=postgres -target-id \
-		$(shell cd boundary-configuration && terraform output boundary_target_postgres)
+		$(shell cd boundary-configuration && terraform output boundary_target_postgres) -- -d products
 
 configure-application:
 	kubectl apply -f application/
@@ -68,5 +57,8 @@ clean-application:
 
 clean-vault:
 	vault lease revoke -force -prefix database/creds
+
+clean-consul:
+	kubectl delete -f consul-deployment/terminating-gateway/kubernetes.yaml
 
 clean: clean-application clean-vault
