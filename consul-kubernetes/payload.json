@@ -1,6 +1,6 @@
 {
     "Node": "database",
-    "Address": "10.0.2.143",
+    "Address": "10.0.3.27",
     "Datacenter": "zero",
     "NodeMeta": {
         "external-node": "true",
@@ -13,7 +13,7 @@
         "Status": "passing",
         "ServiceID": "database-1",
         "Definition": {
-          "TCP": "10.0.2.143:5432",
+          "TCP": "10.0.3.27:5432",
           "Interval": "5s",
           "Timeout": "1s",
           "DeregisterCriticalServiceAfter": "30s"

@@ -54,8 +54,6 @@ spec:
               value: postgres
             - name: POSTGRES_PASSWORD
               value: password
-          # only listen on loopback so only access is via connect proxy
-          args: ["-c", "listen_addresses=127.0.0.1"]
           volumeMounts:
             - mountPath: "/var/lib/postgresql/data"
               name: "pgdata"

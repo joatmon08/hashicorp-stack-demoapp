@@ -3,4 +3,4 @@ kind: ServiceDefaults
 metadata:
   name: database
 spec:
-  protocol: http
+  protocol: tcp

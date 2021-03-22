@@ -26,5 +26,6 @@ controller:
 
 terminatingGateways:
   enabled: true
-  default:
-    replicas: 1
+  gateways:
+    - name: terminating-gateway
+      replicas: 1
