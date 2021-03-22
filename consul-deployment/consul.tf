@@ -17,25 +17,25 @@
 #   }
 # }
 
-resource "consul_config_entry" "database" {
-  name = "database"
-  kind = "service-defaults"
+# resource "consul_config_entry" "database" {
+#   name = "database"
+#   kind = "service-defaults"
 
-  config_json = jsonencode({
-    Protocol = "tcp"
-  })
-}
+#   config_json = jsonencode({
+#     Protocol = "tcp"
+#   })
+# }
 
-resource "consul_config_entry" "terminating_gateway" {
-  name = "terminating-gateway"
-  kind = "terminating-gateway"
+# resource "consul_config_entry" "terminating_gateway" {
+#   name = "terminating-gateway"
+#   kind = "terminating-gateway"
 
-  config_json = jsonencode({
-    Services = [{
-      Name = "database"
-    }]
-  })
-}
+#   config_json = jsonencode({
+#     Services = [{
+#       Name = "database"
+#     }]
+#   })
+# }
 
 # resource "kubernetes_manifest" "database_terminating_gateway" {
 #   provider   = kubernetes-alpha
