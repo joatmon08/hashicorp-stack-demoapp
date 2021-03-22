@@ -6,7 +6,7 @@ resource "vault_mount" "postgres" {
 resource "vault_database_secret_backend_connection" "postgres" {
   count         = var.postgres_hostname != "" ? 1 : 0
   backend       = vault_mount.postgres.path
-  name          = "products"
+  name          = "product"
   allowed_roles = ["*"]
 
   postgresql {
@@ -17,7 +17,7 @@ resource "vault_database_secret_backend_connection" "postgres" {
 resource "vault_database_secret_backend_role" "postgres" {
   count                 = var.postgres_hostname != "" ? 1 : 0
   backend               = vault_mount.postgres.path
-  name                  = "products"
+  name                  = "product"
   db_name               = vault_database_secret_backend_connection.postgres.0.name
   creation_statements   = ["CREATE ROLE \"{{name}}\" WITH LOGIN PASSWORD '{{password}}' VALID UNTIL '{{expiration}}'; GRANT SELECT ON ALL TABLES IN SCHEMA public TO \"{{name}}\";"]
   revocation_statements = ["ALTER ROLE \"{{name}}\" NOLOGIN;"]
@@ -25,17 +25,17 @@ resource "vault_database_secret_backend_role" "postgres" {
   max_ttl               = 3600
 }
 
-data "vault_policy_document" "products" {
+data "vault_policy_document" "product" {
   count = var.postgres_hostname != "" ? 1 : 0
   rule {
-    path         = "database/creds/products"
+    path         = "database/creds/product"
     capabilities = ["read"]
-    description  = "read all products"
+    description  = "read all product"
   }
 }
 
-resource "vault_policy" "products" {
+resource "vault_policy" "product" {
   count  = var.postgres_hostname != "" ? 1 : 0
-  name   = "products"
-  policy = data.vault_policy_document.products.0.hcl
+  name   = "product"
+  policy = data.vault_policy_document.product.0.hcl
 }

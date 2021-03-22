@@ -2,16 +2,12 @@ variable "postgres_hostname" {
   type        = string
   default     = ""
   description = "PostgreSQL hostname"
+  sensitive   = true
 }
 
 variable "kubernetes_host" {
   type        = string
   description = "Kubernetes host"
-}
-
-variable "kubernetes_ca_cert" {
-  type        = string
-  description = "Kubernetes CA certificates"
 }
 
 variable "postgres_port" {
@@ -30,6 +26,7 @@ variable "postgres_password" {
   type        = string
   description = "PostgreSQL password"
   default     = "password"
+  sensitive   = true
 }
 
 variable "tfc_organization" {
