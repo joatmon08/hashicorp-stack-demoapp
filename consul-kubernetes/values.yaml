@@ -1,0 +1,30 @@
+# name your datacenter
+global:
+  enabled: true
+  name: consul
+  datacenter: zero
+  gossipEncryption:
+    secretName: consul-gossip-encryption-key
+    secretKey: key
+  tls:
+    enabled: true
+
+  acls:
+    manageSystemACLs: true
+
+client:
+  grpc: true
+
+connectInject:
+  enabled: true
+
+ui:
+  enabled: true
+
+controller:
+  enabled: true
+
+terminatingGateways:
+  enabled: true
+  default:
+    replicas: 1
