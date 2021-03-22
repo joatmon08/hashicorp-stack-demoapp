@@ -21,7 +21,7 @@ resource "consul_node" "database" {
 
   meta = {
     "external-node"  = "true"
-    "external-probe" = "false"
+    "external-probe" = "true"
   }
 }
 
@@ -39,7 +39,10 @@ resource "consul_config_entry" "terminating_gateway" {
   kind = "terminating-gateway"
 
   config_json = jsonencode({
-    Services = [{ Name = "database" }]
+    Services = [{
+      Name = "database"
+      SNI  = local.products_database
+    }]
   })
 }
 
