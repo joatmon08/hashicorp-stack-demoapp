@@ -1,30 +1,23 @@
-# HashiCorp Demo Application with Boundary, Waypoint, & HashiCorp Cloud Platform
+# HashiCorp Demo Application with Boundary, Consul, & Vault on Kubernetes
 
 This is the HashiCorp demo application on Amazon EKS. It incorporates the following
 tools:
 
-* Terraform
-* Waypoint
-* HCP Consul
-* HCP Vault
-* Boundary
+* Terraform 0.14+
+* HCP Consul 1.9.4
+* HCP Vault 1.7.0
+* Boundary 0.1.5
 
 ![Diagram of Infrastructure](./assets/diagram.png)
 
 ## Prerequisites
 
-1. Terraform Cloud as Backend, state only (or reconfigure `terraform` directive in `providers.tf`)
+1. Terraform Cloud
 1. AWS Account
-1. HCP Consul (already set up with HVN + Cluster) - you will need the `client_config.json` and `ca.pem` copied to the `secrets` folder.
-   1.  You will need the public URL set as `export CONSUL_HTTP_ADDR=<HCP Consul public URL>`.
-   1.  You will need the bootstrap token set as `export CONSUL_HTTP_TOKEN=<bootstrap token>`.
-1. HCP Vault (already set up with HVN + Cluster)
-   1. You will need the private URL set as `export VAULT_ADDR=<HCP Vault public URL>`.
-   1. You will need the namespace set as `export VAULT_NAMESPACE=admin`.
-   1. HCP Vault admin token, set as `export VAULT_TOKEN=<Vault token>`.
+1. HCP Access, including service principal for automation
 1. `jq` installed
 1. Install HashiCorp Boundary and an SSH key to `~/projects/boundary`.
-   1. Download Boundary to `~/projects/boundary/bin`.
+   1. Download Boundary to `boundary-deployment/bin/boundary`.
       ```shell
       mkdir -p ~/projects/boundary/bin
       cd ~/projects/boundary/bin
@@ -32,19 +25,15 @@ tools:
       unzip boundary.zip
       rm boundary.zip
       ```
-   1. Add an SSH key named `id_rsa` to `~/projects/boundary`.
+   1. Add an SSH key named `id_rsa` to `boundary-deployment/bin/boundary`.
 
-## Deploy & Configure the Kubernetes Cluster
+## Deploy Kubernetes, Boundary, HCP Network, and HCP Consul
 
-1. Add the Consul and Vault addresses to `terraform.tfvars`.
-   ```hcl
-   name                                     = "hcp-demo"
-   peering_connection_has_been_added_to_hvn = false
-   hcp_vault_private_addr                   = ${HCP_VAULT_PRIVATE_ADDRESS}
-   hcp_consul_host                          = ${HCP_CONSUL_PRIVATE_ADDRESS}
-   ```
+1. Create a Terraform workspace named `infrastructure`
+   to use the working directory `infrastructure`. Create
+   it using VCS Settings.
 
-1. Run `make setup` and enter `yes` to create the EKS cluster, VPC, and Boundary.
+1. Add the following variables
 
 1. Set up the peering connection in HVN (do not accept, this configuration will do it for you).
 

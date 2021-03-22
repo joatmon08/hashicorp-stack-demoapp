@@ -48,14 +48,15 @@ variable "postgres_port" {
 variable "postgres_username" {
   type        = string
   description = "PostgreSQL username"
-  default     = "postgres"
+  sensitive   = true
+  default     = ""
 }
 
 variable "postgres_password" {
   type        = string
   description = "PostgreSQL password"
-  default     = "password"
   sensitive   = true
+  default     = ""
 }
 
 variable "aws_eks_cluster_id" {
