@@ -34,17 +34,6 @@ resource "consul_config_entry" "database" {
   })
 }
 
-resource "consul_config_entry" "terminating_gateway" {
-  name = "terminating-gateway"
-  kind = "terminating-gateway"
-
-  config_json = jsonencode({
-    Services = [{
-      Name = "database"
-    }]
-  })
-}
-
 # resource "kubernetes_manifest" "database_terminating_gateway" {
 #   provider   = kubernetes-alpha
 #   depends_on = [consul_service.database]
