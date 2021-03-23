@@ -44,3 +44,29 @@ resource "boundary_host_set" "products_database" {
   host_catalog_id = boundary_host_catalog.products_database.id
   host_ids        = [boundary_host.products_database.id]
 }
+
+resource "boundary_host_catalog" "products_frontend" {
+  count       = var.products_frontend_address != "" ? 1 : 0
+  name        = "products_frontend"
+  description = "Products frontend"
+  type        = "static"
+  scope_id    = boundary_scope.products_infra.id
+}
+
+resource "boundary_host" "products_frontend" {
+  count           = var.products_frontend_address != "" ? 1 : 0
+  type            = "static"
+  name            = "products_frontend"
+  description     = "products frontend"
+  address         = var.products_frontend_address
+  host_catalog_id = boundary_host_catalog.products_frontend.0.id
+}
+
+resource "boundary_host_set" "products_frontend" {
+  count           = var.products_frontend_address != "" ? 1 : 0
+  type            = "static"
+  name            = "products_frontend"
+  description     = "Host set for Product Frontend"
+  host_catalog_id = boundary_host_catalog.products_frontend.0.id
+  host_ids        = [boundary_host.products_frontend.0.id]
+}

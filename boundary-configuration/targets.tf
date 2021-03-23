@@ -21,3 +21,16 @@ resource "boundary_target" "products_database_postgres" {
     boundary_host_set.products_database.id
   ]
 }
+
+resource "boundary_target" "products_frontend" {
+  count                    = var.products_frontend_address != "" ? 1 : 0
+  type                     = "tcp"
+  name                     = "products_frontend"
+  description              = "Products Frontend Target"
+  scope_id                 = boundary_scope.products_infra.id
+  session_connection_limit = -1
+  default_port             = 30080
+  host_set_ids = [
+    boundary_host_set.products_frontend.0.id
+  ]
+}
