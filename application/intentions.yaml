@@ -19,7 +19,11 @@ spec:
     name: product
   sources:
     - name: public
-      action: allow
+      permissions:
+        - action: allow
+          http:
+            pathPrefix: /coffees
+            methods: ['GET']
 ---
 apiVersion: consul.hashicorp.com/v1alpha1
 kind: ServiceIntentions
