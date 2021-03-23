@@ -6,7 +6,7 @@ tools:
 * Terraform 0.14+
 * HCP Consul 1.9.4
 * HCP Vault 1.7.0
-* Boundary 0.1.5
+* Boundary 0.1.8
 
 ![Diagram of Infrastructure](./assets/diagram.png)
 
@@ -19,8 +19,8 @@ tools:
 1. Install HashiCorp Boundary and an SSH key to `~/projects/boundary`.
    1. Download Boundary to `boundary-deployment/bin/boundary`.
       ```shell
-      cd boundary-deployment/bin/boundary
-      wget https://releases.hashicorp.com/boundary/${VERSION}/boundary_${VERSION}_linux_amd64.zip -O boundary.zip
+      cd boundary-deployment/bin
+      curl https://releases.hashicorp.com/boundary/0.1.8/boundary_0.1.8_linux_amd64.zip -o boundary.zip
       unzip boundary.zip
       rm boundary.zip
       ```
