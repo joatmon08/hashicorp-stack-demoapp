@@ -32,9 +32,7 @@ resource "boundary_role" "org_admin" {
   grant_strings = [
     "id=*;type=*;actions=*"
   ]
-  principal_ids = concat(
-    [for user in boundary_user.operations : user.id],
-  )
+  principal_ids = [boundary_group.operations_team.id]
 }
 
 # Adds a read-only role in the global scope granting read-only access
@@ -53,6 +51,20 @@ resource "boundary_role" "org_readonly" {
   grant_scope_id = boundary_scope.org.id
 }
 
+resource "boundary_role" "org_targetonly" {
+  name        = "targetonly"
+  description = "Target-only role"
+  principal_ids = [
+    boundary_group.products_team.id
+  ]
+  grant_strings = [
+    "id=*;type=target;actions=read,list,authorize-session",
+    "id=*;type=session;actions=read,list"
+  ]
+  scope_id       = boundary_scope.global.id
+  grant_scope_id = boundary_scope.org.id
+}
+
 # Adds an org-level role granting administrative permissions within the core_infra project
 resource "boundary_role" "project_admin" {
   name           = "core_infra_admin"
@@ -62,9 +74,7 @@ resource "boundary_role" "project_admin" {
   grant_strings = [
     "id=*;type=*;actions=*"
   ]
-  principal_ids = concat(
-    [for user in boundary_user.operations : user.id],
-  )
+  principal_ids = [boundary_group.operations_team.id]
 }
 
 # Adds an org-level role granting administrative permissions within the products_infra project
@@ -76,21 +86,17 @@ resource "boundary_role" "project_admin_products" {
   grant_strings = [
     "id=*;type=*;actions=*"
   ]
-  principal_ids = concat(
-    [for user in boundary_user.operations : user.id],
-  )
+  principal_ids = [boundary_group.operations_team.id]
 }
 
-# Adds an org-level role granting target permissions within the products_infra project
+# Adds an org-level role granting limited permissions within the products_infra project
 resource "boundary_role" "project_targets_products" {
-  name           = "products_targets"
-  description    = "Targets-only role for products infra"
+  name           = "project_products_targets"
+  description    = "Project-level permissions for products infra"
   scope_id       = boundary_scope.org.id
   grant_scope_id = boundary_scope.products_infra.id
   grant_strings = [
-    "id=*;type=target;actions=*"
+    "id=*;type=*;actions=*"
   ]
-  principal_ids = concat(
-    [for user in boundary_user.products : user.id],
-  )
+  principal_ids = [boundary_group.products_team.id]
 }
