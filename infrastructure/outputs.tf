@@ -35,7 +35,7 @@ output "product_database_address" {
 }
 
 output "product_database_username" {
-  value     = aws_db_instance.products.username
+  value = aws_db_instance.products.username
 }
 
 output "product_database_password" {

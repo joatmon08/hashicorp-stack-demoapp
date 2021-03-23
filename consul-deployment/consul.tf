@@ -37,22 +37,8 @@
 #   })
 # }
 
-# # resource "kubernetes_manifest" "database_terminating_gateway" {
-# #   provider   = kubernetes-alpha
-# #   depends_on = [consul_service.database]
-# #   manifest = {
-# #     "apiVersion" = "consul.hashicorp.com/v1alpha1"
-# #     "kind"       = "TerminatingGateway"
-# #     "metadata" = {
-# #       "name"      = "terminating-gateway"
-# #       "namespace" = "default"
-# #     }
-# #     "spec" = {
-# #       "services" = [
-# #         {
-# #           "name" = "database"
-# #         },
-# #       ]
-# #     }
-# #   }
-# # }
+# resource "consul_intention" "default" {
+#   source_name      = "*"
+#   destination_name = "*"
+#   action           = "deny"
+# }
