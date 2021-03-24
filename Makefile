@@ -61,4 +61,7 @@ clean-vault:
 clean-consul:
 	kubectl delete -f consul-deployment/terminating-gateway/kubernetes.yaml
 
-clean: clean-application clean-vault
+taint:
+	cd consul-deployment && terraform taint hcp_consul_cluster_root_token.token
+
+clean: clean-application clean-vault clean-consul taint
