@@ -32,9 +32,9 @@ resource "boundary_role" "org_admin" {
   grant_strings = [
     "id=*;type=*;actions=*"
   ]
-  principal_ids = concat(
-    [for user in boundary_user.operations : user.id],
-  )
+  principal_ids = [
+    boundary_group.operations_team.id
+  ]
 }
 
 # Adds a read-only role in the global scope granting read-only access
@@ -44,7 +44,8 @@ resource "boundary_role" "org_readonly" {
   name        = "readonly"
   description = "Read-only role"
   principal_ids = [
-    boundary_group.leadership.id
+    boundary_group.leadership.id,
+    boundary_group.products_team.id
   ]
   grant_strings = [
     "id=*;type=*;actions=read"
@@ -62,9 +63,9 @@ resource "boundary_role" "project_admin" {
   grant_strings = [
     "id=*;type=*;actions=*"
   ]
-  principal_ids = concat(
-    [for user in boundary_user.operations : user.id],
-  )
+  principal_ids = [
+    boundary_group.operations_team.id
+  ]
 }
 
 # Adds an org-level role granting administrative permissions within the products_infra project
@@ -76,21 +77,8 @@ resource "boundary_role" "project_admin_products" {
   grant_strings = [
     "id=*;type=*;actions=*"
   ]
-  principal_ids = concat(
-    [for user in boundary_user.operations : user.id],
-  )
-}
-
-# Adds an org-level role granting target permissions within the products_infra project
-resource "boundary_role" "project_targets_products" {
-  name           = "products_targets"
-  description    = "Targets-only role for products infra"
-  scope_id       = boundary_scope.org.id
-  grant_scope_id = boundary_scope.products_infra.id
-  grant_strings = [
-    "id=*;type=target;actions=*"
+  principal_ids = [
+    boundary_group.operations_team.id,
+    boundary_group.products_team.id
   ]
-  principal_ids = concat(
-    [for user in boundary_user.products : user.id],
-  )
 }
