@@ -9,6 +9,10 @@ metadata:
     service.beta.kubernetes.io/aws-load-balancer-internal: "true"
 spec:
   type: LoadBalancer
+  loadBalancerSourceRanges:
+  - "10.0.4.0/24"
+  - "10.0.5.0/24"
+  - "10.0.6.0/24"
   ports:
     - port: 80
       targetPort: 80
