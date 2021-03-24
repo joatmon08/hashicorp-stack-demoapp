@@ -48,7 +48,9 @@ resource "boundary_role" "org_readonly" {
     boundary_group.products_team.id
   ]
   grant_strings = [
-    "id=*;type=*;actions=read"
+    "id=*;type=*;actions=read",
+    "id=*;type=target;actions=read,list,authorize-session",
+    "id=*;type=session;actions=read,list"
   ]
   scope_id       = boundary_scope.global.id
   grant_scope_id = boundary_scope.org.id
