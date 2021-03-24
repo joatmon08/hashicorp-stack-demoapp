@@ -40,7 +40,7 @@ postgres-operations:
 		-password $(shell cd boundary-configuration && terraform output boundary_operations_password) \
 		-auth-method-id=$(shell cd boundary-configuration && terraform output boundary_auth_method_id)
 	boundary connect postgres -username=postgres -target-id \
-		$(shell cd boundary-configuration && terraform output boundary_target_postgres) -- -d products
+		$(shell cd boundary-configuration && terraform output boundary_target_postgres)
 
 postgres-products:
 	@boundary authenticate password -login-name=rob \
