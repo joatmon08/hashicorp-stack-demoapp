@@ -29,7 +29,7 @@ resource "boundary_target" "products_frontend" {
   description              = "Products Frontend Target"
   scope_id                 = boundary_scope.products_infra.id
   session_connection_limit = -1
-  default_port             = 80
+  default_port             = 30080
   host_set_ids = [
     boundary_host_set.products_frontend.0.id
   ]
