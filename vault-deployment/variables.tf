@@ -19,12 +19,12 @@ data "terraform_remote_state" "infrastructure" {
   }
 }
 
-locals {
-  kubernetes_host   = var.kubernetes_host == "" ? data.aws_eks_cluster.cluster.endpoint : var.kubernetes_host
-  postgres_hostname = var.postgres_hostname == "" ? data.terraform_remote_state.infrastructure.outputs.product_database_address : var.postgres_hostname
-  postgres_username = var.postgres_username == "" ? data.terraform_remote_state.infrastructure.outputs.product_database_username : var.postgres_username
-  postgres_password = var.postgres_password == "" ? data.terraform_remote_state.infrastructure.outputs.product_database_password : var.postgres_password
-}
+# locals {
+#   kubernetes_host   = var.kubernetes_host == "" ? data.aws_eks_cluster.cluster.endpoint : var.kubernetes_host
+#   postgres_hostname = var.postgres_hostname == "" ? data.terraform_remote_state.infrastructure.outputs.product_database_address : var.postgres_hostname
+#   postgres_username = var.postgres_username == "" ? data.terraform_remote_state.infrastructure.outputs.product_database_username : var.postgres_username
+#   postgres_password = var.postgres_password == "" ? data.terraform_remote_state.infrastructure.outputs.product_database_password : var.postgres_password
+# }
 
 variable "kubernetes_host" {
   type        = string
