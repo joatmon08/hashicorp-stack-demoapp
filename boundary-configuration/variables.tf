@@ -68,4 +68,5 @@ locals {
   kms_recovery_key_id              = data.terraform_remote_state.infrastructure.outputs.boundary_kms_recovery_key_id
   eks_target_ips                   = toset(data.aws_instances.eks.private_ips)
   products_database_target_address = data.terraform_remote_state.infrastructure.outputs.product_database_address
+  consul_private_address           = data.terraform_remote_state.infrastructure.outputs.hcp_consul_private_address
 }
