@@ -26,6 +26,10 @@ output "hcp_consul_cluster" {
   value = hcp_consul_cluster.consul.cluster_id
 }
 
+output "hcp_consul_private_address" {
+  value = hcp_consul_cluster.consul.consul_private_endpoint_url
+}
+
 output "kubernetes_endpoint" {
   value = data.aws_eks_cluster.cluster.endpoint
 }
