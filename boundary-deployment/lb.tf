@@ -1,6 +1,6 @@
 resource "aws_lb" "controller" {
   name               = "${var.name}-controller-${random_pet.test.id}"
-  load_balancer_type = "network"
+  load_balancer_type = "application"
   internal           = false
   subnets            = var.public_subnet_ids
   security_groups    = [aws_security_group.controller_lb.id]
@@ -13,13 +13,14 @@ resource "aws_lb" "controller" {
 resource "aws_lb_target_group" "controller" {
   name     = "${var.name}-controller-${random_pet.test.id}"
   port     = 9200
-  protocol = "TCP"
+  protocol = "HTTP"
   vpc_id   = var.vpc_id
 
   stickiness {
     enabled = false
-    type    = "source_ip"
+    type    = "lb_cookie"
   }
+
   tags = merge({
     Name = "${var.name}-controller-${random_pet.test.id}"
   }, var.tags)
@@ -35,7 +36,7 @@ resource "aws_lb_target_group_attachment" "controller" {
 resource "aws_lb_listener" "controller" {
   load_balancer_arn = aws_lb.controller.arn
   port              = "9200"
-  protocol          = "TCP"
+  protocol          = "HTTP"
 
   default_action {
     type             = "forward"
