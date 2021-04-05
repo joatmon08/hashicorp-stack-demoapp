@@ -191,12 +191,12 @@ resource "aws_security_group_rule" "allow_ssh_controller" {
 
 # Boundary API
 resource "aws_security_group_rule" "allow_9200_controller" {
-  type              = "ingress"
-  from_port         = 9200
-  to_port           = 9200
-  protocol          = "tcp"
-  cidr_blocks       = ["0.0.0.0/0"] # Needs to be open for TFC
-  security_group_id = aws_security_group.controller.id
+  type                     = "ingress"
+  from_port                = 9200
+  to_port                  = 9200
+  protocol                 = "tcp"
+  source_security_group_id = aws_security_group.controller_lb.id
+  security_group_id        = aws_security_group.controller.id
 }
 
 resource "aws_security_group_rule" "allow_9201_controller" {
