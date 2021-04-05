@@ -65,3 +65,11 @@ taint:
 	cd consul-deployment && terraform taint hcp_consul_cluster_root_token.token
 
 clean: clean-application clean-vault clean-consul taint
+
+vault-commands:
+	vault list sys/leases/lookup/database/creds/product
+	vault read database/creds/product
+	gunzip -d ~/Downloads/auditlogs-zero-202103231800-202103231900.gz
+
+db-commands:
+	psql -h 127.0.0.1 -p 62079 -U postgres -d products -f database-service/products.sql

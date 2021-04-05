@@ -3,6 +3,7 @@ resource "aws_lb" "controller" {
   load_balancer_type = "network"
   internal           = false
   subnets            = var.public_subnet_ids
+  security_groups    = [aws_security_group.controller_lb.id]
 
   tags = merge({
     Name = "${var.name}-controller-${random_pet.test.id}"
