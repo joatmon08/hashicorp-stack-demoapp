@@ -32,12 +32,12 @@ tools:
    1. Use the working directory `infrastructure`.
    1. Connect it to VCS Settings.
    1. Variables should include:
-      ```
+      ```plaintext
       private_ssh_key (sensitive): base64 encoded SSH Key for Boundary SSH
-      database_password (sensitive)
+      database_password (sensitive): password for Amazon RDS PostgreSQL database for application
       ```
    1. Environment Variables should include:
-      ```
+      ```plaintext
       HCP_CLIENT_ID: HCP service principal ID
       HCP_CLIENT_SECRET (sensitive): HCP service principal secret
       AWS_ACCESS_KEY_ID: AWS access key ID
@@ -53,20 +53,25 @@ tools:
 1. Go into the HCP Portal. You will need to manually create an **public** HCP Vault
    cluster.
 
+> Note: To delete the infrastructure, you must run `terraform destroy` a few times because
+  of AWS timing out. After you finish destroying, you need to run
+  `make clean-infrastructure` to remove the AWS auth ConfigMap from state.
+
+
 ## Configure Boundary
 
 1. Create a Terraform workspace named `boundary-configuration`
    1. Use the working directory `boundary-configuration`.
    1. Connect it to VCS Settings.
    1. Variables should include:
-      ```
+      ```plaintext
       tfc_organization: your Terraform Cloud organization name
       tfc_workspace: infrastructure
       ```
       The configuration retrieves a set of variables using `terraform_remote_state`
       data source.
    1. Environment Variables should include:
-      ```
+      ```plaintext
       AWS_ACCESS_KEY_ID: AWS access key ID
       AWS_SECRET_ACCESS_KEY (sensitive): AWS secret access key
       AWS_SESSION_TOKEN (sensitive): If applicable, the token for session

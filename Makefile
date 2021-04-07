@@ -52,6 +52,9 @@ postgres-products:
 configure-application:
 	kubectl apply -f application/
 
+clean-infrastructure:
+	terraform state rm 'module.eks.kubernetes_config_map.aws_auth[0]'
+
 clean-application:
 	kubectl delete -f application/
 
