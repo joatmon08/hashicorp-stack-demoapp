@@ -60,6 +60,11 @@ resource "helm_release" "consul" {
   ]
 
   set {
+    name  = "global.image"
+    value = "hashicorp/consul:${replace(data.hcp_consul_cluster.cluster.consul_version, "v", "")}"
+  }
+
+  set {
     name  = "controller.enabled"
     value = "true"
   }
@@ -67,5 +72,10 @@ resource "helm_release" "consul" {
   set {
     name  = "terminatingGateways.enabled"
     value = "true"
+  }
+
+  set {
+    name  = "terminatingGateways.defaults.replicas"
+    value = "1"
   }
 }
