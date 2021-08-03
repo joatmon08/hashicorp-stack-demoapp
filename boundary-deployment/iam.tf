@@ -17,9 +17,9 @@ resource "aws_iam_role" "boundary" {
 }
 EOF
 
-  tags = merge({
+  tags = {
     Name = "${var.name}-${random_pet.test.id}"
-  }, var.tags)
+  }
 }
 
 resource "aws_iam_instance_profile" "boundary" {

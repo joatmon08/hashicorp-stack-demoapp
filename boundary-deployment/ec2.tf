@@ -167,17 +167,17 @@ resource "aws_instance" "controller" {
     ]
   }
 
-  tags = merge({
+  tags = {
     Name = "${var.name}-controller-${random_pet.test.id}"
-  }, var.tags)
+  }
 }
 
 resource "aws_security_group" "controller" {
   vpc_id = var.vpc_id
 
-  tags = merge({
+  tags = {
     Name = "${var.name}-controller-${random_pet.test.id}"
-  }, var.tags)
+  }
 }
 
 resource "aws_security_group_rule" "allow_ssh_controller" {
@@ -220,9 +220,9 @@ resource "aws_security_group_rule" "allow_egress_controller" {
 resource "aws_security_group" "worker" {
   vpc_id = var.vpc_id
 
-  tags = merge({
+  tags = {
     Name = "${var.name}-worker-${random_pet.test.id}"
-  }, var.tags)
+  }
 }
 
 resource "aws_security_group_rule" "allow_ssh_worker" {

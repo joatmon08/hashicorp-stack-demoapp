@@ -3,9 +3,9 @@ resource "random_pet" "test" {
 }
 
 locals {
-  tags = merge({
+  tags = {
     Name = "${var.name}-${random_pet.test.id}"
-  }, var.tags)
+  }
   boundary_bin        = var.boundary_bin == "" ? "${path.module}/bin" : var.boundary_bin
   public_ssh_key_path = var.public_ssh_key_path == "" ? "${path.module}/bin/id_rsa.pub" : var.public_ssh_key_path
 }
@@ -64,12 +64,6 @@ variable "tls_disabled" {
 
 variable "kms_type" {
   default = "aws"
-}
-
-variable "tags" {
-  description = "Tags for resources"
-  type        = map(string)
-  default     = {}
 }
 
 variable "client_cidr_block" {
