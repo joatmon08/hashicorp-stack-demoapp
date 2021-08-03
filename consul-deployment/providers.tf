@@ -40,6 +40,9 @@ provider "kubernetes" {
   host                   = data.aws_eks_cluster.cluster.endpoint
   cluster_ca_certificate = base64decode(data.aws_eks_cluster.cluster.certificate_authority.0.data)
   token                  = data.aws_eks_cluster_auth.cluster.token
+  experiments {
+    manifest_resource = true
+  }
 }
 
 provider "helm" {
@@ -61,7 +64,7 @@ resource "hcp_consul_cluster_root_token" "token" {
 }
 
 provider "consul" {
-  address    = "https://${data.hcp_consul_cluster.cluster.consul_public_endpoint_url}"
+  address    = data.hcp_consul_cluster.cluster.consul_public_endpoint_url
   datacenter = data.hcp_consul_cluster.cluster.datacenter
   token      = hcp_consul_cluster_root_token.token.secret_id
 }

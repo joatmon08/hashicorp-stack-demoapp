@@ -1,3 +1,0 @@
-service "database" {
-  policy = "write"
-}

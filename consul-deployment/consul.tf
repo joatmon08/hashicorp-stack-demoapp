@@ -1,5 +1,4 @@
 resource "consul_service" "database" {
-  depends_on = [helm_release.consul]
   name       = "database"
   node       = consul_node.database.name
   port       = 5432
@@ -15,7 +14,6 @@ resource "consul_service" "database" {
 }
 
 resource "consul_node" "database" {
-  depends_on = [helm_release.consul]
   name       = "database"
   address    = local.products_database
 
@@ -51,4 +49,13 @@ resource "consul_config_entry" "service_intentions" {
       }
     ]
   })
+}
+
+resource "consul_acl_policy" "database" {
+  name  = "database-write-policy"
+  rules = <<-RULE
+    service "database" {
+        policy = "write"
+    }
+    RULE
 }

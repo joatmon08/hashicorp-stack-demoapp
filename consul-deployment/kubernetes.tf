@@ -65,6 +65,11 @@ resource "helm_release" "consul" {
   }
 
   set {
+    name  = "global.imageEnvoy"
+    value = "envoyproxy/envoy-alpine:v1.16.4"
+  }
+
+  set {
     name  = "controller.enabled"
     value = "true"
   }
