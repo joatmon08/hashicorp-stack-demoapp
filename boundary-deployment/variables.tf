@@ -69,6 +69,7 @@ variable "kms_type" {
 variable "tags" {
   description = "Tags for resources"
   type        = map(string)
+  default     = {}
 }
 
 variable "client_cidr_block" {
