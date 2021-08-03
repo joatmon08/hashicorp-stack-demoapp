@@ -8,6 +8,12 @@ variable "region" {
   type        = string
 }
 
+variable "hcp_region" {
+  description = "HCP Region"
+  type        = string
+  default     = ""
+}
+
 variable "private_ssh_key" {
   description = "Base64 encoded contents of private SSH key for Boundary and EKS nodes"
   type        = string
