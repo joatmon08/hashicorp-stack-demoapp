@@ -1,29 +1,25 @@
 terraform {
-  required_version = "~> 0.14"
+  required_version = "~> 1.0"
   required_providers {
     kubernetes = {
       source  = "hashicorp/kubernetes"
-      version = "~> 2.0"
-    }
-    kubernetes-alpha = {
-      source  = "hashicorp/kubernetes-alpha"
-      version = "~> 0.3"
+      version = "~> 2.4"
     }
     helm = {
       source  = "hashicorp/helm"
-      version = "~> 2.0"
+      version = "~> 2.2"
     }
     hcp = {
       source  = "hashicorp/hcp"
-      version = "~> 0.2"
+      version = "~> 0.11"
     }
     aws = {
       source  = "hashicorp/aws"
-      version = "~> 3.32"
+      version = "~> 3.52"
     }
     consul = {
       source  = "hashicorp/consul"
-      version = "~> 2.11"
+      version = "~> 2.12"
     }
   }
 }
@@ -45,12 +41,6 @@ provider "kubernetes" {
   cluster_ca_certificate = base64decode(data.aws_eks_cluster.cluster.certificate_authority.0.data)
   token                  = data.aws_eks_cluster_auth.cluster.token
 }
-
-# provider "kubernetes-alpha" {
-#   host                   = data.aws_eks_cluster.cluster.endpoint
-#   cluster_ca_certificate = base64decode(data.aws_eks_cluster.cluster.certificate_authority.0.data)
-#   token                  = data.aws_eks_cluster_auth.cluster.token
-# }
 
 provider "helm" {
   kubernetes {
