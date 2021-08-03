@@ -1,21 +1,17 @@
 terraform {
-  required_version = "~> 0.14"
+  required_version = "~> 1.0"
   required_providers {
     aws = {
       source  = "hashicorp/aws"
-      version = "~> 3.32"
+      version = "~> 3.52"
     }
     kubernetes = {
       source  = "hashicorp/kubernetes"
-      version = "~> 1.13"
+      version = "~> 2.4"
     }
     tls = {
       source  = "hashicorp/tls"
-      version = "~> 3.0"
-    }
-    boundary = {
-      source  = "hashicorp/boundary"
-      version = "~> 1.0"
+      version = "~> 3.1"
     }
     hcp = {
       source  = "hashicorp/hcp"
@@ -26,6 +22,9 @@ terraform {
 
 provider "aws" {
   region = var.region
+  default_tags {
+    tags = var.tags
+  }
 }
 
 provider "hcp" {}

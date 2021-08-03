@@ -43,49 +43,19 @@ locals {
   ])
 }
 
-resource "hcp_hvn" "hvn" {
-  hvn_id         = var.name
-  cloud_provider = "aws"
-  region         = var.region
-  cidr_block     = var.hcp_consul_cidr_block
-}
-
-resource "hcp_consul_cluster" "consul" {
-  hvn_id          = hcp_hvn.hvn.hvn_id
-  datacenter      = local.datacenter
-  cluster_id      = var.name
-  tier            = "development"
-  public_endpoint = var.hcp_consul_public_endpoint
-}
-
-resource "hcp_aws_network_peering" "peer" {
-  hvn_id              = hcp_hvn.hvn.hvn_id
-  peer_vpc_id         = module.vpc.vpc_id
-  peer_account_id     = module.vpc.vpc_owner_id
-  peer_vpc_region     = var.region
-  peer_vpc_cidr_block = module.vpc.vpc_cidr_block
-}
-
-resource "aws_vpc_peering_connection_accepter" "hvn" {
-  vpc_peering_connection_id = hcp_aws_network_peering.peer.provider_peering_id
-  auto_accept               = true
-  tags                      = var.tags
-}
-
-resource "aws_route" "hvn" {
-  count                     = length(local.route_table_ids)
-  route_table_id            = local.route_table_ids[count.index]
-  destination_cidr_block    = var.hcp_consul_cidr_block
-  vpc_peering_connection_id = hcp_aws_network_peering.peer.provider_peering_id
-}
-
-resource "aws_security_group_rule" "hcp_consul" {
-  count             = length(local.hcp_consul_security_groups)
-  description       = local.hcp_consul_security_groups[count.index].description
-  protocol          = local.hcp_consul_security_groups[count.index].protocol
-  security_group_id = local.hcp_consul_security_groups[count.index].security_group_id
-  cidr_blocks       = [var.hcp_consul_cidr_block]
-  from_port         = local.hcp_consul_security_groups[count.index].port
-  to_port           = local.hcp_consul_security_groups[count.index].port
-  type              = "ingress"
+module "hcp" {
+  source                     = "joatmon08/hcp/aws"
+  version                    = "1.0.1"
+  hvn_cidr_block             = var.hcp_consul_cidr_block
+  hvn_name                   = var.name
+  hvn_region                 = var.region
+  number_of_route_table_ids  = length(local.route_table_ids)
+  route_table_ids            = local.route_table_ids
+  vpc_cidr_block             = module.vpc.vpc_cidr_block
+  vpc_id                     = module.vpc.vpc_id
+  vpc_owner_id               = module.vpc.vpc_owner_id
+  hcp_consul_name            = var.name
+  hcp_consul_public_endpoint = var.hcp_consul_public_endpoint
+  hcp_vault_name             = var.name
+  hcp_vault_public_endpoint  = var.hcp_vault_public_endpoint
 }

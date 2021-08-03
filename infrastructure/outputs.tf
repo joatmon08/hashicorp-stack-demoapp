@@ -23,11 +23,19 @@ output "boundary_kms_recovery_key_id" {
 }
 
 output "hcp_consul_cluster" {
-  value = hcp_consul_cluster.consul.cluster_id
+  value = module.hcp.hcp_consul_id
 }
 
 output "hcp_consul_private_address" {
-  value = hcp_consul_cluster.consul.consul_private_endpoint_url
+  value = module.hcp.hcp_consul_private_endpoint
+}
+
+output "hcp_vault_cluster" {
+  value = module.hcp.hcp_vault_id
+}
+
+output "hcp_vault_private_address" {
+  value = module.hcp.hcp_vault_private_endpoint
 }
 
 output "kubernetes_endpoint" {

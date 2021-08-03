@@ -32,6 +32,12 @@ variable "hcp_consul_public_endpoint" {
   description = "Enable HCP Consul public endpoint for cluster"
 }
 
+variable "hcp_vault_public_endpoint" {
+  type        = string
+  default     = false
+  description = "Enable HCP Vault public endpoint for cluster"
+}
+
 variable "tags" {
   default = {
     Environment = "rosemary-zero-trust-demo"
