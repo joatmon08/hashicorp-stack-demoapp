@@ -10,9 +10,9 @@ output "eks_cluster_name" {
   value = var.name
 }
 
-# output "eks_cluster_id" {
-#   value = module.eks.cluster_id
-# }
+output "eks_cluster_id" {
+  value = module.eks.cluster_id
+}
 
 output "boundary_endpoint" {
   value = "http://${module.boundary.boundary_lb}:9200"
@@ -38,9 +38,9 @@ output "hcp_vault_private_address" {
   value = module.hcp.hcp_vault_private_endpoint
 }
 
-# output "kubernetes_endpoint" {
-#   value = data.aws_eks_cluster.cluster.endpoint
-# }
+output "kubernetes_endpoint" {
+  value = data.aws_eks_cluster.cluster.endpoint
+}
 
 output "product_database_address" {
   value = aws_db_instance.products.address
