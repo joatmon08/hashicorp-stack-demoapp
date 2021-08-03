@@ -3,28 +3,59 @@
 This is the HashiCorp demo application on Amazon EKS. It incorporates the following
 tools:
 
-* Terraform 0.14+
-* HCP Consul 1.9.4
-* HCP Vault 1.7.0
-* Boundary 0.1.8
+- Terraform 1.0.3
+- HashiCorp Cloud Platform (HCP) Consul 1.9.8
+- HashiCorp Cloud Platform (HCP) Vault 1.7.3
+- Boundary 0.4.0
 
 ![Diagram of Infrastructure](./assets/diagram.png)
+
+Each folder contains a few different configurations.
+
+- Terraform Modules
+  - `boundary-deployment/`: This is a __local__ Terraform module because it includes
+    the Boundary binary and an SSH key. It is referenced by `infrastructure/`.
+
+- Terraform Configurations
+  - `infrastructure/` (takes 30+ minutes to provision!)
+     - VPC (3 private subnets, 3 public subnets)
+     - Boundary cluster (controllers, workers, and AWS RDS PostgreSQL database)
+     - AWS Elastic Kubernetes Service cluster
+     - AWS RDS (PostgreSQL) database for demo application
+     - HashiCorp Virtual Network (peered to VPC)
+     - HCP Consul
+     - HCP Vault
+   - `boundary-configuration`: Configures boundary with two organizations
+   - `consul-deployment/`: Deploys a Consul cluster via Helm chart.
+   - `vault-deployment/`: Deploy a Vault cluster via Helm chart.
+
+
+- Kubernetes
+   - `application/`: Deploys the HashiCorp Demo Application (AKA HashiCups)
 
 ## Prerequisites
 
 1. Terraform Cloud
 1. AWS Account
-1. HCP Access, including service principal for automation
+1. HashiCorp Cloud Platform account
+   1. You need access to HCP Consul and Vault.
+   1. Create a [service principal](https://portal.cloud.hashicorp.com/access/service-principals)
+      for the HCP Terraform provider.
 1. `jq` installed
-1. Install HashiCorp Boundary and an SSH key to `~/projects/boundary`.
+1. Install HashiCorp Boundary and an SSH key to the `boundary-deployment/bin` directory.
    1. Download Boundary to `boundary-deployment/bin/boundary`.
       ```shell
       cd boundary-deployment/bin
-      curl https://releases.hashicorp.com/boundary/0.1.8/boundary_0.1.8_linux_amd64.zip -o boundary.zip
+      curl https://releases.hashicorp.com/boundary/0.4.0/boundary_0.4.0_linux_amd64.zip -o boundary.zip
       unzip boundary.zip
       rm boundary.zip
       ```
-   1. Add an SSH key named `id_rsa` to `boundary-deployment/bin/boundary`.
+   1. Add an SSH key named `id_rsa` to `boundary-deployment/bin`. You can optionally add a passphrase.
+      ```shell
+      $ ssh-keygen -t rsa
+
+      Enter file in which to save the key (~/.ssh/id_rsa): boundary-deployment/bin/id_rsa
+      ```
 
 ## Deploy Kubernetes, Boundary, and HCP Clusters
 
@@ -49,9 +80,6 @@ tools:
    with three nodes in a private subnet, an Amazon RDS instance using PostgreSQL,
    a Boundary cluster (load balancer, workers, controllers, and database),
    HCP network with peering to the VPC, and HCP Consul cluster.
-
-1. Go into the HCP Portal. You will need to manually create an **public** HCP Vault
-   cluster.
 
 > Note: To delete the infrastructure, you must run `terraform destroy` a few times because
   of AWS timing out. After you finish destroying, you need to run
@@ -85,12 +113,16 @@ tools:
    `operations` users will be able to access both `core_infra`
    and `product_infra`.
 
+1. Set the `BOUNDARY_ADDR` environment variable to the Boundary endpoint.
+   ```shell
+   export BOUNDARY_ADDR=$(cd boundary-configuration && terraform output -raw boundary_endpoint)
+   ```
+
 1. As an example, you can use the following commands to log in
    first as an operations user and then as a product user.
    ```shell
    make ssh-operations
    ```
-
 
 ## Add Coffee Data to Database
 
@@ -144,7 +176,7 @@ tools:
    export CONSUL_HTTP_ADDR=<public HCP Consul address>
    export CONSUL_HTTP_TOKEN=<HCP Consul token>
    make configure-consul
-   ``` 
+   ```
 
 > Note: To delete, you will need to run `make clean-vault` and comment out the `kubernetes.tf` and `consul.tf` files.
 
