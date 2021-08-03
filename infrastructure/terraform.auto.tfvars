@@ -1,5 +1,9 @@
-region                     = "us-east-1"
+region                     = "us-east-2"
 name                       = "zero"
 hcp_consul_public_endpoint = true
 hcp_vault_public_endpoint  = true
-client_cidr_block          = "96.242.54.120/32"
+tags = {
+  Environment = "rosemary-zero-trust-demo"
+  Automation  = "terraform"
+  Owner       = "rosemary"
+}

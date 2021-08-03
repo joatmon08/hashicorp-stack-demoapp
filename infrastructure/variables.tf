@@ -39,10 +39,6 @@ variable "hcp_vault_public_endpoint" {
 }
 
 variable "tags" {
-  default = {
-    Environment = "rosemary-zero-trust-demo"
-    Automation  = "terraform"
-  }
   type        = map(any)
   description = "Tags to add resources"
 }
