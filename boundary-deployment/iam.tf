@@ -17,9 +17,7 @@ resource "aws_iam_role" "boundary" {
 }
 EOF
 
-  tags = {
-    Name = "${var.name}-${random_pet.test.id}"
-  }
+  tags = local.tags
 }
 
 resource "aws_iam_instance_profile" "boundary" {

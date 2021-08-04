@@ -1,17 +1,25 @@
 terraform {
-  required_version = "~> 0.14"
+  required_version = "~> 1.0"
   required_providers {
-    vault = {
-      source  = "hashicorp/vault"
-      version = "~> 2.19"
-    }
     kubernetes = {
       source  = "hashicorp/kubernetes"
-      version = "~> 2.0"
+      version = "~> 2.4"
     }
     helm = {
       source  = "hashicorp/helm"
-      version = "~> 2.0"
+      version = "~> 2.2"
+    }
+    hcp = {
+      source  = "hashicorp/hcp"
+      version = "~> 0.11"
+    }
+    aws = {
+      source  = "hashicorp/aws"
+      version = "~> 3.52"
+    }
+    vault = {
+      source  = "hashicorp/vault"
+      version = "~> 2.22"
     }
   }
 }
@@ -42,6 +50,12 @@ provider "helm" {
   }
 }
 
+resource "hcp_vault_cluster_admin_token" "cluster" {
+  cluster_id = local.hcp_vault_cluster_id
+}
+
 provider "vault" {
-  namespace = var.vault_namespace
+  address   = data.hcp_vault_cluster.cluster.vault_public_endpoint_url
+  token     = hcp_vault_cluster_admin_token.cluster.token
+  namespace = data.hcp_vault_cluster.cluster.namespace
 }

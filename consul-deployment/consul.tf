@@ -59,3 +59,21 @@ resource "consul_acl_policy" "database" {
     }
     RULE
 }
+
+resource "consul_acl_policy" "kubernetes" {
+  name  = "kubernetes-client"
+  rules = <<-RULE
+    node_prefix "" {
+      policy = "write"
+    }
+    service_prefix "" {
+      policy = "read"
+    }
+    RULE
+}
+
+resource "consul_acl_token" "kubernetes" {
+  description = "Token for Consul clients on Kubernetes"
+  policies = [consul_acl_policy.kubernetes.name]
+  local = false
+}

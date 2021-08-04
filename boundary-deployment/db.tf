@@ -8,22 +8,19 @@ resource "aws_db_instance" "boundary" {
   username            = "boundary"
   password            = "boundarydemo"
   skip_final_snapshot = true
+  identifier          = "${var.name}-${random_pet.test.id}-boundary"
 
   vpc_security_group_ids = [aws_security_group.db.id]
   db_subnet_group_name   = aws_db_subnet_group.boundary.name
   publicly_accessible    = false
 
-  tags = {
-    Name = "${var.name}-db"
-  }
+  tags = merge(local.tags, { Component = "database" })
 }
 
 resource "aws_security_group" "db" {
   vpc_id = var.vpc_id
 
-  tags = {
-    Name = "${var.name}-db-${random_pet.test.id}"
-  }
+  tags = merge(local.tags, { Component = "database" })
 }
 
 resource "aws_security_group_rule" "allow_controller_sg_to_db" {
@@ -48,7 +45,5 @@ resource "aws_db_subnet_group" "boundary" {
   name       = "boundary"
   subnet_ids = var.public_subnet_ids
 
-  tags = {
-    Name = "${var.name}-db-${random_pet.test.id}"
-  }
+  tags = merge(local.tags, { Component = "database" })
 }

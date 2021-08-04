@@ -5,9 +5,7 @@ resource "aws_lb" "controller" {
   subnets            = var.public_subnet_ids
   security_groups    = [aws_security_group.controller_lb.id]
 
-  tags = {
-    Name = "${var.name}-controller-${random_pet.test.id}"
-  }
+  tags = merge(local.tags, { Component = "controller" })
 }
 
 resource "aws_lb_target_group" "controller" {
@@ -21,9 +19,7 @@ resource "aws_lb_target_group" "controller" {
     type    = "lb_cookie"
   }
 
-  tags = {
-    Name = "${var.name}-controller-${random_pet.test.id}"
-  }
+  tags = merge(local.tags, { Component = "controller" })
 }
 
 resource "aws_lb_target_group_attachment" "controller" {
@@ -47,9 +43,7 @@ resource "aws_lb_listener" "controller" {
 resource "aws_security_group" "controller_lb" {
   vpc_id = var.vpc_id
 
-  tags = {
-    Name = "${var.name}-controller-lb-${random_pet.test.id}"
-  }
+  tags = merge(local.tags, { Component = "controller" })
 }
 
 resource "aws_security_group_rule" "allow_9200" {

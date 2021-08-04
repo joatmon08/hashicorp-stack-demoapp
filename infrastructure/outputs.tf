@@ -30,12 +30,20 @@ output "hcp_consul_private_address" {
   value = module.hcp.hcp_consul_private_endpoint
 }
 
+output "hcp_consul_public_address" {
+  value = var.hcp_consul_public_endpoint ? trim(module.hcp.hcp_consul_public_endpoint, "/") : ""
+}
+
 output "hcp_vault_cluster" {
   value = module.hcp.hcp_vault_id
 }
 
 output "hcp_vault_private_address" {
   value = module.hcp.hcp_vault_private_endpoint
+}
+
+output "hcp_vault_public_address" {
+  value = var.hcp_vault_public_endpoint ? trim(module.hcp.hcp_vault_public_endpoint, "/") : ""
 }
 
 output "kubernetes_endpoint" {

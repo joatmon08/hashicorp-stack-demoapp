@@ -90,9 +90,7 @@ resource "aws_instance" "worker" {
     ]
   }
 
-  tags = {
-    Name = "${var.name}-worker-${random_pet.test.id}"
-  }
+  tags = merge(local.tags, { Component = "worker" })
 
   depends_on = [aws_instance.controller]
 }
@@ -167,17 +165,13 @@ resource "aws_instance" "controller" {
     ]
   }
 
-  tags = {
-    Name = "${var.name}-controller-${random_pet.test.id}"
-  }
+  tags = merge(local.tags, { Component = "controller" })
 }
 
 resource "aws_security_group" "controller" {
   vpc_id = var.vpc_id
 
-  tags = {
-    Name = "${var.name}-controller-${random_pet.test.id}"
-  }
+  tags = merge(local.tags, { Component = "controller" })
 }
 
 resource "aws_security_group_rule" "allow_ssh_controller" {
@@ -220,9 +214,7 @@ resource "aws_security_group_rule" "allow_egress_controller" {
 resource "aws_security_group" "worker" {
   vpc_id = var.vpc_id
 
-  tags = {
-    Name = "${var.name}-worker-${random_pet.test.id}"
-  }
+  tags = merge(local.tags, { Component = "worker" })
 }
 
 resource "aws_security_group_rule" "allow_ssh_worker" {

@@ -9,7 +9,7 @@ data "hcp_consul_agent_helm_config" "cluster" {
 
 locals {
   consul_secrets = yamldecode(data.hcp_consul_agent_kubernetes_secret.cluster.secret)
-  consul_token   = yamldecode(hcp_consul_cluster_root_token.token.kubernetes_secret)
+  consul_token   = consul_acl_token.kubernetes.id
 }
 
 resource "kubernetes_secret" "hcp_consul_secret" {

@@ -17,7 +17,7 @@ Each folder contains a few different configurations.
     the Boundary binary and an SSH key. It is referenced by `infrastructure/`.
 
 - Terraform Configurations
-  - `infrastructure/` (takes 30+ minutes to provision!)
+  - `infrastructure/`: All the infrastructure to run the system.
      - VPC (3 private subnets, 3 public subnets)
      - Boundary cluster (controllers, workers, and AWS RDS PostgreSQL database)
      - AWS Elastic Kubernetes Service cluster
@@ -25,10 +25,10 @@ Each folder contains a few different configurations.
      - HashiCorp Virtual Network (peered to VPC)
      - HCP Consul
      - HCP Vault
-   - `boundary-configuration`: Configures boundary with two organizations
+   - `boundary-configuration`: Configures Boundary with two projects, one for operations
+      and the other for development teams.
    - `consul-deployment/`: Deploys a Consul cluster via Helm chart.
    - `vault-deployment/`: Deploy a Vault cluster via Helm chart.
-
 
 - Kubernetes
    - `application/`: Deploys the HashiCorp Demo Application (AKA HashiCups)
@@ -56,77 +56,98 @@ Each folder contains a few different configurations.
 
       Enter file in which to save the key (~/.ssh/id_rsa): boundary-deployment/bin/id_rsa
       ```
+1. Fork this repository.
 
-## Deploy Kubernetes, Boundary, and HCP Clusters
+## Deploy infrastructure.
 
-1. Create a Terraform workspace named `infrastructure`
-   1. Use the working directory `infrastructure`.
-   1. Connect it to VCS Settings.
-   1. Variables should include:
-      ```plaintext
-      private_ssh_key (sensitive): base64 encoded SSH Key for Boundary SSH
-      database_password (sensitive): password for Amazon RDS PostgreSQL database for application
-      ```
-   1. Environment Variables should include:
-      ```plaintext
-      HCP_CLIENT_ID: HCP service principal ID
-      HCP_CLIENT_SECRET (sensitive): HCP service principal secret
-      AWS_ACCESS_KEY_ID: AWS access key ID
-      AWS_SECRET_ACCESS_KEY (sensitive): AWS secret access key
-      AWS_SESSION_TOKEN (sensitive): If applicable, the token for session
-      ```
+First, set up the Terraform workspace.
 
-1. Queue to plan and apply. This creates VPCs and networks, an EKS cluster
-   with three nodes in a private subnet, an Amazon RDS instance using PostgreSQL,
-   a Boundary cluster (load balancer, workers, controllers, and database),
-   HCP network with peering to the VPC, and HCP Consul cluster.
+1. Create a new Terraform workspace.
+1. Choose "Version control workflow".
+1. Connect to GitHub.
+1. Choose your fork of this repository.
+1. Name the workpsace `infrastructure`.
+1. Select the "Advanced Options" dropdown.
+1. Use the working directory `infrastructure`.
+1. Select "Create workspace".
 
-> Note: To delete the infrastructure, you must run `terraform destroy` a few times because
-  of AWS timing out. After you finish destroying, you need to run
-  `make clean-infrastructure` to remove the AWS auth ConfigMap from state.
+Next, configure the workspace's variables.
 
+1. Variables should include:
+   - `private_ssh_key` (sensitive): base64 encoded SSH Key for Boundary SSH
+   - `database_password` (sensitive): password for Amazon RDS PostgreSQL database for application.
+      __SAVE THIS PASSWORD! YOU'LL NEED IT TO LOG IN LATER!__
+   - `client_cidr_block` (sensitive): public IP address of your machine, in `00.00.00.00/32` form.
+      You get it by running `curl ifconfig.me` in your terminal.
+
+1. Environment Variables should include:
+   - `HCP_CLIENT_ID`: HCP service principal ID
+   - `HCP_CLIENT_SECRET` (sensitive): HCP service principal secret
+   - `AWS_ACCESS_KEY_ID`: AWS access key ID
+   - `AWS_SECRET_ACCESS_KEY` (sensitive): AWS secret access key
+   - `AWS_SESSION_TOKEN` (sensitive): If applicable, the token for session
+
+If you have additional variables you want to customize, including __region__, make sure to update them in
+the `infrastructure/terraform.auto.tfvars` file.
+
+Finally, start a new plan and apply it. It can take more than 15 minutes to provision!
 
 ## Configure Boundary
 
-1. Create a Terraform workspace named `boundary-configuration`
-   1. Use the working directory `boundary-configuration`.
-   1. Connect it to VCS Settings.
-   1. Variables should include:
-      ```plaintext
-      tfc_organization: your Terraform Cloud organization name
-      tfc_workspace: infrastructure
-      ```
-      The configuration retrieves a set of variables using `terraform_remote_state`
-      data source.
-   1. Environment Variables should include:
-      ```plaintext
-      AWS_ACCESS_KEY_ID: AWS access key ID
-      AWS_SECRET_ACCESS_KEY (sensitive): AWS secret access key
-      AWS_SESSION_TOKEN (sensitive): If applicable, the token for session
-      ```
+First, set up the Terraform workspace.
 
-1. Queue to plan and apply. This creates an organization with two scopes:
-   - `core_infra`, which allows you to SSH into EKS nodes
-   - `product_infra`, which allows you to access the PostgreSQL database
+1. Create a new Terraform workspace.
+1. Choose "Version control workflow".
+1. Connect to GitHub.
+1. Choose your fork of this repository.
+1. Name the workpsace `boundary-configuration`.
+1. Select the "Advanced Options" dropdown.
+1. Use the working directory `boundary-configuration`.
+1. Select "Create workspace".
 
-1. Only `product` users will be able to access `product_infra`.
-   `operations` users will be able to access both `core_infra`
-   and `product_infra`.
+Next, configure the workspace's variables. This Terraform configuration
+retrieves a set of variables using `terraform_remote_state` data source.
+
+1. Variables should include:
+   - `tfc_organization`: your Terraform Cloud organization name
+   - `tfc_workspace`: `infrastructure`
+
+1. Environment Variables should include:
+   - `AWS_ACCESS_KEY_ID`: AWS access key ID
+   - `AWS_SECRET_ACCESS_KEY` (sensitive): AWS secret access key
+   - `AWS_SESSION_TOKEN` (sensitive): If applicable, the token for session
+
+
+Queue to plan and apply. This creates an organization with two scopes:
+- `core_infra`, which allows you to SSH into EKS nodes
+- `product_infra`, which allows you to access the PostgreSQL database
+
+Only `product` users will be able to access `product_infra`.
+`operations` users will be able to access both `core_infra`
+and `product_infra`.
+
+To use Boundary, use your terminal in the top level of this repository.
 
 1. Set the `BOUNDARY_ADDR` environment variable to the Boundary endpoint.
    ```shell
    export BOUNDARY_ADDR=$(cd boundary-configuration && terraform output -raw boundary_endpoint)
    ```
 
-1. As an example, you can use the following commands to log in
-   first as an operations user and then as a product user.
+1. Use the example command in top-level `Makefile` to SSH to the EKS nodes as the operations team.
    ```shell
    make ssh-operations
    ```
 
 ## Add Coffee Data to Database
 
-1. To add data, you need to log into the PostgreSQL database.
+To add data, you need to log into the PostgreSQL database. However, it's on a private
+network. You need to use Boundary to proxy to the database.
+
+1. Set the `PGPASSWORD` environment variable to the database password you
+   defined in the `infrastructure` Terraform workspace.
+   ```shell
+   export PGPASSWORD=<password that you set in infrastructure workspace>
+   ```
 
 1. Run the following commands to log in and load data into the `products`
    database.
@@ -146,24 +167,30 @@ Each folder contains a few different configurations.
 
 ## Configure Consul
 
-1. Create a Terraform workspace named `consul-deployment`
-   1. Use the working directory `consul-deployment`.
-   1. Connect it to VCS Settings.
-   1. Variables should include:
-      ```
-      tfc_organization: your Terraform Cloud organization name
-      tfc_workspace: infrastructure
-      ```
-      The configuration retrieves a set of variables using `terraform_remote_state`
-      data source.
-   1. Environment Variables should include:
-      ```
-      HCP_CLIENT_ID: HCP service principal ID
-      HCP_CLIENT_SECRET (sensitive): HCP service principal secret
-      AWS_ACCESS_KEY_ID: AWS access key ID
-      AWS_SECRET_ACCESS_KEY (sensitive): AWS secret access key
-      AWS_SESSION_TOKEN (sensitive): If applicable, the token for session
-      ```
+First, set up the Terraform workspace.
+
+1. Create a new Terraform workspace.
+1. Choose "Version control workflow".
+1. Connect to GitHub.
+1. Choose your fork of this repository.
+1. Name the workpsace `consul-deployment`.
+1. Select the "Advanced Options" dropdown.
+1. Use the working directory `consul-deployment`.
+1. Select "Create workspace".
+
+Next, configure the workspace's variables. This Terraform configuration
+retrieves a set of variables using `terraform_remote_state` data source.
+
+1. Variables should include:
+   - `tfc_organization`: your Terraform Cloud organization name
+   - `tfc_workspace`: `infrastructure`
+
+1. Environment Variables should include:
+   - `HCP_CLIENT_ID`: HCP service principal ID
+   - `HCP_CLIENT_SECRET` (sensitive): HCP service principal secret
+   - `AWS_ACCESS_KEY_ID`: AWS access key ID
+   - `AWS_SECRET_ACCESS_KEY` (sensitive): AWS secret access key
+   - `AWS_SESSION_TOKEN` (sensitive): If applicable, the token for session
 
 1. Queue to plan and apply. This deploys Consul clients and a terminating gateway
    via the Consul Helm chart to the EKS cluster to join the HCP Consul servers.

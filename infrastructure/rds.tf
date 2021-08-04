@@ -37,6 +37,7 @@ resource "aws_db_instance" "products" {
   engine_version         = "11.6"
   instance_class         = "db.t3.micro"
   name                   = "products"
+  identifier             = "${var.name}-products"
   username               = var.database_username
   password               = var.database_password
   db_subnet_group_name   = module.vpc.database_subnet_group_name

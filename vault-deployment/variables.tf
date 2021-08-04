@@ -20,11 +20,23 @@ data "terraform_remote_state" "infrastructure" {
 }
 
 locals {
-  kubernetes_host   = var.kubernetes_host == "" ? data.aws_eks_cluster.cluster.endpoint : var.kubernetes_host
-  postgres_hostname = var.postgres_hostname == "" ? data.terraform_remote_state.infrastructure.outputs.product_database_address : var.postgres_hostname
-  postgres_username = var.postgres_username == "" ? data.terraform_remote_state.infrastructure.outputs.product_database_username : var.postgres_username
-  postgres_password = var.postgres_password == "" ? data.terraform_remote_state.infrastructure.outputs.product_database_password : var.postgres_password
+  kubernetes_host      = var.kubernetes_host == "" ? data.aws_eks_cluster.cluster.endpoint : var.kubernetes_host
+  postgres_hostname    = var.postgres_hostname == "" ? data.terraform_remote_state.infrastructure.outputs.product_database_address : var.postgres_hostname
+  postgres_username    = var.postgres_username == "" ? data.terraform_remote_state.infrastructure.outputs.product_database_username : var.postgres_username
+  postgres_password    = var.postgres_password == "" ? data.terraform_remote_state.infrastructure.outputs.product_database_password : var.postgres_password
+  hcp_vault_cluster_id = var.hcp_vault_cluster_id == "" ? data.terraform_remote_state.infrastructure.outputs.hcp_vault_cluster : var.hcp_vault_cluster_id
 }
+
+data "hcp_vault_cluster" "cluster" {
+  cluster_id = local.hcp_vault_cluster_id
+}
+
+variable "hcp_vault_cluster_id" {
+  type        = string
+  description = "HCP Vault Cluster ID for configuration"
+  default     = ""
+}
+
 
 variable "kubernetes_host" {
   type        = string
@@ -74,16 +86,5 @@ variable "region" {
 variable "vault_helm_version" {
   type        = string
   description = "Vault Helm chart version"
-  default     = "v0.9.1"
-}
-
-variable "vault_namespace" {
-  type        = string
-  description = "Vault namespace"
-  default     = "admin"
-}
-
-variable "vault_private_address" {
-  type        = string
-  description = "Vault private address"
+  default     = "v0.14.0"
 }

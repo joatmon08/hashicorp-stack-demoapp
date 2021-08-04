@@ -24,7 +24,5 @@ resource "aws_acm_certificate" "cert" {
   private_key      = tls_private_key.boundary.private_key_pem
   certificate_body = tls_self_signed_cert.boundary.cert_pem
 
-  tags = {
-    Name = "${var.name}-${random_pet.test.id}"
-  }
+  tags = local.tags
 }

@@ -4,7 +4,8 @@ resource "random_pet" "test" {
 
 locals {
   tags = {
-    Name = "${var.name}-${random_pet.test.id}"
+    Name   = "${var.name}-${random_pet.test.id}",
+    Module = "boundary-deployment"
   }
   boundary_bin        = var.boundary_bin == "" ? "${path.module}/bin" : var.boundary_bin
   public_ssh_key_path = var.public_ssh_key_path == "" ? "${path.module}/bin/id_rsa.pub" : var.public_ssh_key_path
