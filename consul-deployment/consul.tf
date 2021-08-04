@@ -1,8 +1,8 @@
 resource "consul_service" "database" {
-  name       = "database"
-  node       = consul_node.database.name
-  port       = 5432
-  tags       = ["external"]
+  name = "database"
+  node = consul_node.database.name
+  port = 5432
+  tags = ["external"]
   check {
     check_id = "service:postgres"
     name     = "Postgres health check"
@@ -14,8 +14,8 @@ resource "consul_service" "database" {
 }
 
 resource "consul_node" "database" {
-  name       = "database"
-  address    = local.products_database
+  name    = "database"
+  address = local.products_database
 
   meta = {
     "external-node"  = "true"
@@ -74,6 +74,6 @@ resource "consul_acl_policy" "kubernetes" {
 
 resource "consul_acl_token" "kubernetes" {
   description = "Token for Consul clients on Kubernetes"
-  policies = [consul_acl_policy.kubernetes.name]
-  local = false
+  policies    = [consul_acl_policy.kubernetes.name]
+  local       = false
 }

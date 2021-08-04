@@ -8,8 +8,9 @@ data "hcp_consul_agent_helm_config" "cluster" {
 }
 
 locals {
-  consul_secrets = yamldecode(data.hcp_consul_agent_kubernetes_secret.cluster.secret)
-  consul_token   = consul_acl_token.kubernetes.id
+  consul_secrets      = yamldecode(data.hcp_consul_agent_kubernetes_secret.cluster.secret)
+  consul_root_token   = yamldecode(hcp_consul_cluster_root_token.token.kubernetes_secret)
+  consul_client_token = consul_acl_token.kubernetes.id
 }
 
 resource "kubernetes_secret" "hcp_consul_secret" {
@@ -27,14 +28,14 @@ resource "kubernetes_secret" "hcp_consul_secret" {
 
 resource "kubernetes_secret" "hcp_consul_token" {
   metadata {
-    name = local.consul_token.metadata.name
+    name = local.consul_root_token.metadata.name
   }
 
   data = {
-    token = base64decode(local.consul_token.data.token)
+    token = base64decode(local.consul_root_token.data.token)
   }
 
-  type = local.consul_token.type
+  type = local.consul_root_token.type
 }
 
 resource "kubernetes_secret" "consul_client" {
@@ -43,10 +44,10 @@ resource "kubernetes_secret" "consul_client" {
   }
 
   data = {
-    token = base64decode(local.consul_token.data.token)
+    token = local.consul_client_token
   }
 
-  type = local.consul_token.type
+  type = local.consul_root_token.type
 }
 
 resource "helm_release" "consul" {

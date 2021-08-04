@@ -60,6 +60,10 @@ Each folder contains a few different configurations.
 
 ## Deploy infrastructure.
 
+> Note: When you run this, you might get the error `Provider produced inconsistent final plan`.
+> This is because we're using [`default_tags`](https://registry.terraform.io/providers/hashicorp/aws/latest/docs#default_tags).
+> Re-run the plan and apply to resolve the error.
+
 First, set up the Terraform workspace.
 
 1. Create a new Terraform workspace.
@@ -196,43 +200,46 @@ retrieves a set of variables using `terraform_remote_state` data source.
    via the Consul Helm chart to the EKS cluster to join the HCP Consul servers.
    It also registers the database as an external service to Consul.
 
-1. Update the [terminating gateway](https://www.consul.io/docs/k8s/connect/terminating-gateways#update-terminating-gateway-acl-token-if-acls-are-enabled) with a
-   write policy to the database.
+1. Update the [terminating gateway](https://www.consul.io/docs/k8s/connect/terminating-gateways#update-terminating-gateway-acl-token-if-acls-are-enabled)
+   with a write policy to the database. You need to run this outside of Terraform in your CLI!
    ```shell
-   make kubeconfig
-   export CONSUL_HTTP_ADDR=<public HCP Consul address>
-   export CONSUL_HTTP_TOKEN=<HCP Consul token>
+   export CONSUL_HTTP_ADDR=$(cd infrastructure && terraform output -raw hcp_consul_public_address)
+   export CONSUL_HTTP_TOKEN=$(cd consul-deployment && terraform output -raw hcp_consul_token)
    make configure-consul
    ```
 
-> Note: To delete, you will need to run `make clean-vault` and comment out the `kubernetes.tf` and `consul.tf` files.
-
+> Note: To delete, you will need to run `make clean-consul` before destroying the infrastructure with Terraform.
 
 ## Configure Vault
 
-1. Create a Terraform workspace named `vault-deployment`
-   1. Use the working directory `vault-deployment`.
-   1. Connect it to VCS Settings.
-   1. Variables should include:
-      ```
-      tfc_organization: your Terraform Cloud organization name
-      tfc_workspace: infrastructure
-      vault_private_address: Private Address of HCP Vault instance
-      ```
-      The configuration retrieves a set of variables using `terraform_remote_state`
-      data source.
-   1. Environment Variables should include:
-      ```
-      VAULT_ADDR: Public Address of HCP Vault instance
-      VAULT_TOKEN (sensitive): HCP Vault root token
-      AWS_ACCESS_KEY_ID: AWS access key ID
-      AWS_SECRET_ACCESS_KEY (sensitive): AWS secret access key
-      AWS_SESSION_TOKEN (sensitive): If applicable, the token for session
-      ```
+First, set up the Terraform workspace.
+
+1. Create a new Terraform workspace.
+1. Choose "Version control workflow".
+1. Connect to GitHub.
+1. Choose your fork of this repository.
+1. Name the workpsace `vault-deployment`.
+1. Select the "Advanced Options" dropdown.
+1. Use the working directory `vault-deployment`.
+1. Select "Create workspace".
+
+Next, configure the workspace's variables. This Terraform configuration
+retrieves a set of variables using `terraform_remote_state` data source.
+
+1. Variables should include:
+   - `tfc_organization`: your Terraform Cloud organization name
+   - `tfc_workspace`: `infrastructure`
+
+1. Environment Variables should include:
+   - `HCP_CLIENT_ID`: HCP service principal ID
+   - `HCP_CLIENT_SECRET` (sensitive): HCP service principal secret
+   - `AWS_ACCESS_KEY_ID`: AWS access key ID
+   - `AWS_SECRET_ACCESS_KEY` (sensitive): AWS secret access key
+   - `AWS_SESSION_TOKEN` (sensitive): If applicable, the token for session
 
 1. This sets up Kubernetes authentication method and PostgreSQL database engine.
 
-> Note: To delete, you will need to run `make clean-vault` and comment out the `kubernetes.tf` and `database.tf` files.
+> Note: To delete, you will need to run `make clean-vault` before destroying the infrastructure with Terraform.
 
 
 ## Deploy Example Application
