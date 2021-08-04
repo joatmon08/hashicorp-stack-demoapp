@@ -20,7 +20,7 @@ configure-db:
 
 configure-consul: kubeconfig
 	consul acl token update -id \
-		$(shell consul acl token list -format json |jq -r '.[] | select (.Policies[0].Name == "terminating-gateway-terminating-gateway-token") | .AccessorID')} \
+		$(shell consul acl token list -format json |jq -r '.[] | select (.Policies[0].Name == "terminating-gateway-terminating-gateway-token") | .AccessorID') \
     	-policy-name database-write-policy -merge-policies -merge-roles -merge-service-identities
 	kubectl apply -f consul-deployment/terminating_gateway.yaml
 

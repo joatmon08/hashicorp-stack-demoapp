@@ -77,3 +77,7 @@ resource "consul_acl_token" "kubernetes" {
   policies    = [consul_acl_policy.kubernetes.name]
   local       = false
 }
+
+data "consul_acl_token_secret_id" "kubernetes" {
+  accessor_id = consul_acl_token.kubernetes.id
+}
