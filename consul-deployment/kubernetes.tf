@@ -58,6 +58,11 @@ resource "helm_release" "consul" {
   }
 
   set {
+    name  = "global.imageK8S"
+    value = "hashicorp/consul-k8s:0.25.0"
+  }
+
+  set {
     name  = "controller.enabled"
     value = "true"
   }
