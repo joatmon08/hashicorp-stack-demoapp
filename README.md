@@ -8,7 +8,7 @@ tools:
 - HashiCorp Cloud Platform (HCP) Vault 1.7.3
 - Boundary 0.4.0
 
-![Diagram of Infrastructure](./assets/diagram.png)
+![Architecture diagram with HashiCorp Cloud Platform Consul and Vault connecting to an AWS EKS cluster and Boundary](./assets/diagram.png)
 
 Each folder contains a few different configurations.
 
@@ -142,6 +142,10 @@ To use Boundary, use your terminal in the top level of this repository.
    make ssh-operations
    ```
 
+1. Go to the Boundary UI and examine the "Sessions". You should get an active session
+   in the Boundary list because you accessed the EKS node over SSH.
+   ![List of active sessions in Boundary UI, one session listed as active and another listed as terminated](./assets/boundary_sessions.png)
+
 ## Add Coffee Data to Database
 
 To add data, you need to log into the PostgreSQL database. However, it's on a private
@@ -164,10 +168,6 @@ network. You need to use Boundary to proxy to the database.
    ```shell
    make postgres-products
    ```
-
-1. Go to the Boundary UI and examine the "Sessions".
-   ![List of active sessions in Boundary](./assets/boundary_sessions.png)
-
 
 ## Configure Consul
 
@@ -250,9 +250,36 @@ and [PostgreSQL database secrets engine](https://www.vaultproject.io/docs/secret
 
 ## Deploy Example Application
 
-1. To deploy the example application, run `make configure-application`.
+To deploy the example application, run `make configure-application`.
 
 > Note: To delete, you will need to run `make clean-application`.
+
+You can check if everything by checking the pods in Kubernetes.
+
+```shell
+$ kubectl get pods
+
+NAME                                                          READY   STATUS    RESTARTS   AGE
+consul-46zp9                                                  1/1     Running   0          5m12s
+consul-connect-injector-webhook-deployment-79b8b7986d-zsc5f   1/1     Running   0          5m12s
+consul-controller-64cf857cdc-d9vq6                            1/1     Running   0          5m12s
+consul-cq56l                                                  1/1     Running   0          5m12s
+consul-hmfr4                                                  1/1     Running   0          5m12s
+consul-terminating-gateway-5f5d9947cf-k8m8h                   2/2     Running   0          5m12s
+consul-webhook-cert-manager-5745cbb9d-w7qqk                   1/1     Running   0          5m12s
+frontend-99765b95f-r8z8j                                      3/3     Running   0          3m46s
+product-589b95f9f5-p5ncz                                      4/4     Running   0          3m45s
+public-86b5578cd-29k4s                                        3/3     Running   0          3m45s
+vault-agent-injector-57dc4886cd-7sfnf                         1/1     Running   0          63m
+```
+
+Port forward the `frontend` service to [http://localhost:8080](http://localhost:8080).
+
+```shell
+kubectl port-forward svc/frontend 8080:80
+```
+
+You'll get a UI with a "Packer-Spiced Latte".
 
 ## Credits
 

@@ -52,8 +52,18 @@ postgres-products:
 	boundary connect postgres -username=postgres -target-id \
 		$(shell cd boundary-configuration && terraform output -raw boundary_target_postgres) -- -d products
 
+frontend-products:
+	@boundary authenticate password -login-name=appdev \
+		-password $(shell cd boundary-configuration && terraform output -raw boundary_products_password) \
+		-auth-method-id=$(shell cd boundary-configuration && terraform output -raw boundary_auth_method_id)
+	boundary connect -target-id \
+		$(shell cd boundary-configuration && terraform output -raw boundary_target_frontend)
+
 configure-application:
 	kubectl apply -f application/
+
+get-application:
+	kubectl get svc frontend -o jsonpath="{.status.loadBalancer.ingress[*].hostname}"
 
 clean-infrastructure:
 	terraform state rm 'module.eks.kubernetes_config_map.aws_auth[0]'
