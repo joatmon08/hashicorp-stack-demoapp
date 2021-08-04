@@ -14,7 +14,9 @@ locals {
 
 resource "kubernetes_secret" "hcp_consul_secret" {
   metadata {
-    name = local.consul_secrets.metadata.name
+    name        = local.consul_secrets.metadata.name
+    annotations = {}
+    labels      = {}
   }
 
   data = {
@@ -27,7 +29,9 @@ resource "kubernetes_secret" "hcp_consul_secret" {
 
 resource "kubernetes_secret" "hcp_consul_token" {
   metadata {
-    name = local.consul_root_token.metadata.name
+    name        = local.consul_root_token.metadata.name
+    annotations = {}
+    labels      = {}
   }
 
   data = {

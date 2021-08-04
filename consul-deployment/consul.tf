@@ -3,6 +3,7 @@ resource "consul_service" "database" {
   node = consul_node.database.name
   port = 5432
   tags = ["external"]
+  meta = {}
   check {
     check_id = "service:postgres"
     name     = "Postgres health check"
@@ -44,7 +45,8 @@ resource "consul_config_entry" "service_intentions" {
       {
         Action     = "deny"
         Name       = "*"
-        Precedence = 1
+        Namespace  = "default"
+        Precedence = 5
         Type       = "consul"
       }
     ]
@@ -52,8 +54,9 @@ resource "consul_config_entry" "service_intentions" {
 }
 
 resource "consul_acl_policy" "database" {
-  name  = "database-write-policy"
-  rules = <<-RULE
+  name        = "database-write-policy"
+  datacenters = [data.hcp_consul_cluster.cluster.datacenter]
+  rules       = <<-RULE
     service "database" {
         policy = "write"
     }
