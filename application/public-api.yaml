@@ -44,11 +44,12 @@ spec:
       annotations:
         consul.hashicorp.com/connect-inject: "true"
         consul.hashicorp.com/connect-service-upstreams: "product:9090"
+        consul.hashicorp.com/enable-metrics-merging: "false"
     spec:
       serviceAccountName: public
       containers:
         - name: public
-          image: hashicorpdemoapp/public-api:v0.0.3
+          image: hashicorpdemoapp/public-api:v0.0.5
           ports:
             - containerPort: 8080
           env:

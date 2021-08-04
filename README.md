@@ -171,6 +171,11 @@ network. You need to use Boundary to proxy to the database.
 
 ## Configure Consul
 
+> Note: When you run this, the Helm release for Consul will fail.
+> You need to run a separate command to configure the terminating
+> gateway with an ACL. Once you run the command, run another plan
+> and apply. The Helm chart will successfully flag as released.
+
 First, set up the Terraform workspace.
 
 1. Create a new Terraform workspace.

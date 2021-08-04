@@ -43,6 +43,7 @@ spec:
       annotations:
         consul.hashicorp.com/connect-inject: "true"
         consul.hashicorp.com/connect-service-upstreams: "database:5432"
+        consul.hashicorp.com/enable-metrics-merging: "false"
         vault.hashicorp.com/agent-inject: "true"
         vault.hashicorp.com/role: "product"
         vault.hashicorp.com/namespace: "admin"
@@ -59,7 +60,7 @@ spec:
       serviceAccountName: product
       containers:
         - name: product
-          image: hashicorpdemoapp/product-api:v0.0.12
+          image: hashicorpdemoapp/product-api:v0.0.16
           ports:
             - containerPort: 9090
             - containerPort: 9103

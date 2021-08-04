@@ -84,10 +84,9 @@ spec:
         service: frontend
         app: frontend
       annotations:
-        prometheus.io/scrape: "true"
-        prometheus.io/port: "9102"
         consul.hashicorp.com/connect-inject: "true"
         consul.hashicorp.com/connect-service-upstreams: "public:8080"
+        consul.hashicorp.com/enable-metrics-merging: "false"
     spec:
       serviceAccountName: frontend
       volumes:
@@ -99,7 +98,7 @@ spec:
             path: default.conf
       containers:
         - name: frontend
-          image: hashicorpdemoapp/frontend:v0.0.4
+          image: hashicorpdemoapp/frontend:v0.0.5
           ports:
             - containerPort: 80
           volumeMounts:
