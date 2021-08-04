@@ -21,23 +21,14 @@ data "terraform_remote_state" "infrastructure" {
 
 variable "operations_team" {
   type = set(string)
-  default = [
-    "rosemary"
-  ]
 }
 
 variable "products_team" {
   type = set(string)
-  default = [
-    "rob"
-  ]
 }
 
 variable "leadership_team" {
   type = set(string)
-  default = [
-    "melissa"
-  ]
 }
 
 variable "products_frontend_address" {
