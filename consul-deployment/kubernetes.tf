@@ -38,20 +38,8 @@ resource "kubernetes_secret" "hcp_consul_token" {
   type = local.consul_root_token.type
 }
 
-resource "kubernetes_secret" "consul_client" {
-  metadata {
-    name = "consul-client-acl-token"
-  }
-
-  data = {
-    token = local.consul_client_token
-  }
-
-  type = local.consul_root_token.type
-}
-
 resource "helm_release" "consul" {
-  depends_on = [kubernetes_secret.hcp_consul_secret, kubernetes_secret.hcp_consul_token, kubernetes_secret.consul_client]
+  depends_on = [kubernetes_secret.hcp_consul_secret, kubernetes_secret.hcp_consul_token]
   name       = "consul"
 
   chart = "https://github.com/hashicorp/consul-helm/archive/${var.consul_helm_version}.tar.gz"
