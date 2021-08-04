@@ -237,7 +237,8 @@ retrieves a set of variables using `terraform_remote_state` data source.
    - `AWS_SECRET_ACCESS_KEY` (sensitive): AWS secret access key
    - `AWS_SESSION_TOKEN` (sensitive): If applicable, the token for session
 
-1. This sets up Kubernetes authentication method and PostgreSQL database engine.
+Terraform will set up [Kubernetes authentication method](https://www.vaultproject.io/docs/auth/kubernetes)
+and [PostgreSQL database secrets engine](https://www.vaultproject.io/docs/secrets/databases/postgresql).
 
 > Note: To delete, you will need to run `make clean-vault` before destroying the infrastructure with Terraform.
 

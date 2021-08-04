@@ -8,15 +8,15 @@ fmt:
 	terraform fmt
 
 kubeconfig:
-	aws eks --region $(shell cd infrastructure && terraform output region) update-kubeconfig \
-		--name $(shell cd infrastructure && terraform output eks_cluster_name)
+	aws eks --region $(shell cd infrastructure && terraform output -raw region) update-kubeconfig \
+		--name $(shell cd infrastructure && terraform output -raw eks_cluster_name)
 
 configure-db:
 	boundary authenticate password -login-name=appdev \
-		-password $(shell cd boundary-configuration && terraform output boundary_products_password) \
-		-auth-method-id=$(shell cd boundary-configuration && terraform output boundary_auth_method_id)
+		-password $(shell cd boundary-configuration && terraform output -raw boundary_products_password) \
+		-auth-method-id=$(shell cd boundary-configuration && terraform output -raw boundary_auth_method_id)
 	boundary connect postgres -username=postgres -target-id \
-		$(shell cd boundary-configuration && terraform output boundary_target_postgres) -- -d products -f database-service/products.sql
+		$(shell cd boundary-configuration && terraform output -raw boundary_target_postgres) -- -d products -f database-service/products.sql
 
 configure-consul: kubeconfig
 	consul acl token update -id \

@@ -50,12 +50,8 @@ provider "helm" {
   }
 }
 
-resource "hcp_vault_cluster_admin_token" "cluster" {
-  cluster_id = local.hcp_vault_cluster_id
-}
-
 provider "vault" {
   address   = data.hcp_vault_cluster.cluster.vault_public_endpoint_url
-  token     = hcp_vault_cluster_admin_token.cluster.token
+  token     = local.hcp_vault_cluster_token
   namespace = data.hcp_vault_cluster.cluster.namespace
 }
