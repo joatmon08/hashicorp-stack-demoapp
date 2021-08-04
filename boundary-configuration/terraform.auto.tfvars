@@ -1,11 +1,11 @@
 operations_team = [
-    "ops"
+  "ops"
 ]
 
 products_team = [
-    "appdev"
+  "appdev"
 ]
 
 leadership_team = [
-    "manager"
+  "manager"
 ]
