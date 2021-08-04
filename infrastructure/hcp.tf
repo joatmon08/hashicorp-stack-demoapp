@@ -46,7 +46,7 @@ locals {
 
 module "hcp" {
   source                     = "joatmon08/hcp/aws"
-  version                    = "1.0.1"
+  version                    = "2.0.0"
   hvn_cidr_block             = var.hcp_consul_cidr_block
   hvn_name                   = var.name
   hvn_region                 = local.hcp_region
@@ -57,6 +57,7 @@ module "hcp" {
   vpc_owner_id               = module.vpc.vpc_owner_id
   hcp_consul_name            = var.name
   hcp_consul_public_endpoint = var.hcp_consul_public_endpoint
+  hcp_consul_version         = var.hcp_consul_version
   hcp_vault_name             = var.name
   hcp_vault_public_endpoint  = var.hcp_vault_public_endpoint
 }

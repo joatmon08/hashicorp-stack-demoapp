@@ -26,6 +26,12 @@ variable "hcp_consul_datacenter" {
   type        = string
 }
 
+variable "hcp_consul_version" {
+  default     = "v1.9.8"
+  description = "HCP Consul version"
+  type        = string
+}
+
 variable "hcp_consul_cidr_block" {
   type        = string
   default     = "172.25.16.0/20"
