@@ -38,6 +38,11 @@ output "hcp_vault_cluster" {
   value = module.hcp.hcp_vault_id
 }
 
+output "hcp_vault_token" {
+  value     = hcp_vault_cluster_admin_token.cluster.token
+  sensitive = true
+}
+
 output "hcp_vault_private_address" {
   value = module.hcp.hcp_vault_private_endpoint
 }

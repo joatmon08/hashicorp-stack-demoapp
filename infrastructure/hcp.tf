@@ -60,3 +60,7 @@ module "hcp" {
   hcp_vault_name             = var.name
   hcp_vault_public_endpoint  = var.hcp_vault_public_endpoint
 }
+
+resource "hcp_vault_cluster_admin_token" "cluster" {
+  cluster_id = module.hcp.hcp_vault_id
+}
