@@ -84,8 +84,7 @@ clean: clean-application clean-vault clean-consul taint
 
 vault-commands:
 	vault list sys/leases/lookup/database/creds/product
-	vault read database/creds/product
-	gunzip -d ~/Downloads/auditlogs-zero-202103231800-202103231900.gz
+	kubectl exec -it $(shell kubectl get pods -l="app=product" -o name) -- cat /vault/secrets/conf.json
 
 db-commands:
 	psql -h 127.0.0.1 -p 62079 -U postgres -d products -f database-service/products.sql
