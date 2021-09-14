@@ -68,6 +68,6 @@ variable "kms_type" {
 }
 
 variable "client_cidr_block" {
-  description = "IP address to allow Boundary connection"
-  type        = string
+  description = "IP addresses to allow Boundary connection"
+  type        = list(string)
 }
