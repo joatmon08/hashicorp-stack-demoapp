@@ -1,6 +1,6 @@
 operations_team = [
   "ops",
-  "rosemary"
+  "jacquie"
 ]
 
 products_team = [
