@@ -45,7 +45,9 @@ resource "helm_release" "consul" {
   depends_on = [kubernetes_secret.hcp_consul_secret, kubernetes_secret.hcp_consul_token]
   name       = "consul"
 
-  chart = "https://github.com/hashicorp/consul-helm/archive/${var.consul_helm_version}.tar.gz"
+  repository = "https://helm.releases.hashicorp.com"
+  chart      = "consul"
+  version    = var.consul_helm_version
 
   values = [
     data.hcp_consul_agent_helm_config.cluster.config
@@ -54,16 +56,6 @@ resource "helm_release" "consul" {
   set {
     name  = "global.image"
     value = "hashicorp/consul:${replace(data.hcp_consul_cluster.cluster.consul_version, "v", "")}"
-  }
-
-  set {
-    name  = "global.imageEnvoy"
-    value = "envoyproxy/envoy-alpine:v1.16.4"
-  }
-
-  set {
-    name  = "global.imageK8S"
-    value = "hashicorp/consul-k8s:0.25.0"
   }
 
   set {
