@@ -87,6 +87,8 @@ spec:
         consul.hashicorp.com/connect-inject: "true"
         consul.hashicorp.com/connect-service-upstreams: "public:8080"
         consul.hashicorp.com/enable-metrics-merging: "false"
+        consul.hashicorp.com/transparent-proxy: "false"
+        consul.hashicorp.com/transparent-proxy-exclude-inbound-ports: "80"
     spec:
       serviceAccountName: frontend
       volumes:

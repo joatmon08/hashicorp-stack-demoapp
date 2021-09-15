@@ -281,6 +281,43 @@ kubectl port-forward svc/frontend 8080:80
 
 You'll get a UI with a "Packer-Spiced Latte".
 
+## Use Boundary to access the application UI
+
+ Make sure you set your environment variables in your terminal.
+
+```shell
+bash set_terminal.sh
+```
+
+Rather than port-forward the service with Kubernetes, you can authenticate to Boundary
+to access the application UI over its internal load balancer.
+
+1. Get the internal load balancer's DNS name. If you try to access the load balancer from your machine,
+   you won't be able to because it is an internal one!
+   ```shell
+   export FRONTEND_DNS=$(kubectl get svc frontend -o jsonpath="{.status.loadBalancer.ingress[*].hostname}")
+   ```
+
+1. Define a variable for `products_frontend_address` in `boundary-configuration/terraform.auto.tfvars`.
+   ```shell
+   products_frontend_address=<set to FRONTEND_DNS environment variable>
+   ```
+
+1. Queue to plan and apply. This adds a target to the `products_infra` scope in Boundary.
+
+1. Use Boundary to proxy to the frontend UI's load balancer. Access the UI on the `Address` and `Port`
+   fields.
+   ```shell
+   $ make frontend-products
+
+   # omitted
+   Proxy listening information:
+   Address:             127.0.0.1
+   Port:                61169
+   ```
+
+You'll get a UI with a "Packer-Spiced Latte".
+
 ## Credits
 
 - The module for Boundary is based on the [Boundary AWS Reference Architecture](https://github.com/hashicorp/boundary-reference-architecture/tree/main/deployment)
