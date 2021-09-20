@@ -34,7 +34,7 @@ resource "aws_security_group" "database" {
 resource "aws_db_instance" "products" {
   allocated_storage      = 10
   engine                 = "postgres"
-  engine_version         = "11.6"
+  engine_version         = "11.12"
   instance_class         = "db.t3.micro"
   name                   = "products"
   identifier             = "${var.name}-products"

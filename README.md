@@ -6,7 +6,7 @@ tools:
 - Terraform 1.0.3
 - HashiCorp Cloud Platform (HCP) Consul 1.9.8
 - HashiCorp Cloud Platform (HCP) Vault 1.7.3
-- Boundary 0.4.0
+- Boundary 0.6.0
 
 ![Architecture diagram with HashiCorp Cloud Platform Consul and Vault connecting to an AWS EKS cluster and Boundary](./assets/diagram.png)
 
@@ -46,7 +46,7 @@ Each folder contains a few different configurations.
    1. Download Boundary to `boundary-deployment/bin/boundary`.
       ```shell
       cd boundary-deployment/bin
-      curl https://releases.hashicorp.com/boundary/0.4.0/boundary_0.4.0_linux_amd64.zip -o boundary.zip
+      curl https://releases.hashicorp.com/boundary/0.6.0/boundary_0.6.0_linux_amd64.zip -o boundary.zip
       unzip boundary.zip
       rm boundary.zip
       ```
