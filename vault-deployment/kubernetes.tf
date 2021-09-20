@@ -36,9 +36,9 @@ resource "vault_kubernetes_auth_backend_role" "product" {
 }
 
 resource "helm_release" "vault" {
-  name = "vault"
-
-  chart = "https://github.com/hashicorp/vault-helm/archive/${var.vault_helm_version}.tar.gz"
+  repository = "https://helm.releases.hashicorp.com"
+  chart      = "vault"
+  version    = var.vault_helm_version
 
   set {
     name  = "injector.enabled"
