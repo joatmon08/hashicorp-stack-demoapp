@@ -1,5 +1,6 @@
 data "kubernetes_service_account" "vault_auth" {
   depends_on = [helm_release.vault]
+
   metadata {
     name = "vault"
   }
@@ -7,6 +8,7 @@ data "kubernetes_service_account" "vault_auth" {
 
 data "kubernetes_secret" "vault_auth" {
   depends_on = [helm_release.vault]
+
   metadata {
     name = data.kubernetes_service_account.vault_auth.default_secret_name
   }
@@ -36,9 +38,9 @@ resource "vault_kubernetes_auth_backend_role" "product" {
 }
 
 resource "helm_release" "vault" {
-  name = "vault"
-
-  chart = "https://github.com/hashicorp/vault-helm/archive/${var.vault_helm_version}.tar.gz"
+  repository = "https://helm.releases.hashicorp.com"
+  chart      = "vault"
+  version    = var.vault_helm_version
 
   set {
     name  = "injector.enabled"

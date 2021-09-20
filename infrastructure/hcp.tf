@@ -1,9 +1,9 @@
-
 locals {
   hcp_region                    = var.hcp_region == "" ? var.region : var.hcp_region
   route_table_ids               = concat(module.vpc.private_route_table_ids, module.vpc.public_route_table_ids)
   hcp_consul_security_group_ids = [module.eks.cluster_primary_security_group_id]
   datacenter                    = var.hcp_consul_datacenter == "" ? var.name : var.hcp_consul_datacenter
+
   ingress_consul_rules = [
     {
       description = "HCP Consul Server RPC"
