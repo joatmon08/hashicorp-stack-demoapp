@@ -1,5 +1,6 @@
 data "kubernetes_service_account" "vault_auth" {
   depends_on = [helm_release.vault]
+
   metadata {
     name = "vault"
   }
@@ -7,6 +8,7 @@ data "kubernetes_service_account" "vault_auth" {
 
 data "kubernetes_secret" "vault_auth" {
   depends_on = [helm_release.vault]
+
   metadata {
     name = data.kubernetes_service_account.vault_auth.default_secret_name
   }
