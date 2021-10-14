@@ -53,3 +53,9 @@ variable "region" {
   description = "AWS Region"
   default     = ""
 }
+
+variable "consul_dc_addr" {
+  type        = string
+  description = "Datacenter endpoint for Consul"
+  default     = ""
+}
