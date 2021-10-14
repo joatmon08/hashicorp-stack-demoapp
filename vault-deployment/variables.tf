@@ -94,5 +94,5 @@ variable "region" {
 variable "vault_helm_version" {
   type        = string
   description = "Vault Helm chart version"
-  default     = "0.16.0"
+  default     = "0.16.1"
 }

@@ -45,7 +45,7 @@ variable "products_database_address" {
 variable "consul_helm_version" {
   type        = string
   description = "Consul Helm chart version"
-  default     = "0.33.0"
+  default     = "0.34.1"
 }
 
 variable "region" {

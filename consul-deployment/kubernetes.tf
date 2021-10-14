@@ -72,4 +72,9 @@ resource "helm_release" "consul" {
     name  = "terminatingGateways.defaults.replicas"
     value = "1"
   }
+
+  set {
+    name  = "transparentProxy.defaultEnabled"
+    value = "false"
+  }
 }

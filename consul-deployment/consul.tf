@@ -58,7 +58,7 @@ resource "consul_acl_policy" "database" {
   name        = "database-write-policy"
   datacenters = [data.hcp_consul_cluster.cluster.datacenter]
 
-  rules       = <<-RULE
+  rules = <<-RULE
     service "database" {
         policy = "write"
     }
