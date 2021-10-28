@@ -81,8 +81,7 @@ Next, configure the workspace's variables.
    - `private_ssh_key` (sensitive): base64 encoded SSH Key for Boundary SSH
    - `database_password` (sensitive): password for Amazon RDS PostgreSQL database for application.
       __SAVE THIS PASSWORD! YOU'LL NEED IT TO LOG IN LATER!__
-   - `client_cidr_block` (sensitive): public IP address of your machine, in `00.00.00.00/32` form.
-      You get it by running `curl ifconfig.me` in your terminal.
+   - `client_cidr_block` (sensitive): list including the public IP address of your machine, in [`00.00.00.00/32`] form. You get it by running `curl ifconfig.me` in your terminal.
 
 1. Environment Variables should include:
    - `HCP_CLIENT_ID`: HCP service principal ID
