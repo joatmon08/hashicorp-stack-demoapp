@@ -55,3 +55,5 @@ provider "vault" {
   token     = local.hcp_vault_cluster_token
   namespace = data.hcp_vault_cluster.cluster.namespace
 }
+
+provider "hcp" {}
