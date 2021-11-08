@@ -11,51 +11,43 @@ kubeconfig:
 	aws eks --region $(shell cd infrastructure && terraform output -raw region) update-kubeconfig \
 		--name $(shell cd infrastructure && terraform output -raw eks_cluster_name)
 
-configure-db:
-	boundary authenticate password -login-name=appdev \
-		-password $(shell cd boundary-configuration && terraform output -raw boundary_products_password) \
-		-auth-method-id=$(shell cd boundary-configuration && terraform output -raw boundary_auth_method_id)
-	boundary connect postgres -username=postgres -target-id \
-		$(shell cd boundary-configuration && terraform output -raw boundary_target_postgres) -- -d products -f database-service/products.sql
-
 configure-consul: kubeconfig
 	consul acl token update -id \
 		$(shell consul acl token list -format json |jq -r '.[] | select (.Policies[0].Name == "terminating-gateway-terminating-gateway-token") | .AccessorID') \
     	-policy-name database-write-policy -merge-policies -merge-roles -merge-service-identities
 	kubectl apply -f consul-deployment/terminating_gateway.yaml
 
-ssh-operations:
+boundary-operations-auth:
 	@boundary authenticate password -login-name=ops \
 		-password $(shell cd boundary-configuration && terraform output -raw boundary_operations_password) \
 		-auth-method-id=$(shell cd boundary-configuration && terraform output -raw boundary_auth_method_id)
-	boundary connect ssh -username=ec2-user -target-id \
-		$(shell cd boundary-configuration && terraform output -raw boundary_target_eks) -- -i boundary-deployment/bin/id_rsa
 
-ssh-products:
+boundary-appdev-auth:
 	@boundary authenticate password -login-name=appdev \
 		-password $(shell cd boundary-configuration && terraform output -raw boundary_products_password) \
 		-auth-method-id=$(shell cd boundary-configuration && terraform output -raw boundary_auth_method_id)
+
+ssh-operations:
 	boundary connect ssh -username=ec2-user -target-id \
-		$(shell cd boundary-configuration && terraform output -raw boundary_target_eks) -- -i boundary-deployment/bin/id_rsa
+		$(shell cd boundary-configuration && terraform output -raw boundary_target_eks) -- -i ${SSH_KEYPAIR_FILE}
+
+ssh-products:
+	boundary connect ssh -username=ec2-user -target-id \
+		$(shell cd boundary-configuration && terraform output -raw boundary_target_eks) -- -i ${SSH_KEYPAIR_FILE}
+
+configure-db:
+	boundary connect postgres -username=postgres -dbname=products -target-id \
+		$(shell cd boundary-configuration && terraform output -raw boundary_target_postgres) -- -f database-service/products.sql
 
 postgres-operations:
-	@boundary authenticate password -login-name=ops \
-		-password $(shell cd boundary-configuration && terraform output -raw boundary_operations_password) \
-		-auth-method-id=$(shell cd boundary-configuration && terraform output -raw boundary_auth_method_id)
 	boundary connect postgres -username=postgres -target-id \
 		$(shell cd boundary-configuration && terraform output -raw boundary_target_postgres)
 
 postgres-products:
-	@boundary authenticate password -login-name=appdev \
-		-password $(shell cd boundary-configuration && terraform output -raw boundary_products_password) \
-		-auth-method-id=$(shell cd boundary-configuration && terraform output -raw boundary_auth_method_id)
-	boundary connect postgres -username=postgres -target-id \
-		$(shell cd boundary-configuration && terraform output -raw boundary_target_postgres) -- -d products
+	boundary connect postgres -username=postgres -dbname=products -target-id \
+		$(shell cd boundary-configuration && terraform output -raw boundary_target_postgres)
 
 frontend-products:
-	@boundary authenticate password -login-name=appdev \
-		-password $(shell cd boundary-configuration && terraform output -raw boundary_products_password) \
-		-auth-method-id=$(shell cd boundary-configuration && terraform output -raw boundary_auth_method_id)
 	boundary connect -target-id \
 		$(shell cd boundary-configuration && terraform output -raw boundary_target_frontend)
 
@@ -77,10 +69,7 @@ clean-vault:
 clean-consul:
 	kubectl delete -f consul-deployment/terminating_gateway.yaml
 
-taint:
-	cd consul-deployment && terraform taint hcp_consul_cluster_root_token.token
-
-clean: clean-application clean-vault clean-consul taint
+clean: clean-application clean-vault clean-consul
 
 vault-commands:
 	vault list sys/leases/lookup/database/creds/product
