@@ -23,7 +23,7 @@ module "eks" {
       instance_types            = ["t2.small"]
       k8s_labels                = var.tags
       additional_tags           = var.additional_tags
-      key_name                  = module.boundary.boundary_key_name
+      key_name                  = var.key_pair_name
       source_security_group_ids = [module.boundary.boundary_security_group]
     }
   }

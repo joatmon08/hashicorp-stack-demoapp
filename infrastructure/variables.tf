@@ -14,10 +14,9 @@ variable "hcp_region" {
   default     = ""
 }
 
-variable "private_ssh_key" {
-  description = "Base64 encoded contents of private SSH key for Boundary and EKS nodes"
+variable "key_pair_name" {
+  description = "SSH keypair name for Boundary and EKS nodes"
   type        = string
-  sensitive   = true
 }
 
 variable "hcp_consul_datacenter" {
@@ -70,6 +69,12 @@ variable "database_username" {
 variable "database_password" {
   type        = string
   description = "Password for postgresql"
+  sensitive   = true
+}
+
+variable "boundary_database_password" {
+  type        = string
+  description = "Password for Boundary database"
   sensitive   = true
 }
 
