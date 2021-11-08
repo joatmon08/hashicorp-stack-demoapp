@@ -28,7 +28,7 @@ resource "boundary_target" "consul" {
   scope_id                 = boundary_scope.core_infra.id
   session_connection_limit = -1
   default_port             = 443
-  host_set_ids = [
+  host_source_ids = [
     boundary_host_set.consul.id
   ]
 }

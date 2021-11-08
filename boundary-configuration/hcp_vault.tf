@@ -28,7 +28,7 @@ resource "boundary_target" "vault" {
   scope_id                 = boundary_scope.core_infra.id
   session_connection_limit = -1
   default_port             = 8200
-  host_set_ids = [
+  host_source_ids = [
     boundary_host_set.vault.id
   ]
 }
