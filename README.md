@@ -37,25 +37,12 @@ Each folder contains a few different configurations.
 
 1. Terraform Cloud
 1. AWS Account
+   1. Create an AWS EC2 keypair.
 1. HashiCorp Cloud Platform account
    1. You need access to HCP Consul and Vault.
    1. Create a [service principal](https://portal.cloud.hashicorp.com/access/service-principals)
       for the HCP Terraform provider.
 1. `jq` installed
-1. Install HashiCorp Boundary and an SSH key to the `boundary-deployment/bin` directory.
-   1. Download Boundary to `boundary-deployment/bin/boundary`.
-      ```shell
-      cd boundary-deployment/bin
-      curl https://releases.hashicorp.com/boundary/0.6.0/boundary_0.6.0_linux_amd64.zip -o boundary.zip
-      unzip boundary.zip
-      rm boundary.zip
-      ```
-   1. Add an SSH key named `id_rsa` to `boundary-deployment/bin`. You can optionally add a passphrase.
-      ```shell
-      $ ssh-keygen -t rsa
-
-      Enter file in which to save the key (~/.ssh/id_rsa): boundary-deployment/bin/id_rsa
-      ```
 1. Fork this repository.
 
 ## Deploy infrastructure.
@@ -78,9 +65,6 @@ First, set up the Terraform workspace.
 Next, configure the workspace's variables.
 
 1. Variables should include:
-   - `private_ssh_key` (sensitive): base64 encoded SSH Key for Boundary SSH
-   - `database_password` (sensitive): password for Amazon RDS PostgreSQL database for application.
-      __SAVE THIS PASSWORD! YOU'LL NEED IT TO LOG IN LATER!__
    - `client_cidr_block` (sensitive): list including the public IP address of your machine, in [`00.00.00.00/32`] form. You get it by running `curl ifconfig.me` in your terminal.
 
 1. Environment Variables should include:

@@ -2,7 +2,7 @@ resource "boundary_user" "operations" {
   for_each    = var.operations_team
   name        = each.key
   description = "Operations user: ${each.key}"
-  account_ids = [boundary_account.operations_user_acct[each.value].id]
+  account_ids = [boundary_account_password.operations_user_acct[each.value].id]
   scope_id    = boundary_scope.org.id
 }
 
@@ -10,7 +10,7 @@ resource "boundary_user" "products" {
   for_each    = var.products_team
   name        = each.key
   description = "Products user: ${each.key}"
-  account_ids = [boundary_account.products_user_acct[each.value].id]
+  account_ids = [boundary_account_password.products_user_acct[each.value].id]
   scope_id    = boundary_scope.org.id
 }
 
@@ -18,7 +18,7 @@ resource "boundary_user" "leadership" {
   for_each    = var.leadership_team
   name        = each.key
   description = "WARNING: Managers should be read-only"
-  account_ids = [boundary_account.leadership_user_acct[each.value].id]
+  account_ids = [boundary_account_password.leadership_user_acct[each.value].id]
   scope_id    = boundary_scope.org.id
 }
 
@@ -28,7 +28,7 @@ resource "random_password" "operations_team" {
   override_special = "_%@"
 }
 
-resource "boundary_account" "operations_user_acct" {
+resource "boundary_account_password" "operations_user_acct" {
   for_each       = var.operations_team
   name           = each.key
   description    = "User account for ${each.key}"
@@ -44,7 +44,7 @@ resource "random_password" "products_team" {
   override_special = "_%@"
 }
 
-resource "boundary_account" "products_user_acct" {
+resource "boundary_account_password" "products_user_acct" {
   for_each       = var.products_team
   name           = each.key
   description    = "User account for ${each.key}"
@@ -54,7 +54,7 @@ resource "boundary_account" "products_user_acct" {
   auth_method_id = boundary_auth_method.password.id
 }
 
-resource "boundary_account" "leadership_user_acct" {
+resource "boundary_account_password" "leadership_user_acct" {
   for_each       = var.leadership_team
   name           = each.key
   description    = "User account for ${each.key}"
