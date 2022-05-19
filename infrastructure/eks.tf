@@ -1,9 +1,9 @@
 module "eks" {
   depends_on      = [module.vpc]
   source          = "terraform-aws-modules/eks/aws"
-  version         = "17.1.0"
+  version         = "17.24.0"
   cluster_name    = var.name
-  cluster_version = "1.19"
+  cluster_version = "1.22"
   subnets         = module.vpc.private_subnets
 
   vpc_id           = module.vpc.vpc_id

@@ -19,22 +19,22 @@ variable "key_pair_name" {
   type        = string
 }
 
+variable "vpc_cidr_block" {
+  description = "CIDR Block for VPC"
+  type        = string
+  default     = "10.0.0.0/16"
+}
+
+variable "hcp_cidr_block" {
+  type        = string
+  default     = "172.25.16.0/20"
+  description = "CIDR block of the HashiCorp Virtual Network"
+}
+
 variable "hcp_consul_datacenter" {
   default     = ""
   description = "HCP Consul datacenter name"
   type        = string
-}
-
-variable "hcp_consul_version" {
-  default     = "v1.9.8"
-  description = "HCP Consul version"
-  type        = string
-}
-
-variable "hcp_consul_cidr_block" {
-  type        = string
-  default     = "172.25.16.0/20"
-  description = "CIDR block of the HashiCorp Virtual Network"
 }
 
 variable "hcp_consul_public_endpoint" {
@@ -58,24 +58,6 @@ variable "additional_tags" {
   default     = {}
   type        = map(any)
   description = "Tags to add resources"
-}
-
-variable "database_username" {
-  default     = "postgres"
-  type        = string
-  description = "Username for postgresql"
-}
-
-variable "database_password" {
-  type        = string
-  description = "Password for postgresql"
-  sensitive   = true
-}
-
-variable "boundary_database_password" {
-  type        = string
-  description = "Password for Boundary database"
-  sensitive   = true
 }
 
 variable "client_cidr_block" {

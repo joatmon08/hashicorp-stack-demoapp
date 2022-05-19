@@ -16,7 +16,7 @@ resource "aws_security_group" "database" {
     from_port   = 5432
     to_port     = 5432
     protocol    = "tcp"
-    cidr_blocks = [var.hcp_consul_cidr_block]
+    cidr_blocks = [var.hcp_cidr_block]
   }
 
   egress {
@@ -31,15 +31,29 @@ resource "aws_security_group" "database" {
   }
 }
 
+resource "random_pet" "database" {
+  length = 1
+}
+
+resource "random_password" "database" {
+  length           = 16
+  min_upper        = 2
+  min_lower        = 2
+  min_numeric      = 2
+  min_special      = 2
+  special          = true
+  override_special = "`~!@#$%^&*()_-+={}[]<>,.?':"
+}
+
 resource "aws_db_instance" "products" {
   allocated_storage      = 10
   engine                 = "postgres"
   engine_version         = "11.12"
   instance_class         = "db.t3.micro"
-  name                   = "products"
+  db_name                = "products"
   identifier             = "${var.name}-products"
-  username               = var.database_username
-  password               = var.database_password
+  username               = random_pet.database.id
+  password               = random_password.database.result
   db_subnet_group_name   = module.vpc.database_subnet_group_name
   vpc_security_group_ids = [aws_security_group.database.id]
   skip_final_snapshot    = true

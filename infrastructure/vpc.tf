@@ -7,16 +7,20 @@ data "aws_availability_zones" "available" {
   }
 }
 
+locals {
+  subnets = cidrsubnets("10.0.0.0/16", 8, 8, 8, 8, 8, 8, 8, 8, 8)
+}
+
 module "vpc" {
   source  = "terraform-aws-modules/vpc/aws"
-  version = "3.2.0"
+  version = "3.14.0"
 
   name             = var.name
-  cidr             = "10.0.0.0/16"
+  cidr             = var.vpc_cidr_block
   azs              = data.aws_availability_zones.available.names
-  private_subnets  = ["10.0.1.0/24", "10.0.2.0/24", "10.0.3.0/24"]
-  public_subnets   = ["10.0.4.0/24", "10.0.5.0/24", "10.0.6.0/24"]
-  database_subnets = ["10.0.7.0/24", "10.0.8.0/24", "10.0.9.0/24"]
+  private_subnets  = slice(local.subnets, 0, 3)
+  public_subnets   = slice(local.subnets, 3, 6)
+  database_subnets = slice(local.subnets, 6, 9)
 
   manage_default_route_table = true
   default_route_table_tags   = { DefaultRouteTable = true }
