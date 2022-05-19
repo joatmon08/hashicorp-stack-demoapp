@@ -1,11 +1,9 @@
 resource "random_password" "boundary_database" {
-  length           = 16
-  min_upper        = 2
-  min_lower        = 2
-  min_numeric      = 2
-  min_special      = 2
-  special          = true
-  override_special = "`~!@#$%^&*()_-+={}[]<>,.?':"
+  length      = 12
+  min_upper   = 2
+  min_lower   = 2
+  min_numeric = 2
+  special     = false
 }
 
 module "boundary" {
