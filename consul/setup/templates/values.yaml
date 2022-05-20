@@ -19,8 +19,6 @@ global:
     enableAutoEncrypt: true
     caCert:
       secretName: "${CONSUL_PKI_PATH}/cert/ca"
-  federation:
-    enabled: true
   acls:
     manageSystemACLs: true
     bootstrapToken:
