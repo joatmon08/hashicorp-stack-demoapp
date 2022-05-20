@@ -4,27 +4,22 @@ terraform {
   required_providers {
     kubernetes = {
       source  = "hashicorp/kubernetes"
-      version = "~> 2.4"
+      version = "~> 2.11"
     }
 
     helm = {
       source  = "hashicorp/helm"
-      version = "~> 2.2"
-    }
-
-    hcp = {
-      source  = "hashicorp/hcp"
-      version = "~> 0.11"
+      version = "~> 2.5"
     }
 
     aws = {
       source  = "hashicorp/aws"
-      version = "~> 3.52"
+      version = "~> 4.14"
     }
 
     consul = {
       source  = "hashicorp/consul"
-      version = "~> 2.12"
+      version = "~> 2.15"
     }
   }
 }
@@ -56,20 +51,4 @@ provider "helm" {
     cluster_ca_certificate = base64decode(data.aws_eks_cluster.cluster.certificate_authority.0.data)
     token                  = data.aws_eks_cluster_auth.cluster.token
   }
-}
-
-provider "hcp" {}
-
-data "hcp_consul_cluster" "cluster" {
-  cluster_id = local.hcp_consul_cluster_id
-}
-
-resource "hcp_consul_cluster_root_token" "token" {
-  cluster_id = local.hcp_consul_cluster_id
-}
-
-provider "consul" {
-  address    = data.hcp_consul_cluster.cluster.consul_public_endpoint_url
-  datacenter = data.hcp_consul_cluster.cluster.datacenter
-  token      = hcp_consul_cluster_root_token.token.secret_id
 }

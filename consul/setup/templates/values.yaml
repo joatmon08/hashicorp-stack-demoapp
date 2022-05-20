@@ -1,0 +1,49 @@
+# consul-dc1.yaml
+global:
+  datacenter: "${CONSUL_DATACENTER}"
+  name: consul
+  secretsBackend:
+    vault:
+      enabled: true
+      consulServerRole: ${CONSUL_SERVER_ROLE}
+      consulClientRole: ${CONSUL_CLIENT_ROLE}
+      consulCARole: ${CONSUL_CA_ROLE}
+      manageSystemACLsRole: ${SERVER_ACL_INIT_ROLE}
+      connectCA:
+        address: ${VAULT_ADDR}
+        rootPKIPath: connect_root/
+        intermediatePKIPath: dc1/connect_inter/
+        authMethodPath: ${KUBERNETES_AUTH_METHOD_PATH}
+  tls:
+    enabled: true
+    enableAutoEncrypt: true
+    caCert:
+      secretName: "${CONSUL_PKI_PATH}/cert/ca"
+  federation:
+    enabled: true
+  acls:
+    manageSystemACLs: true
+    bootstrapToken:
+      secretName: "${CONSUL_STATIC_PATH}/data/bootstrap"
+      secretKey: token
+  gossipEncryption:
+    secretName: ${CONSUL_STATIC_PATH}/data/gossip
+    secretKey: key
+server:
+  replicas: 1
+  serverCert:
+    secretName: "${CONSUL_PKI_PATH}/issue/${CONSUL_SERVER_ROLE}"
+connectInject:
+  replicas: 1
+  enabled: true
+controller:
+  enabled: true
+terminatingGateways:
+  enabled: true
+  replicas: 1
+
+ui:
+  enabled: true
+  service:
+    enabled: true
+    type: LoadBalancer
