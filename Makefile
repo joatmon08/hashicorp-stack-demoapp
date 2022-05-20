@@ -66,6 +66,10 @@ clean-vault:
 clean-consul:
 	kubectl delete -f consul/terminating_gateway.yaml
 
+clean-certs:
+	cd certs/terraform && terraform destroy -auto-approve
+	rm -rf certs/root/ certs/intermediate/
+
 clean: clean-application clean-vault clean-consul
 
 vault-commands:

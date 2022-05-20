@@ -20,7 +20,7 @@ module "eks" {
       max_capacity     = 3
       min_capacity     = 3
 
-      instance_types            = ["t2.small"]
+      instance_types            = ["m5.large"]
       k8s_labels                = var.tags
       additional_tags           = var.additional_tags
       key_name                  = var.key_pair_name
