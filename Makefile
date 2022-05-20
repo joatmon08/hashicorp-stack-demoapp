@@ -1,6 +1,7 @@
 fmt:
-	cd vault && terraform fmt
-	cd consul-deployment && terraform fmt
+	cd vault/setup && terraform fmt
+	cd vault/app && terraform fmt
+	cd consul && terraform fmt
 	cd boundary && terraform fmt
 	cd boundary-deployment && terraform fmt
 	cd infrastructure && terraform fmt
@@ -15,7 +16,7 @@ configure-consul: kubeconfig
 	consul acl token update -id \
 		$(shell consul acl token list -format json |jq -r '.[] | select (.Policies[0].Name == "terminating-gateway-terminating-gateway-token") | .AccessorID') \
     	-policy-name database-write-policy -merge-policies -merge-roles -merge-service-identities
-	kubectl apply -f consul-deployment/terminating_gateway.yaml
+	kubectl apply -f consul/terminating_gateway.yaml
 
 boundary-operations-auth:
 	@boundary authenticate password -login-name=ops \
@@ -63,7 +64,7 @@ clean-vault:
 	vault lease revoke -force -prefix database/creds
 
 clean-consul:
-	kubectl delete -f consul-deployment/terminating_gateway.yaml
+	kubectl delete -f consul/terminating_gateway.yaml
 
 clean: clean-application clean-vault clean-consul
 

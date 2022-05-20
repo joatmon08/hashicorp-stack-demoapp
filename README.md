@@ -25,10 +25,12 @@ Each folder contains a few different configurations.
      - HashiCorp Virtual Network (peered to VPC)
      - HCP Consul
      - HCP Vault
-   - `boundary-configuration`: Configures Boundary with two projects, one for operations
+   - `boundary`: Configures Boundary with two projects, one for operations
       and the other for development teams.
-   - `consul-deployment/`: Deploys a Consul cluster via Helm chart.
-   - `vault-deployment/`: Deploy a Vault cluster via Helm chart.
+   - `consul/`: Deploys a Consul cluster via Helm chart.
+   - `vault/setup/`: Deploy a Vault cluster via Helm chart and set up Kubernetes auth method
+   - `vault/consul/`: Set up Consul-related secrets engines.
+   - `vault/app/`: Set up secrets engines for applications.
 
 - Kubernetes
    - `application/`: Deploys the HashiCorp Demo Application (AKA HashiCups)
@@ -87,9 +89,9 @@ First, set up the Terraform workspace.
 1. Choose "Version control workflow".
 1. Connect to GitHub.
 1. Choose your fork of this repository.
-1. Name the workpsace `boundary-configuration`.
+1. Name the workpsace `boundary`.
 1. Select the "Advanced Options" dropdown.
-1. Use the working directory `boundary-configuration`.
+1. Use the working directory `boundary`.
 1. Select "Create workspace".
 
 Next, configure the workspace's variables. This Terraform configuration
@@ -117,7 +119,7 @@ To use Boundary, use your terminal in the top level of this repository.
 
 1. Set the `BOUNDARY_ADDR` environment variable to the Boundary endpoint.
    ```shell
-   export BOUNDARY_ADDR=$(cd boundary-configuration && terraform output -raw boundary_endpoint)
+   export BOUNDARY_ADDR=$(cd boundary && terraform output -raw boundary_endpoint)
    ```
 
 1. Use the example command in top-level `Makefile` to SSH to the EKS nodes as the operations team.
@@ -165,9 +167,9 @@ First, set up the Terraform workspace.
 1. Choose "Version control workflow".
 1. Connect to GitHub.
 1. Choose your fork of this repository.
-1. Name the workpsace `consul-deployment`.
+1. Name the workpsace `consul`.
 1. Select the "Advanced Options" dropdown.
-1. Use the working directory `consul-deployment`.
+1. Use the working directory `consul`.
 1. Select "Create workspace".
 
 Next, configure the workspace's variables. This Terraform configuration
@@ -192,7 +194,7 @@ retrieves a set of variables using `terraform_remote_state` data source.
    with a write policy to the database. You need to run this outside of Terraform in your CLI!
    ```shell
    export CONSUL_HTTP_ADDR=$(cd infrastructure && terraform output -raw hcp_consul_public_address)
-   export CONSUL_HTTP_TOKEN=$(cd consul-deployment && terraform output -raw hcp_consul_token)
+   export CONSUL_HTTP_TOKEN=$(cd consul && terraform output -raw hcp_consul_token)
    make configure-consul
    ```
 
@@ -206,9 +208,9 @@ First, set up the Terraform workspace.
 1. Choose "Version control workflow".
 1. Connect to GitHub.
 1. Choose your fork of this repository.
-1. Name the workpsace `vault-deployment`.
+1. Name the workpsace `vault-setup`.
 1. Select the "Advanced Options" dropdown.
-1. Use the working directory `vault-deployment`.
+1. Use the working directory `vault/setup`.
 1. Select "Create workspace".
 
 Next, configure the workspace's variables. This Terraform configuration
@@ -281,7 +283,7 @@ to access the application UI over its internal load balancer.
    export FRONTEND_DNS=$(kubectl get svc frontend -o jsonpath="{.status.loadBalancer.ingress[*].hostname}")
    ```
 
-1. Define a variable for `products_frontend_address` in `boundary-configuration/terraform.auto.tfvars`.
+1. Define a variable for `products_frontend_address` in `boundary/terraform.auto.tfvars`.
    ```shell
    products_frontend_address=<set to FRONTEND_DNS environment variable>
    ```
