@@ -1,7 +1,7 @@
 fmt:
 	cd vault && terraform fmt
 	cd consul-deployment && terraform fmt
-	cd boundary-configuration && terraform fmt
+	cd boundary && terraform fmt
 	cd boundary-deployment && terraform fmt
 	cd infrastructure && terraform fmt
 	cd kubernetes && terraform fmt
@@ -19,37 +19,33 @@ configure-consul: kubeconfig
 
 boundary-operations-auth:
 	@boundary authenticate password -login-name=ops \
-		-password $(shell cd boundary-configuration && terraform output -raw boundary_operations_password) \
-		-auth-method-id=$(shell cd boundary-configuration && terraform output -raw boundary_auth_method_id)
+		-password $(shell cd boundary && terraform output -raw boundary_operations_password) \
+		-auth-method-id=$(shell cd boundary && terraform output -raw boundary_auth_method_id)
 
 boundary-appdev-auth:
 	@boundary authenticate password -login-name=appdev \
-		-password $(shell cd boundary-configuration && terraform output -raw boundary_products_password) \
-		-auth-method-id=$(shell cd boundary-configuration && terraform output -raw boundary_auth_method_id)
+		-password $(shell cd boundary && terraform output -raw boundary_products_password) \
+		-auth-method-id=$(shell cd boundary && terraform output -raw boundary_auth_method_id)
 
 ssh-operations:
 	boundary connect ssh -username=ec2-user -target-id \
-		$(shell cd boundary-configuration && terraform output -raw boundary_target_eks) -- -i ${SSH_KEYPAIR_FILE}
+		$(shell cd boundary && terraform output -raw boundary_target_eks) -- -i ${SSH_KEYPAIR_FILE}
 
 ssh-products:
 	boundary connect ssh -username=ec2-user -target-id \
-		$(shell cd boundary-configuration && terraform output -raw boundary_target_eks) -- -i ${SSH_KEYPAIR_FILE}
+		$(shell cd boundary && terraform output -raw boundary_target_eks) -- -i ${SSH_KEYPAIR_FILE}
 
 configure-db:
-	boundary connect postgres -username=postgres -dbname=products -target-id \
-		$(shell cd boundary-configuration && terraform output -raw boundary_target_postgres) -- -f database-service/products.sql
+	boundary connect postgres -username=$(shell cd infrastructure && terraform output -raw product_database_username) -dbname=products -target-id \
+		$(shell cd boundary && terraform output -raw boundary_target_postgres) -- -f database/products.sql
 
 postgres-operations:
-	boundary connect postgres -username=postgres -target-id \
-		$(shell cd boundary-configuration && terraform output -raw boundary_target_postgres)
-
-postgres-products:
-	boundary connect postgres -username=postgres -dbname=products -target-id \
-		$(shell cd boundary-configuration && terraform output -raw boundary_target_postgres)
+	boundary connect postgres -username=$(shell cd infrastructure && terraform output -raw product_database_username) -dbname=products -target-id \
+		$(shell cd boundary && terraform output -raw boundary_target_postgres)
 
 frontend-products:
 	boundary connect -target-id \
-		$(shell cd boundary-configuration && terraform output -raw boundary_target_frontend)
+		$(shell cd boundary && terraform output -raw boundary_target_frontend)
 
 configure-application:
 	kubectl apply -f application/
