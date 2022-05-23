@@ -35,8 +35,8 @@ resource "vault_kubernetes_auth_backend_role" "consul_ca" {
 
 resource "vault_kubernetes_auth_backend_role" "server_acl_init" {
   backend                          = local.vault_kubernetes_auth_path
-  role_name                        = "server-acl-init"
-  bound_service_account_names      = ["server-acl-init"]
+  role_name                        = "consul-server-acl-init"
+  bound_service_account_names      = ["consul-server-acl-init"]
   bound_service_account_namespaces = [var.consul_namespace]
   token_ttl                        = 86400
   token_policies = [
