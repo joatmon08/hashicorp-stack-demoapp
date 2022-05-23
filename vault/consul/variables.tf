@@ -1,6 +1,6 @@
-variable "use_offline_root_ca" {
+variable "use_vault_root_ca" {
   type        = bool
-  description = "Use offline root CA that has intermediate CAs loaded into Vault"
+  description = "Use Vault to generate root CAs. Recommended for development purposes only."
   default     = false
 }
 
@@ -22,9 +22,15 @@ variable "consul_namespace" {
   default     = "default"
 }
 
-variable "vault_consul_pki_backend" {
+variable "vault_consul_pki_root_backend" {
   type        = string
-  description = "Vault backend with Consul PKI secrets engine"
+  description = "Vault PKI secrets engine for Consul Root CA"
+  default     = "consul/pki"
+}
+
+variable "vault_consul_pki_int_backend" {
+  type        = string
+  description = "Vault PKI secrets engine for Consul Intermediate CA"
   default     = "consul/pki_int"
 }
 

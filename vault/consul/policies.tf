@@ -22,7 +22,7 @@ resource "vault_policy" "ca_policy" {
   name = "ca-policy"
 
   policy = <<EOT
-path "${var.vault_consul_pki_backend}/cert/ca" {
+path "${local.consul_pki_backend}/cert/ca" {
   capabilities = ["read"]
 }
 EOT
@@ -32,7 +32,7 @@ resource "vault_policy" "consul_cert" {
   name = "consul-server"
 
   policy = <<EOT
-path "${var.vault_consul_pki_backend}/issue/${vault_pki_secret_backend_role.consul_server.name}"
+path "${local.consul_pki_backend}/issue/${vault_pki_secret_backend_role.consul_server.name}"
 {
   capabilities = ["create","update"]
 }

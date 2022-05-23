@@ -16,6 +16,7 @@ global:
         rootPKIPath: connect_root/
         intermediatePKIPath: dc1/connect_inter/
         authMethodPath: ${KUBERNETES_AUTH_METHOD_PATH}
+        additionalConfig: '"{"connect": [{ "ca_config": [{ "namespace": "${VAULT_NAMESPACE}"}]}]}"'
   tls:
     enabled: true
     enableAutoEncrypt: true

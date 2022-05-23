@@ -1,5 +1,9 @@
+locals {
+  consul_pki_backend = var.use_vault_root_ca ? vault_mount.consul_pki.0.path : var.vault_consul_pki_int_backend
+}
+
 resource "vault_pki_secret_backend_role" "consul_server" {
-  backend = var.vault_consul_pki_backend
+  backend = local.consul_pki_backend
   name    = "consul-server"
   max_ttl = 2592000
   allowed_domains = [
@@ -15,11 +19,11 @@ resource "vault_pki_secret_backend_role" "consul_server" {
 }
 
 resource "vault_pki_secret_backend_config_urls" "consul_server" {
-  backend = var.vault_consul_pki_backend
+  backend = local.consul_pki_backend
   issuing_certificates = [
-    "${data.hcp_vault_cluster.cluster.vault_private_endpoint_url}/v1/${var.vault_consul_pki_backend}/ca"
+    "${data.hcp_vault_cluster.cluster.vault_private_endpoint_url}/v1/${local.consul_pki_backend}/ca"
   ]
   crl_distribution_points = [
-    "${data.hcp_vault_cluster.cluster.vault_private_endpoint_url}/v1/${var.vault_consul_pki_backend}/crl"
+    "${data.hcp_vault_cluster.cluster.vault_private_endpoint_url}/v1/${local.consul_pki_backend}/crl"
   ]
 }
