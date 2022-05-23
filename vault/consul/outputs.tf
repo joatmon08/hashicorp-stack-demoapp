@@ -22,3 +22,7 @@ output "consul_datacenter" {
 output "vault_addr" {
   value = data.hcp_vault_cluster.cluster.vault_private_endpoint_url
 }
+
+output "vault_namespace" {
+  value = data.hcp_vault_cluster.cluster.namespace
+}
