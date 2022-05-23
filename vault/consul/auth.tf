@@ -7,7 +7,8 @@ resource "vault_kubernetes_auth_backend_role" "consul_server" {
   token_policies = [
     vault_policy.consul_gossip.name,
     vault_policy.consul_cert.name,
-    vault_policy.connect_ca.name
+    vault_policy.connect_ca.name,
+    vault_policy.consul_bootstrap.name
   ]
 }
 
