@@ -15,7 +15,6 @@ resource "helm_release" "consul" {
       VAULT_ADDR                  = local.vault_addr
       VAULT_NAMESPACE             = local.vault_namespace
       KUBERNETES_AUTH_METHOD_PATH = local.paths.kubernetes_auth_method
-      CONSUL_SERVER_ROOT_CA_PATH  = local.paths.consul_server_root_ca
       CONSUL_PKI_PATH             = local.paths.consul_pki
       CONSUL_STATIC_PATH          = local.paths.consul_static
     })
