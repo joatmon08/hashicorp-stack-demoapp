@@ -198,7 +198,7 @@ organizationalUnitName      = Organizational Unit Name (eg, section)
 organizationalUnitName_default  = HashiConf Europe
 
 commonName          = Common Name (eg, YOUR name)
-commonName_default  = Consul CA
+commonName_default  = Consul CA Root
 commonName_max                  = 64
 
 emailAddress            = Email Address
