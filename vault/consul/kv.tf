@@ -14,16 +14,6 @@ resource "vault_generic_secret" "gossip" {
 EOT
 }
 
-resource "vault_policy" "consul_gossip" {
-  name = "consul-gossip"
-
-  policy = <<EOT
-path "${vault_mount.consul_static.path}/data/gossip" {
-  capabilities = ["read"]
-}
-EOT
-}
-
 resource "random_uuid" "consul_bootstrap" {}
 
 resource "vault_generic_secret" "bootstrap" {
@@ -32,16 +22,6 @@ resource "vault_generic_secret" "bootstrap" {
   data_json = <<EOT
 {
   "token": "${random_uuid.consul_bootstrap.result}"
-}
-EOT
-}
-
-resource "vault_policy" "consul_bootstrap" {
-  name = "consul-bootstrap"
-
-  policy = <<EOT
-path "${vault_mount.consul_static.path}/data/bootstrap" {
-  capabilities = ["read"]
 }
 EOT
 }

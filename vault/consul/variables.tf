@@ -1,3 +1,9 @@
+variable "use_offline_root_ca" {
+  type        = bool
+  description = "Use offline root CA that has intermediate CAs loaded into Vault"
+  default     = false
+}
+
 variable "consul_gossip_key" {
   type        = string
   sensitive   = true
