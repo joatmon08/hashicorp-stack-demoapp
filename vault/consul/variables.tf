@@ -19,7 +19,7 @@ variable "consul_namespace" {
 variable "vault_consul_pki_backend" {
   type        = string
   description = "Vault backend with Consul PKI secrets engine"
-  default     = "consul/pki"
+  default     = "consul/pki_int"
 }
 
 variable "tfc_organization" {
