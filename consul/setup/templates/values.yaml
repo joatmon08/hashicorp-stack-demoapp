@@ -9,6 +9,8 @@ global:
       consulClientRole: ${CONSUL_CLIENT_ROLE}
       consulCARole: ${CONSUL_CA_ROLE}
       manageSystemACLsRole: ${SERVER_ACL_INIT_ROLE}
+      agentAnnotations: |
+        "vault.hashicorp.com/namespace": "${VAULT_NAMESPACE}"
       connectCA:
         address: ${VAULT_ADDR}
         rootPKIPath: connect_root/
