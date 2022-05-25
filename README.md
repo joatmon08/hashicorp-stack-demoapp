@@ -266,13 +266,18 @@ retrieves a set of variables using `terraform_remote_state` data source.
    make configure-consul
    ```
 
-> Note: To delete, you will need to run `make clean-consul` before destroying the infrastructure with Terraform.
+> __NOTE:__ To delete, you will need to run `make clean-consul` before destroying the infrastructure with Terraform.
 
 ## Configure Consul for Database
 
 > __NOTE:__ This is a local Terraform command in order to secure the Consul bootstrap token.
 
+Run the command to attach policies to the terminating gateway role and deploy
+Kubernetes CR's for the terminating gateway.
 
+```shell
+make configure-consul
+```
 
 ## Configure Vault for Applications
 
