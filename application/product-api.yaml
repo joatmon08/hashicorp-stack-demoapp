@@ -43,7 +43,6 @@ spec:
       annotations:
         consul.hashicorp.com/connect-inject: "true"
         consul.hashicorp.com/connect-service-upstreams: "database:5432"
-        consul.hashicorp.com/enable-metrics-merging: "false"
         consul.hashicorp.com/transparent-proxy: "false"
         vault.hashicorp.com/agent-inject: "true"
         vault.hashicorp.com/role: "product"
@@ -54,14 +53,14 @@ spec:
             "bind_address": ":9090",
             "metrics_address": ":9103",
             {{ with secret "database/creds/product" -}}
-            "db_connection": "host=localhost port=5432 user={{ .Data.username }} password={{ .Data.password }} dbname=products sslmode=disable"
+            "db_connection": "host=127.0.0.1 port=5432 user={{ .Data.username }} password={{ .Data.password }} dbname=products sslmode=disable"
             {{- end }}
           }
     spec:
       serviceAccountName: product
       containers:
         - name: product
-          image: hashicorpdemoapp/product-api:v0.0.17
+          image: hashicorpdemoapp/product-api:v0.0.20
           ports:
             - containerPort: 9090
             - containerPort: 9103

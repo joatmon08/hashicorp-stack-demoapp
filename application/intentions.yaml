@@ -2,7 +2,53 @@
 apiVersion: consul.hashicorp.com/v1alpha1
 kind: ServiceIntentions
 metadata:
-  name: product-to-database
+  name: nginx
+spec:
+  # Name of the destination service affected by this ServiceIntentions entry
+  destination:
+    name: nginx
+  # The set of traffic sources affected by this ServiceIntentions entry
+  sources:
+    - name: ingress-gateway
+      action: allow
+---
+apiVersion: consul.hashicorp.com/v1alpha1
+kind: ServiceIntentions
+metadata:
+  name: frontend
+spec:
+  destination:
+    name: frontend
+  sources:
+    - name: nginx
+      action: allow
+---
+apiVersion: consul.hashicorp.com/v1alpha1
+kind: ServiceIntentions
+metadata:
+  name: public
+spec:
+  destination:
+    name: public
+  sources:
+    - name: nginx
+      action: allow
+---
+apiVersion: consul.hashicorp.com/v1alpha1
+kind: ServiceIntentions
+metadata:
+  name: product
+spec:
+  destination:
+    name: product
+  sources:
+    - name: public
+      action: allow
+---
+apiVersion: consul.hashicorp.com/v1alpha1
+kind: ServiceIntentions
+metadata:
+  name: database
 spec:
   destination:
     name: database
@@ -13,25 +59,10 @@ spec:
 apiVersion: consul.hashicorp.com/v1alpha1
 kind: ServiceIntentions
 metadata:
-  name: public-to-product
+  name: payments
 spec:
   destination:
-    name: product
+    name: payments
   sources:
     - name: public
-      permissions:
-        - action: allow
-          http:
-            pathPrefix: /coffees
-            methods: ['GET']
----
-apiVersion: consul.hashicorp.com/v1alpha1
-kind: ServiceIntentions
-metadata:
-  name: frontend-to-public
-spec:
-  destination:
-    name: public
-  sources:
-    - name: frontend
       action: allow

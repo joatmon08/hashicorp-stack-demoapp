@@ -42,19 +42,22 @@ spec:
         service: public
         app: public
       annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "9102"
         consul.hashicorp.com/connect-inject: "true"
-        consul.hashicorp.com/connect-service-upstreams: "product:9090"
-        consul.hashicorp.com/enable-metrics-merging: "false"
-        consul.hashicorp.com/transparent-proxy: "false"
+        consul.hashicorp.com/connect-service-upstreams: "product:9090,payments:1800"
     spec:
       serviceAccountName: public
       containers:
         - name: public
-          image: hashicorpdemoapp/public-api:v0.0.5
+          image: hashicorpdemoapp/public-api:v0.0.6
+          imagePullPolicy: Always
           ports:
             - containerPort: 8080
           env:
             - name: BIND_ADDRESS
               value: ":8080"
-            - name: PRODUCTS_API_URI
+            - name: PRODUCT_API_URI
               value: "http://localhost:9090"
+            - name: PAYMENT_API_URI
+              value: "http://localhost:1800"
