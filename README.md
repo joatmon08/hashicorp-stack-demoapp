@@ -308,14 +308,13 @@ retrieves a set of variables using `terraform_remote_state` data source.
 
 Terraform will set up [PostgreSQL database secrets engine](https://www.vaultproject.io/docs/secrets/databases/postgresql).
 
-> Note: To delete, you will need to run `make clean-vault` before destroying the infrastructure with Terraform.
-
+> __NOTE:__ To delete, you will need to run `make clean-vault` before destroying the infrastructure with Terraform.
 
 ## Deploy Example Application
 
 To deploy the example application, run `make configure-application`.
 
-> Note: To delete, you will need to run `make clean-application`.
+> __NOTE:__ To delete, you will need to run `make clean-application`.
 
 You can check if everything by checking the pods in Kubernetes.
 
@@ -323,26 +322,21 @@ You can check if everything by checking the pods in Kubernetes.
 $ kubectl get pods
 
 NAME                                                          READY   STATUS    RESTARTS   AGE
-consul-46zp9                                                  1/1     Running   0          5m12s
-consul-connect-injector-webhook-deployment-79b8b7986d-zsc5f   1/1     Running   0          5m12s
-consul-controller-64cf857cdc-d9vq6                            1/1     Running   0          5m12s
-consul-cq56l                                                  1/1     Running   0          5m12s
-consul-hmfr4                                                  1/1     Running   0          5m12s
-consul-terminating-gateway-5f5d9947cf-k8m8h                   2/2     Running   0          5m12s
-consul-webhook-cert-manager-5745cbb9d-w7qqk                   1/1     Running   0          5m12s
-frontend-99765b95f-r8z8j                                      3/3     Running   0          3m46s
-product-589b95f9f5-p5ncz                                      4/4     Running   0          3m45s
-public-86b5578cd-29k4s                                        3/3     Running   0          3m45s
-vault-agent-injector-57dc4886cd-7sfnf                         1/1     Running   0          63m
+## omitted for clarity
+frontend-5d7f97456b-2fznv                      2/2     Running   0          15m
+nginx-59c9dbb9ff-j9xhc                         2/2     Running   0          15m
+payments-67c89b9bc9-kbb9r                      2/2     Running   0          16m
+product-55989bf685-ll5t7                       3/3     Running   0          5m5s
+public-64ccfc4fc7-jd7v7                        2/2     Running   0          8m17s
 ```
 
-Port forward the `frontend` service to [http://localhost:8080](http://localhost:8080).
+Port forward the `nginx` service to [http://localhost:8080](http://localhost:8080).
 
 ```shell
-kubectl port-forward svc/frontend 8080:80
+kubectl port-forward svc/nginx 8080:80
 ```
 
-You'll get a UI with a "Packer-Spiced Latte".
+You'll get a UI where you can order your coffee.
 
 ## Use Boundary to access the application UI
 

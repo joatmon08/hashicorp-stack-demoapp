@@ -3,18 +3,13 @@ variable "tfc_organization" {
   description = "TFC Organization for remote state of infrastructure"
 }
 
-variable "tfc_workspace" {
-  type        = string
-  description = "TFC Organization for remote state of infrastructure"
-}
-
 data "terraform_remote_state" "infrastructure" {
   backend = "remote"
 
   config = {
     organization = var.tfc_organization
     workspaces = {
-      name = var.tfc_workspace
+      name = "infrastructure"
     }
   }
 }
