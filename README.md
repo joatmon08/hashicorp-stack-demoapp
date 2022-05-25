@@ -136,10 +136,9 @@ To use Boundary, use your terminal in the top level of this repository.
 To add data, you need to log into the PostgreSQL database. However, it's on a private
 network. You need to use Boundary to proxy to the database.
 
-1. Set the `PGPASSWORD` environment variable to the database password you
-   defined in the `infrastructure` Terraform workspace.
+1. Authenticate to Boundary as the operations team.
    ```shell
-   export PGPASSWORD=<password that you set in infrastructure workspace>
+   make boundary-operations-auth
    ```
 
 1. Run the following commands to log in and load data into the `products`
@@ -154,12 +153,7 @@ network. You need to use Boundary to proxy to the database.
    make postgres-products
    ```
 
-## Configure Consul
-
-> Note: When you run this, the Helm release for Consul will fail.
-> You need to run a separate command to configure the terminating
-> gateway with an ACL. Once you run the command, run another plan
-> and apply. The Helm chart will successfully flag as released.
+## Configure Vault (Auth Method)
 
 First, set up the Terraform workspace.
 
@@ -167,9 +161,81 @@ First, set up the Terraform workspace.
 1. Choose "Version control workflow".
 1. Connect to GitHub.
 1. Choose your fork of this repository.
-1. Name the workpsace `consul`.
+1. Name the workpsace `vault-setup`.
 1. Select the "Advanced Options" dropdown.
-1. Use the working directory `consul`.
+1. Use the working directory `vault/setup`.
+1. Select "Create workspace".
+
+Next, configure the workspace's variables. This Terraform configuration
+retrieves a set of variables using `terraform_remote_state` data source.
+
+1. Variables should include:
+   - `tfc_organization`: your Terraform Cloud organization name
+   - `tfc_workspace`: `infrastructure`
+
+1. Environment Variables should include:
+   - `HCP_CLIENT_ID`: HCP service principal ID
+   - `HCP_CLIENT_SECRET` (sensitive): HCP service principal secret
+   - `AWS_ACCESS_KEY_ID`: AWS access key ID
+   - `AWS_SECRET_ACCESS_KEY` (sensitive): AWS secret access key
+   - `AWS_SESSION_TOKEN` (sensitive): If applicable, the token for session
+
+Terraform will set up [Kubernetes authentication method](https://www.vaultproject.io/docs/auth/kubernetes)
+and deploy the [Vault Helm chart](https://github.com/hashicorp/vault-helm) to the cluster.
+
+## Configure Offline Root CA for Consul
+
+As a best practice, store root CAs away from Vault. To demonstrate this, we generate
+a root CA offline.
+
+Run the command to create a root CA as well as an intermediate CA, and store the intermediate
+CA in Vault.
+
+```shell
+make configure-certs
+```
+
+## Configure Vault for Consul (PKI Secrets Engine)
+
+First, set up the Terraform workspace.
+
+1. Create a new Terraform workspace.
+1. Choose "Version control workflow".
+1. Connect to GitHub.
+1. Choose your fork of this repository.
+1. Name the workpsace `vault-consul`.
+1. Select the "Advanced Options" dropdown.
+1. Use the working directory `vault/consul`.
+1. Select "Create workspace".
+
+Next, configure the workspace's variables. This Terraform configuration
+retrieves a set of variables using `terraform_remote_state` data source.
+
+1. Variables should include:
+   - `tfc_organization`: your Terraform Cloud organization name
+   - `tfc_workspace`: `infrastructure`
+
+1. Environment Variables should include:
+   - `HCP_CLIENT_ID`: HCP service principal ID
+   - `HCP_CLIENT_SECRET` (sensitive): HCP service principal secret
+   - `AWS_ACCESS_KEY_ID`: AWS access key ID
+   - `AWS_SECRET_ACCESS_KEY` (sensitive): AWS secret access key
+   - `AWS_SESSION_TOKEN` (sensitive): If applicable, the token for session
+
+Terraform will set up the PKI secrets engine for TLS in the Consul cluster
+(not the service mesh).
+
+## Configure Consul
+
+First, set up the Terraform workspace.
+
+1. Create a new Terraform workspace.
+1. Choose "Version control workflow".
+1. Connect to GitHub.
+1. Choose your fork of this repository.
+1. Name the workpsace `consul-setup`.
+1. Select the "Advanced Options" dropdown.
+1. Use the working directory `consul/setup`.
 1. Select "Create workspace".
 
 Next, configure the workspace's variables. This Terraform configuration
@@ -200,7 +266,7 @@ retrieves a set of variables using `terraform_remote_state` data source.
 
 > Note: To delete, you will need to run `make clean-consul` before destroying the infrastructure with Terraform.
 
-## Configure Vault
+## Configure Vault for Applications
 
 First, set up the Terraform workspace.
 
@@ -208,9 +274,9 @@ First, set up the Terraform workspace.
 1. Choose "Version control workflow".
 1. Connect to GitHub.
 1. Choose your fork of this repository.
-1. Name the workpsace `vault-setup`.
+1. Name the workpsace `vault-app`.
 1. Select the "Advanced Options" dropdown.
-1. Use the working directory `vault/setup`.
+1. Use the working directory `vault/app`.
 1. Select "Create workspace".
 
 Next, configure the workspace's variables. This Terraform configuration
@@ -227,8 +293,7 @@ retrieves a set of variables using `terraform_remote_state` data source.
    - `AWS_SECRET_ACCESS_KEY` (sensitive): AWS secret access key
    - `AWS_SESSION_TOKEN` (sensitive): If applicable, the token for session
 
-Terraform will set up [Kubernetes authentication method](https://www.vaultproject.io/docs/auth/kubernetes)
-and [PostgreSQL database secrets engine](https://www.vaultproject.io/docs/secrets/databases/postgresql).
+Terraform will set up [PostgreSQL database secrets engine](https://www.vaultproject.io/docs/secrets/databases/postgresql).
 
 > Note: To delete, you will need to run `make clean-vault` before destroying the infrastructure with Terraform.
 

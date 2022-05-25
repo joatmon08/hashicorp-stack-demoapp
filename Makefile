@@ -12,7 +12,10 @@ kubeconfig:
 	aws eks --region $(shell cd infrastructure && terraform output -raw region) update-kubeconfig \
 		--name $(shell cd infrastructure && terraform output -raw eks_cluster_name)
 
-configure-consul: kubeconfig
+configure-certs:
+	bash certs/ca_root.sh
+
+configure-consul:
 	consul acl token update -id \
 		$(shell consul acl token list -format json |jq -r '.[] | select (.Policies[0].Name == "terminating-gateway-terminating-gateway-token") | .AccessorID') \
     	-policy-name database-write-policy -merge-policies -merge-roles -merge-service-identities
@@ -37,8 +40,7 @@ ssh-products:
 		$(shell cd boundary && terraform output -raw boundary_target_eks) -- -i ${SSH_KEYPAIR_FILE}
 
 configure-db:
-	boundary connect postgres -username=$(shell cd infrastructure && terraform output -raw product_database_username) -dbname=products -target-id \
-		$(shell cd boundary && terraform output -raw boundary_target_postgres) -- -f database/products.sql
+	bash database/configure.sh
 
 postgres-operations:
 	boundary connect postgres -username=$(shell cd infrastructure && terraform output -raw product_database_username) -dbname=products -target-id \

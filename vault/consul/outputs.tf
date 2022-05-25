@@ -10,7 +10,7 @@ output "roles" {
 output "paths" {
   value = {
     kubernetes_auth_method = local.vault_kubernetes_auth_path
-    consul_pki             = var.vault_consul_pki_int_backend
+    consul_pki             = local.consul_pki_backend
     consul_static          = vault_mount.consul_static.path
   }
 }
