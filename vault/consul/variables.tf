@@ -50,7 +50,7 @@ data "terraform_remote_state" "infrastructure" {
   config = {
     organization = var.tfc_organization
     workspaces = {
-      name = var.tfc_workspace
+      name = "infrastructure"
     }
   }
 }

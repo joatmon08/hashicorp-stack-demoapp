@@ -1,7 +1,6 @@
 resource "vault_mount" "postgres" {
-  depends_on = [helm_release.vault]
-  path       = "database"
-  type       = "database"
+  path = "database"
+  type = "database"
 }
 
 resource "vault_database_secret_backend_connection" "postgres" {
@@ -10,7 +9,9 @@ resource "vault_database_secret_backend_connection" "postgres" {
   allowed_roles = ["*"]
 
   postgresql {
-    connection_url = "postgresql://${local.postgres_username}:${local.postgres_password}@${local.postgres_hostname}:${var.postgres_port}/products?sslmode=disable"
+    connection_url = "postgresql://{{username}}:{{password}}@${local.postgres_hostname}:${var.postgres_port}/products?sslmode=disable"
+    username       = local.postgres_username
+    password       = local.postgres_password
   }
 }
 
@@ -25,7 +26,6 @@ resource "vault_database_secret_backend_role" "postgres" {
 }
 
 data "vault_policy_document" "product" {
-  depends_on = [helm_release.vault]
   rule {
     path         = "database/creds/product"
     capabilities = ["read"]
@@ -34,14 +34,12 @@ data "vault_policy_document" "product" {
 }
 
 resource "vault_policy" "product" {
-  depends_on = [helm_release.vault]
-  name       = "product"
-  policy     = data.vault_policy_document.product.hcl
+  name   = "product"
+  policy = data.vault_policy_document.product.hcl
 }
 
 resource "vault_kubernetes_auth_backend_role" "product" {
-  depends_on                       = [helm_release.vault]
-  backend                          = vault_auth_backend.kubernetes.path
+  backend                          = local.vault_kubernetes_auth_path
   role_name                        = "product"
   bound_service_account_names      = ["product"]
   bound_service_account_namespaces = ["default"]
