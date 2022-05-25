@@ -12,6 +12,11 @@ terraform {
       version = "~> 2.5"
     }
 
+    hcp = {
+      source  = "hashicorp/hcp"
+      version = "~> 0.29"
+    }
+
     aws = {
       source  = "hashicorp/aws"
       version = "~> 4.14"
@@ -52,3 +57,5 @@ provider "helm" {
     token                  = data.aws_eks_cluster_auth.cluster.token
   }
 }
+
+provider "hcp" {}

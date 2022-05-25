@@ -1,5 +1,6 @@
 resource "helm_release" "consul" {
-  name = "consul"
+  count = var.use_hcp_consul ? 0 : 1
+  name  = "consul"
 
   repository = "https://helm.releases.hashicorp.com"
   chart      = "consul"

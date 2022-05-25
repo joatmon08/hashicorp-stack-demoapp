@@ -26,11 +26,12 @@ data "terraform_remote_state" "vault_consul" {
 }
 
 locals {
-  roles             = data.terraform_remote_state.vault_consul.outputs.roles
-  paths             = data.terraform_remote_state.vault_consul.outputs.paths
-  consul_datacenter = data.terraform_remote_state.vault_consul.outputs.consul_datacenter
-  vault_addr        = data.terraform_remote_state.vault_consul.outputs.vault_addr
-  vault_namespace   = data.terraform_remote_state.vault_consul.outputs.vault_namespace
+  roles                 = data.terraform_remote_state.vault_consul.outputs.roles
+  paths                 = data.terraform_remote_state.vault_consul.outputs.paths
+  consul_datacenter     = data.terraform_remote_state.vault_consul.outputs.consul_datacenter
+  vault_addr            = data.terraform_remote_state.vault_consul.outputs.vault_addr
+  vault_namespace       = data.terraform_remote_state.vault_consul.outputs.vault_namespace
+  hcp_consul_cluster_id = data.terraform_remote_state.infrastructure.outputs.hcp_consul_cluster
 }
 
 variable "consul_helm_version" {
@@ -49,4 +50,10 @@ variable "region" {
   type        = string
   description = "AWS Region"
   default     = ""
+}
+
+variable "use_hcp_consul" {
+  type        = bool
+  description = "Use HCP Consul Cluster"
+  default     = false
 }

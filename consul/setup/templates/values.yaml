@@ -44,7 +44,8 @@ controller:
   enabled: true
 terminatingGateways:
   enabled: true
-  replicas: 1
+  defaults:
+    replicas: 1
 
 ui:
   enabled: true

@@ -41,6 +41,26 @@ provider "registry.terraform.io/hashicorp/consul" {
   ]
 }
 
+provider "registry.terraform.io/hashicorp/hcp" {
+  version     = "0.29.0"
+  constraints = "~> 0.29"
+  hashes = [
+    "h1:Cdr3Xx5DPjFAnhri+MO+aF/Z/pJB7+7Q2k1moGx8rRM=",
+    "zh:0fa82a384b25a58b65523e0ea4768fa1212b1f5cfc0c9379d31162454fedcc9d",
+    "zh:51b4cb7d13f800ca87c94619ba636f0fe4d8debd4913fb738756c312c4a704fb",
+    "zh:6903aae93c687efa4cac54760199a8cb3d0fe95ef1f0bf7a21dc75e127bf6c39",
+    "zh:69096cfca77655f43f346c55787e0ee5d1e5965cc15db7ff7a2d84b6b14bde5d",
+    "zh:6d800d253e4a2a378fc2e02f2da1dd4cc86be9f9533203fde5d465f1e399e5ac",
+    "zh:74ca9986120ecf6fc84167d66d1f753feadb4ebfb8d50a306abcff8f99eaf205",
+    "zh:79f26cceae9ddc06fe5ed86a4dae9af34122dc8d0f69e03369eb651a0ffabf13",
+    "zh:7b9bbf1c93b6e9afdb0da9ace5e7b98505853c9d7f063eb9bee95d67e7994088",
+    "zh:ba8d67f673fcd920864679449f850a8a7d27414982dc85344850a18e6eefbf3a",
+    "zh:e0839b4de9851439198d2f4ec1bf23cac38b7c79d4cea7aa7f0338cfe7a53d62",
+    "zh:eaf2967a3a21bb2f3bf76bcf47361ff006d3a9736291821bac36a666a5b1e9aa",
+    "zh:fad34cd9ce02dbede8adb43671afb8c6cefb5407bffa7b9298f4b6959d09a54d",
+  ]
+}
+
 provider "registry.terraform.io/hashicorp/helm" {
   version     = "2.5.1"
   constraints = "~> 2.5"
