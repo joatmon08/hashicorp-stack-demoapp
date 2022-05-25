@@ -9,7 +9,8 @@ fmt:
 	terraform fmt
 
 kubeconfig:
-	aws eks --region $(shell cd infrastructure && terraform output -raw region) update-kubeconfig \
+	aws eks --region $(shell cd infrastructure && terraform output -raw region) \
+		update-kubeconfig \
 		--name $(shell cd infrastructure && terraform output -raw eks_cluster_name)
 
 configure-certs:
@@ -17,6 +18,12 @@ configure-certs:
 
 configure-consul:
 	bash consul/database/configure.sh
+
+configure-db: boundary-appdev-auth
+	bash database/configure.sh
+
+configure-application:
+	kubectl apply -f application/
 
 boundary-operations-auth:
 	@boundary authenticate password -login-name=ops \
@@ -36,25 +43,15 @@ ssh-products:
 	boundary connect ssh -username=ec2-user -target-id \
 		$(shell cd boundary && terraform output -raw boundary_target_eks) -- -i ${SSH_KEYPAIR_FILE}
 
-configure-db:
-	bash database/configure.sh
-
-postgres-operations:
-	boundary connect postgres -username=$(shell cd infrastructure && terraform output -raw product_database_username) -dbname=products -target-id \
+postgres-operations: boundary-appdev-auth
+	boundary connect postgres \
+		-username=$(shell cd infrastructure && terraform output -raw product_database_username) \
+		-dbname=products -target-id \
 		$(shell cd boundary && terraform output -raw boundary_target_postgres)
 
 frontend-products:
 	boundary connect -target-id \
 		$(shell cd boundary && terraform output -raw boundary_target_frontend)
-
-configure-application:
-	kubectl apply -f application/
-
-get-application:
-	kubectl get svc frontend -o jsonpath="{.status.loadBalancer.ingress[*].hostname}"
-
-clean-infrastructure:
-	terraform state rm 'module.eks.kubernetes_config_map.aws_auth[0]'
 
 clean-application:
 	kubectl delete -f application/
@@ -68,8 +65,6 @@ clean-consul:
 clean-certs:
 	cd certs/terraform && terraform destroy -auto-approve -var="signed_cert=true"
 	rm -rf certs/root/ certs/intermediate/
-
-clean: clean-application clean-vault clean-consul
 
 vault-commands:
 	vault list sys/leases/lookup/database/creds/product

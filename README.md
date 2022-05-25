@@ -99,7 +99,6 @@ retrieves a set of variables using `terraform_remote_state` data source.
 
 1. Variables should include:
    - `tfc_organization`: your Terraform Cloud organization name
-   - `tfc_workspace`: `infrastructure`
 
 1. Environment Variables should include:
    - `AWS_ACCESS_KEY_ID`: AWS access key ID
@@ -153,7 +152,7 @@ network. You need to use Boundary to proxy to the database.
    make postgres-products
    ```
 
-## Configure Vault (Auth Method)
+## Configure Vault (Kubernetes Auth Method)
 
 First, set up the Terraform workspace.
 
@@ -171,7 +170,6 @@ retrieves a set of variables using `terraform_remote_state` data source.
 
 1. Variables should include:
    - `tfc_organization`: your Terraform Cloud organization name
-   - `tfc_workspace`: `infrastructure`
 
 1. Environment Variables should include:
    - `HCP_CLIENT_ID`: HCP service principal ID
@@ -214,15 +212,11 @@ Next, configure the workspace's variables. This Terraform configuration
 retrieves a set of variables using `terraform_remote_state` data source.
 
 1. Variables should include:
-   - `tfc_organization`: your Terraform Cloud organization name
-   - `tfc_workspace`: `infrastructure`
+   - `tfc_organization`: your Terraform Cloud organization name`
 
 1. Environment Variables should include:
    - `HCP_CLIENT_ID`: HCP service principal ID
    - `HCP_CLIENT_SECRET` (sensitive): HCP service principal secret
-   - `AWS_ACCESS_KEY_ID`: AWS access key ID
-   - `AWS_SECRET_ACCESS_KEY` (sensitive): AWS secret access key
-   - `AWS_SESSION_TOKEN` (sensitive): If applicable, the token for session
 
 Terraform will set up the PKI secrets engine for TLS in the Consul cluster
 (not the service mesh).
@@ -245,7 +239,6 @@ retrieves a set of variables using `terraform_remote_state` data source.
 
 1. Variables should include:
    - `tfc_organization`: your Terraform Cloud organization name
-   - `tfc_workspace`: `infrastructure`
 
 1. Environment Variables should include:
    - `HCP_CLIENT_ID`: HCP service principal ID
@@ -302,9 +295,6 @@ retrieves a set of variables using `terraform_remote_state` data source.
 1. Environment Variables should include:
    - `HCP_CLIENT_ID`: HCP service principal ID
    - `HCP_CLIENT_SECRET` (sensitive): HCP service principal secret
-   - `AWS_ACCESS_KEY_ID`: AWS access key ID
-   - `AWS_SECRET_ACCESS_KEY` (sensitive): AWS secret access key
-   - `AWS_SESSION_TOKEN` (sensitive): If applicable, the token for session
 
 Terraform will set up [PostgreSQL database secrets engine](https://www.vaultproject.io/docs/secrets/databases/postgresql).
 
@@ -374,6 +364,50 @@ to access the application UI over its internal load balancer.
    ```
 
 You'll get a UI with a "Packer-Spiced Latte".
+
+## Clean Up
+
+Delete applications.
+
+```shell
+make clean-application
+```
+
+Revoke Vault credentials for applications.
+
+```shell
+make clean-vault
+```
+
+Go into Terraform Cloud and destroy resources
+for the `vault-app` workspace.
+
+Remove additional Consul resources.
+
+```shell
+make clean-consul
+```
+
+Go into Terraform Cloud and destroy resources
+for the `consul-setup` workspace.
+
+Go into Terraform Cloud and destroy resources
+for the `vault-consul` workspace.
+
+Remove certificates for Consul from Vault.
+
+```shell
+make clean-certs
+```
+
+Go into Terraform Cloud and destroy resources
+for the `vault-setup` workspace.
+
+Go into Terraform Cloud and destroy resources
+for the `boundary` workspace.
+
+Go into Terraform Cloud and destroy resources
+for the `infrastructure` workspace.
 
 ## Credits
 
