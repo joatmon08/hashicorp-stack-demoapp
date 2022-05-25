@@ -16,10 +16,7 @@ configure-certs:
 	bash certs/ca_root.sh
 
 configure-consul:
-	consul acl token update -id \
-		$(shell consul acl token list -format json |jq -r '.[] | select (.Policies[0].Name == "terminating-gateway-terminating-gateway-token") | .AccessorID') \
-    	-policy-name database-write-policy -merge-policies -merge-roles -merge-service-identities
-	kubectl apply -f consul/terminating_gateway.yaml
+	bash consul/database/configure.sh
 
 boundary-operations-auth:
 	@boundary authenticate password -login-name=ops \
@@ -66,7 +63,7 @@ clean-vault:
 	vault lease revoke -force -prefix database/creds
 
 clean-consul:
-	kubectl delete -f consul/terminating_gateway.yaml
+	bash consul/database/clean.sh
 
 clean-certs:
 	cd certs/terraform && terraform destroy -auto-approve -var="signed_cert=true"

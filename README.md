@@ -188,6 +188,8 @@ and deploy the [Vault Helm chart](https://github.com/hashicorp/vault-helm) to th
 As a best practice, store root CAs away from Vault. To demonstrate this, we generate
 a root CA offline.
 
+> __NOTE:__ This is a local Terraform command in order to secure the offline root CA.
+
 Run the command to create a root CA as well as an intermediate CA, and store the intermediate
 CA in Vault.
 
@@ -265,6 +267,12 @@ retrieves a set of variables using `terraform_remote_state` data source.
    ```
 
 > Note: To delete, you will need to run `make clean-consul` before destroying the infrastructure with Terraform.
+
+## Configure Consul for Database
+
+> __NOTE:__ This is a local Terraform command in order to secure the Consul bootstrap token.
+
+
 
 ## Configure Vault for Applications
 
