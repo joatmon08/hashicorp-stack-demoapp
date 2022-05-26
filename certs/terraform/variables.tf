@@ -3,3 +3,9 @@ variable "signed_cert" {
   type        = bool
   description = "Has the certificate been signed yet?"
 }
+
+locals {
+  seconds_in_1_hour  = 3600
+  seconds_in_1_year  = 31536000
+  seconds_in_3_years = 94608000
+}

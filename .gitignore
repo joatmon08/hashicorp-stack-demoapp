@@ -10,5 +10,5 @@ kubernetes/terraform.auto.tfvars
 vault/terraform.auto.tfvars
 database-service/terraform.auto.tfvars
 
-certs/root
-certs/intermediate
+certs/connect
+certs/server

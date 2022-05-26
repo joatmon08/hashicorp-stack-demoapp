@@ -34,6 +34,18 @@ variable "vault_consul_pki_int_backend" {
   default     = "consul/pki_int"
 }
 
+variable "vault_consul_connect_pki_root_backend" {
+  type        = string
+  description = "Vault PKI secrets engine for Consul Connect Root CA"
+  default     = "consul_connect/pki"
+}
+
+variable "vault_consul_connect_pki_int_backend" {
+  type        = string
+  description = "Vault PKI secrets engine for Consul Connect Intermediate CA"
+  default     = "consul_connect/pki_int"
+}
+
 variable "tfc_organization" {
   type        = string
   description = "TFC Organization for remote state of infrastructure"
