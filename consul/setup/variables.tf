@@ -31,6 +31,8 @@ locals {
   consul_datacenter     = data.terraform_remote_state.vault_consul.outputs.consul_datacenter
   vault_addr            = data.terraform_remote_state.vault_consul.outputs.vault_addr
   vault_namespace       = data.terraform_remote_state.vault_consul.outputs.vault_namespace
+  vault_token           = data.terraform_remote_state.infrastructure.outputs.hcp_vault_token
+  vault_public_addr     = data.terraform_remote_state.infrastructure.outputs.hcp_vault_public_address
   hcp_consul_cluster_id = data.terraform_remote_state.infrastructure.outputs.hcp_consul_cluster
 }
 

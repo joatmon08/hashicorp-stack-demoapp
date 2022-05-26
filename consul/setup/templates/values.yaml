@@ -13,8 +13,8 @@ global:
         "vault.hashicorp.com/namespace": "${VAULT_NAMESPACE}"
       connectCA:
         address: ${VAULT_ADDR}
-        rootPKIPath: connect_root/
-        intermediatePKIPath: dc1/connect_inter/
+        rootPKIPath: ${CONSUL_CONNECT_PKI_PATH_ROOT}
+        intermediatePKIPath: ${CONSUL_CONNECT_PKI_PATH_INT}
         authMethodPath: ${KUBERNETES_AUTH_METHOD_PATH}
         additionalConfig: '"{"connect": [{ "ca_config": [{ "namespace": "${VAULT_NAMESPACE}"}]}]}"'
   tls:

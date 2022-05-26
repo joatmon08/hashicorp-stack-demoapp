@@ -26,6 +26,11 @@ terraform {
       source  = "hashicorp/consul"
       version = "~> 2.15"
     }
+
+    vault = {
+      source  = "hashicorp/vault"
+      version = "~> 3.6"
+    }
   }
 }
 
@@ -59,3 +64,9 @@ provider "helm" {
 }
 
 provider "hcp" {}
+
+provider "vault" {
+  address   = local.vault_public_addr
+  namespace = local.vault_namespace
+  token     = local.vault_token
+}
