@@ -46,15 +46,23 @@ resource "vault_policy" "connect_ca" {
 path "/sys/mounts" {
   capabilities = [ "read" ]
 }
+
 path "/sys/mounts/${var.vault_consul_connect_pki_root_backend}" {
-  capabilities = [ "create", "read", "update", "delete", "list" ]
+  capabilities = [ "read" ]
 }
+
 path "/sys/mounts/${var.vault_consul_connect_pki_int_backend}" {
-  capabilities = [ "create", "read", "update", "delete", "list" ]
+  capabilities = [ "read" ]
 }
-path "/${var.vault_consul_connect_pki_root_backend}/*" {
-  capabilities = [ "create", "read", "update", "delete", "list" ]
+
+path "/${var.vault_consul_connect_pki_root_backend}/" {
+  capabilities = [ "read" ]
 }
+
+path "/${var.vault_consul_connect_pki_root_backend}/root/sign-intermediate" {
+  capabilities = [ "update" ]
+}
+
 path "/${var.vault_consul_connect_pki_int_backend}/*" {
   capabilities = [ "create", "read", "update", "delete", "list" ]
 }
