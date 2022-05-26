@@ -9,7 +9,7 @@ data "kubernetes_service" "consul" {
 }
 
 output "consul_address" {
-  value = var.use_hcp_consul ? data.hcp_consul_cluster.cluster.consul_public_endpoint_url : data.kubernetes_service.consul.0.status.0.load_balancer.0.ingress.0.hostname
+  value = var.use_hcp_consul ? data.hcp_consul_cluster.cluster.consul_public_endpoint_url : "https://${data.kubernetes_service.consul.0.status.0.load_balancer.0.ingress.0.hostname}"
 }
 
 data "vault_generic_secret" "consul_token" {
@@ -17,7 +17,7 @@ data "vault_generic_secret" "consul_token" {
     helm_release.consul
   ]
   count = var.use_hcp_consul ? 0 : 1
-  path = "${local.paths.consul_static}/data/bootstrap"
+  path  = "${local.paths.consul_static}/bootstrap"
 }
 
 output "consul_token" {
