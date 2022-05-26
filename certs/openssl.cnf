@@ -245,7 +245,7 @@ nsComment           = "OpenSSL Generated Certificate"
 
 # PKIX recommendations harmless if included in all certificates.
 subjectKeyIdentifier=hash
-authorityKeyIdentifier=keyid,issuer:always
+authorityKeyIdentifier=keyid
 
 # This stuff is for subjectAltName and issuerAltname.
 # Import the email address.
@@ -281,7 +281,7 @@ keyUsage = nonRepudiation, digitalSignature, keyEncipherment
 
 subjectKeyIdentifier=hash
 
-authorityKeyIdentifier=keyid:always,issuer:always
+authorityKeyIdentifier=keyid
 
 # This is what PKIX recommends but some broken software chokes on critical
 # extensions.
@@ -314,4 +314,4 @@ basicConstraints = CA:true
 # Only issuerAltName and authorityKeyIdentifier make any sense in a CRL.
 
 # issuerAltName=issuer:copy
-authorityKeyIdentifier=keyid:always,issuer:always
+authorityKeyIdentifier=keyid

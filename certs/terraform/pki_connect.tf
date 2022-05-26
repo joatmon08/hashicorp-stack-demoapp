@@ -29,7 +29,7 @@ resource "vault_pki_secret_backend_intermediate_set_signed" "consul_connect_pki"
   count   = var.signed_cert ? 1 : 0
   backend = vault_mount.consul_connect_pki.path
 
-  certificate = var.signed_cert ? file("../connect/intermediate/ca.crt") : null
+  certificate = var.signed_cert ? format("%s\n%s", file("../connect/intermediate/ca.crt"), file("../connect/root/ca.crt")) : null
 }
 
 resource "vault_mount" "consul_connect_pki_int" {
@@ -77,5 +77,5 @@ resource "vault_pki_secret_backend_intermediate_set_signed" "consul_connect_pki_
   count       = var.signed_cert ? 1 : 0
   depends_on  = [vault_pki_secret_backend_root_sign_intermediate.consul_connect_pki_int]
   backend     = vault_mount.consul_connect_pki_int.path
-  certificate = var.signed_cert ? format("%s\n%s", vault_pki_secret_backend_root_sign_intermediate.consul_connect_pki_int.0.certificate, file("../connect/intermediate/ca.crt")) : null
+  certificate = var.signed_cert ? format("%s\n%s\n%s", vault_pki_secret_backend_root_sign_intermediate.consul_connect_pki_int.0.certificate, file("../connect/intermediate/ca.crt"), file("../connect/root/ca.crt")) : null
 }

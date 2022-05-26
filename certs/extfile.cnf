@@ -1,1 +1,2 @@
 basicConstraints=CA:TRUE
+authorityKeyIdentifier=keyid
