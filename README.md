@@ -27,9 +27,10 @@ Each folder contains a few different configurations.
      - HCP Vault
    - `boundary`: Configures Boundary with two projects, one for operations
       and the other for development teams.
-   - `consul/`: Deploys a Consul cluster via Helm chart.
    - `vault/setup/`: Deploy a Vault cluster via Helm chart and set up Kubernetes auth method
    - `vault/consul/`: Set up Consul-related secrets engines.
+   - `consul/setup`: Deploys a Consul cluster via Helm chart.
+   - `consul/database`: Sets up external service to database.
    - `vault/app/`: Set up secrets engines for applications.
 
 - Kubernetes
@@ -184,7 +185,10 @@ and deploy the [Vault Helm chart](https://github.com/hashicorp/vault-helm) to th
 ## Configure Offline Root CA for Consul
 
 As a best practice, store root CAs away from Vault. To demonstrate this, we generate
-a root CA offline.
+a root CA offline. We use two separate root CAs:
+
+- Cluster Root CA
+- Service Mesh Root CA for mTLS
 
 > __NOTE:__ This is a local Terraform command in order to secure the offline root CA.
 
@@ -249,17 +253,42 @@ retrieves a set of variables using `terraform_remote_state` data source.
 
 1. Queue to plan and apply. This deploys Consul clients and a terminating gateway
    via the Consul Helm chart to the EKS cluster to join the HCP Consul servers.
-   It also registers the database as an external service to Consul.
 
-1. Update the [terminating gateway](https://www.consul.io/docs/k8s/connect/terminating-gateways#update-terminating-gateway-acl-token-if-acls-are-enabled)
-   with a write policy to the database. You need to run this outside of Terraform in your CLI!
-   ```shell
-   export CONSUL_HTTP_ADDR=$(cd infrastructure && terraform output -raw hcp_consul_public_address)
-   export CONSUL_HTTP_TOKEN=$(cd consul && terraform output -raw hcp_consul_token)
-   make configure-consul
-   ```
+## Configure Consul External Services
+
+Update the [terminating gateway](https://www.consul.io/docs/k8s/connect/terminating-gateways#update-terminating-gateway-acl-token-if-acls-are-enabled)
+with a write policy to the database.
+
+```shell
+make configure-consul
+```
 
 > __NOTE:__ To delete, you will need to run `make clean-consul` before destroying the infrastructure with Terraform.
+
+Then, set up the Terraform workspace.
+
+1. Create a new Terraform workspace.
+1. Choose "Version control workflow".
+1. Connect to GitHub.
+1. Choose your fork of this repository.
+1. Name the workpsace `consul-database`.
+1. Select the "Advanced Options" dropdown.
+1. Use the working directory `consul/database`.
+1. Select "Create workspace".
+
+Next, configure the workspace's variables. This Terraform configuration
+retrieves a set of variables using `terraform_remote_state` data source.
+
+1. Variables should include:
+   - `tfc_organization`: your Terraform Cloud organization name
+
+1. Environment Variables should include:
+   - `AWS_ACCESS_KEY_ID`: AWS access key ID
+   - `AWS_SECRET_ACCESS_KEY` (sensitive): AWS secret access key
+   - `AWS_SESSION_TOKEN` (sensitive): If applicable, the token for session
+
+1. Queue to plan and apply. This registers the database as an
+   external service to Consul.
 
 ## Configure Consul for Database
 
@@ -381,6 +410,9 @@ make clean-vault
 
 Go into Terraform Cloud and destroy resources
 for the `vault-app` workspace.
+
+Go into Terraform Cloud and destroy resources
+for the `consul-database` workspace.
 
 Remove additional Consul resources.
 
