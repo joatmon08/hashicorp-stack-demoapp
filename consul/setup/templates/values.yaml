@@ -33,19 +33,30 @@ global:
   gossipEncryption:
     secretName: ${CONSUL_STATIC_PATH}/data/gossip
     secretKey: key
+
 server:
   replicas: 1
   serverCert:
     secretName: "${CONSUL_PKI_PATH}/issue/${CONSUL_SERVER_ROLE}"
+
 connectInject:
   replicas: 1
   enabled: true
+
 controller:
   enabled: true
+
 terminatingGateways:
   enabled: true
   defaults:
     replicas: 1
+
+apiGateway:
+  enabled: true
+  image: "hashicorp/consul-api-gateway:0.2.1"
+  managedGatewayClass:
+    serviceType: LoadBalancer
+    useHostPorts: true
 
 ui:
   enabled: true

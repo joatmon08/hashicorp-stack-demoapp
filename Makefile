@@ -16,6 +16,9 @@ kubeconfig:
 configure-certs:
 	bash certs/ca_root.sh
 
+configure-kubernetes:
+	kubectl apply --kustomize "github.com/hashicorp/consul-api-gateway/config/crd?ref=v0.2.1"
+
 configure-consul:
 	bash consul/database/configure.sh
 
@@ -61,6 +64,9 @@ clean-vault:
 
 clean-consul:
 	bash consul/database/clean.sh
+
+clean-kubernetes:
+	kubectl delete --kustomize "github.com/hashicorp/consul-api-gateway/config/crd?ref=v0.2.1"
 
 clean-certs:
 	cd certs/terraform && terraform destroy -auto-approve -var="signed_cert=true"
