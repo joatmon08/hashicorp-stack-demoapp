@@ -9,7 +9,7 @@ resource "consul_service" "database" {
     check_id = "service:postgres"
     name     = "Postgres health check"
     status   = "passing"
-    tcp      = "${var.products_database}:5432"
+    tcp      = "${local.products_database}:5432"
     interval = "30s"
     timeout  = "3s"
   }
@@ -17,7 +17,7 @@ resource "consul_service" "database" {
 
 resource "consul_node" "database" {
   name    = "database"
-  address = var.products_database
+  address = local.products_database
 
   meta = {
     "external-node"  = "true"
