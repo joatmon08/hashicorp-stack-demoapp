@@ -29,13 +29,13 @@ resource "kubernetes_manifest" "consul_api_gateway_secret_provider" {
         secretPath: "consul/gateway/pki_int/issue/${kubernetes_service_account.consul_api_gateway.metadata.0.name}"
         secretKey: "certificate"
         secretArgs:
-          common_name: "test.hashiconf.com"
+          common_name: "gateway.${local.certificate_allowed_domain}"
       - objectName: "consul-api-gateway-ca-key"
         method: "POST"
         secretPath: "consul/gateway/pki_int/issue/${kubernetes_service_account.consul_api_gateway.metadata.0.name}"
         secretKey: "private_key"
         secretArgs:
-          common_name: "test.hashiconf.com"
+          common_name: "gateway.${local.certificate_allowed_domain}"
       EOT
         "roleName"       = kubernetes_service_account.consul_api_gateway.metadata.0.name
         "vaultAddress"   = local.vault_addr
