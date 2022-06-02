@@ -10,7 +10,7 @@ export CONSUL_HTTP_ADDR=$(cd consul/setup && terraform output -raw consul_addres
 export CONSUL_HTTP_TOKEN=$(cd consul/setup && terraform output -raw consul_token)
 export CONSUL_HTTP_SSL_VERIFY=false
 
-consul acl policy create -name "database-write-policy" -rules @consul/database/policy.hcl
+consul acl policy create -name "database-write-policy" -rules @consul/config/policy.hcl
 
 consul acl role update -id \
     $(consul acl role list -format json |jq -r '.[] | select (.Name == "consul-terminating-gateway-acl-role") | .ID') \
