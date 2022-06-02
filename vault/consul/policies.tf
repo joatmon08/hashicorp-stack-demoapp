@@ -40,7 +40,7 @@ EOT
 }
 
 resource "vault_policy" "consul_api_gateway" {
-  name = "consul-server"
+  name = "consul-api-gateway"
 
   policy = <<EOT
 path "${local.consul_gateway_pki_backend}/issue/${vault_pki_secret_backend_role.consul_gateway.name}"
