@@ -19,6 +19,10 @@ output "paths" {
   }
 }
 
+output "consul_api_gateway_allowed_domain" {
+  value = var.consul_api_gateway_allowed_domain
+}
+
 output "consul_datacenter" {
   value = var.consul_datacenter
 }

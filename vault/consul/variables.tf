@@ -22,6 +22,12 @@ variable "consul_namespace" {
   default     = "default"
 }
 
+variable "consul_api_gateway_allowed_domain" {
+  type        = string
+  description = "Allowed domain for Consul API Gateway certificates"
+  default     = "hashiconf.example.com"
+}
+
 variable "vault_consul_pki_root_backend" {
   type        = string
   description = "Vault PKI secrets engine for Consul Root CA"
