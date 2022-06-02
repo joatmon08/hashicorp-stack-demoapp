@@ -12,7 +12,7 @@ export VAULT_NAMESPACE=admin
 mkdir -p certs/server/root
 mkdir -p certs/server/intermediate
 
-openssl genrsa -des3 -out certs/server/root/ca.key 1024
+openssl genrsa -des3 -out certs/server/root/ca.key 4096
 openssl req -new -x509 -days 3650 -key certs/server/root/ca.key \
     -out certs/server/root/ca.crt -config certs/openssl.cnf \
     -subj "/C=US/ST=California/L=San Francisco/O=HashiCorp/OU=HashiConf Europe/CN=Consul Server Root CA"
@@ -22,10 +22,21 @@ openssl req -new -x509 -days 3650 -key certs/server/root/ca.key \
 mkdir -p certs/connect/root
 mkdir -p certs/connect/intermediate
 
-openssl genrsa -des3 -out certs/connect/root/ca.key 1024
+openssl genrsa -des3 -out certs/connect/root/ca.key 4096
 openssl req -new -x509 -days 3650 -key certs/connect/root/ca.key \
     -out certs/connect/root/ca.crt -config certs/openssl.cnf \
     -subj "/C=US/ST=California/L=San Francisco/O=HashiCorp/OU=HashiConf Europe/CN=Consul Connect Root CA"
+
+
+## Generate offline root CA for Consul API Gateway
+
+mkdir -p certs/gateway/root
+mkdir -p certs/gateway/intermediate
+
+openssl genrsa -des3 -out certs/gateway/root/ca.key 4096
+openssl req -new -x509 -days 3650 -key certs/gateway/root/ca.key \
+    -out certs/gateway/root/ca.crt -config certs/openssl.cnf \
+    -subj "/C=US/ST=California/L=San Francisco/O=HashiCorp/OU=HashiConf Europe/CN=Consul API Gateway Root CA"
 
 ## Set up PKI secrets engine and set the intermediate
 
@@ -35,19 +46,26 @@ terraform apply -var="signed_cert=false"
 
 cd ../..
 
-## Generate intermediate CA for Consul servers
+## Sign intermediate CA for Consul servers
 
 openssl x509 -req -in certs/server/intermediate/ca.csr \
     -extfile certs/extfile.cnf \
     -CA certs/server/root/ca.crt -CAkey certs/server/root/ca.key \
     -CAcreateserial -out certs/server/intermediate/ca.crt -days 1096 -sha256
 
-## Generate intermediate CA for Consul Connect
+## Sign intermediate CA for Consul Connect
 
 openssl x509 -req -in certs/connect/intermediate/ca.csr \
     -extfile certs/extfile.cnf \
     -CA certs/connect/root/ca.crt -CAkey certs/connect/root/ca.key \
     -CAcreateserial -out certs/connect/intermediate/ca.crt -days 1096 -sha256
+
+## Sign intermediate CA for Consul API Gateway
+
+openssl x509 -req -in certs/gateway/intermediate/ca.csr \
+    -extfile certs/extfile.cnf \
+    -CA certs/gateway/root/ca.crt -CAkey certs/gateway/root/ca.key \
+    -CAcreateserial -out certs/gateway/intermediate/ca.crt -days 1096 -sha256
 
 ## Load the signed intermediate certs into Vault
 

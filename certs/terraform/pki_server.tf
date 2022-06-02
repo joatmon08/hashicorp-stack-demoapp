@@ -1,5 +1,5 @@
 resource "vault_mount" "consul_pki" {
-  path                      = "consul/pki"
+  path                      = "consul/server/pki"
   type                      = "pki"
   description               = "PKI engine hosting intermediate Server CA1 v1 for Consul"
   default_lease_ttl_seconds = local.seconds_in_1_year
@@ -12,7 +12,7 @@ resource "vault_pki_secret_backend_intermediate_cert_request" "consul_pki" {
   type         = "internal"
   common_name  = "Consul Server CA1 v1"
   key_type     = "rsa"
-  key_bits     = "2048"
+  key_bits     = "4096"
   ou           = "HashiConf Europe"
   organization = "HashiCorp"
   country      = "US"
@@ -29,11 +29,11 @@ resource "vault_pki_secret_backend_intermediate_set_signed" "consul_pki" {
   count   = var.signed_cert ? 1 : 0
   backend = vault_mount.consul_pki.path
 
-  certificate = var.signed_cert ? file("../server/intermediate/ca.crt") : null
+  certificate = var.signed_cert ? format("%s\n%s", file("../server/intermediate/ca.crt"), file("../server/root/ca.crt")) : null
 }
 
 resource "vault_mount" "consul_server_pki_int" {
-  path                      = "consul/pki_int"
+  path                      = "consul/server/pki_int"
   type                      = "pki"
   description               = "PKI engine hosting intermediate Server CA2 v1 for Consul"
   default_lease_ttl_seconds = local.seconds_in_1_hour
@@ -46,7 +46,7 @@ resource "vault_pki_secret_backend_intermediate_cert_request" "consul_server_pki
   type         = "internal"
   common_name  = "Consul Server CA2 v1"
   key_type     = "rsa"
-  key_bits     = "2048"
+  key_bits     = "4096"
   ou           = "HashiConf Europe"
   organization = "HashiCorp"
   country      = "US"
