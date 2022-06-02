@@ -25,25 +25,37 @@ variable "consul_namespace" {
 variable "vault_consul_pki_root_backend" {
   type        = string
   description = "Vault PKI secrets engine for Consul Root CA"
-  default     = "consul/pki"
+  default     = "consul/server/pki"
 }
 
 variable "vault_consul_pki_int_backend" {
   type        = string
   description = "Vault PKI secrets engine for Consul Intermediate CA"
-  default     = "consul/pki_int"
+  default     = "consul/server/pki_int"
 }
 
 variable "vault_consul_connect_pki_root_backend" {
   type        = string
   description = "Vault PKI secrets engine for Consul Connect Root CA"
-  default     = "consul_connect/pki"
+  default     = "consul/connect/pki"
 }
 
 variable "vault_consul_connect_pki_int_backend" {
   type        = string
   description = "Vault PKI secrets engine for Consul Connect Intermediate CA"
-  default     = "consul_connect/pki_int"
+  default     = "consul/connect/pki_int"
+}
+
+variable "vault_consul_gateway_pki_root_backend" {
+  type        = string
+  description = "Vault PKI secrets engine for Consul API Gateway CA"
+  default     = "consul/gateway/pki"
+}
+
+variable "vault_consul_gateway_pki_int_backend" {
+  type        = string
+  description = "Vault PKI secrets engine for Consul API Gateway Intermediate CA"
+  default     = "consul/gateway/pki_int"
 }
 
 variable "tfc_organization" {
