@@ -39,6 +39,17 @@ path "${local.consul_pki_backend}/issue/${vault_pki_secret_backend_role.consul_s
 EOT
 }
 
+resource "vault_policy" "consul_api_gateway" {
+  name = "consul-server"
+
+  policy = <<EOT
+path "${local.consul_gateway_pki_backend}/issue/${vault_pki_secret_backend_role.consul_gateway.name}"
+{
+  capabilities = ["create","update"]
+}
+EOT
+}
+
 resource "vault_policy" "connect_ca" {
   name = "connect-ca"
 
