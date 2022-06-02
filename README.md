@@ -29,8 +29,8 @@ Each folder contains a few different configurations.
       and the other for development teams.
    - `vault/setup/`: Deploy a Vault cluster via Helm chart and set up Kubernetes auth method
    - `vault/consul/`: Set up Consul-related secrets engines.
-   - `consul/setup`: Deploys a Consul cluster via Helm chart.
-   - `consul/database`: Sets up external service to database.
+   - `consul/setup/`: Deploys a Consul cluster via Helm chart.
+   - `consul/config/`: Sets up external service to database.
    - `vault/app/`: Set up secrets engines for applications.
 
 - Kubernetes
@@ -254,7 +254,13 @@ retrieves a set of variables using `terraform_remote_state` data source.
 1. Queue to plan and apply. This deploys Consul clients and a terminating gateway
    via the Consul Helm chart to the EKS cluster to join the HCP Consul servers.
 
-## Configure Consul External Services
+## Configure Consul External Services & API Gateway
+
+Deploy the Consul API Gateway specifications.
+
+```shell
+make configure-kubernetes
+```
 
 Update the [terminating gateway](https://www.consul.io/docs/k8s/connect/terminating-gateways#update-terminating-gateway-acl-token-if-acls-are-enabled)
 with a write policy to the database.
@@ -271,7 +277,7 @@ Then, set up the Terraform workspace.
 1. Choose "Version control workflow".
 1. Connect to GitHub.
 1. Choose your fork of this repository.
-1. Name the workpsace `consul-database`.
+1. Name the workpsace `consul-config`.
 1. Select the "Advanced Options" dropdown.
 1. Use the working directory `consul/database`.
 1. Select "Create workspace".
@@ -412,12 +418,18 @@ Go into Terraform Cloud and destroy resources
 for the `vault-app` workspace.
 
 Go into Terraform Cloud and destroy resources
-for the `consul-database` workspace.
+for the `consul-config` workspace.
 
 Remove additional Consul resources.
 
 ```shell
 make clean-consul
+```
+
+Renove API Gateway manifests.
+
+```shell
+make clean-kubernetes
 ```
 
 Go into Terraform Cloud and destroy resources

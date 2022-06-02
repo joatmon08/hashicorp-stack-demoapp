@@ -69,6 +69,8 @@ clean-consul:
 	bash consul/config/clean.sh
 
 clean-kubernetes:
+	kubectl patch gatewayclasses.gateway.networking.k8s.io consul-api-gateway --type merge --patch '{"metadata":{"finalizers":[]}}'
+	kubectl patch gatewayclassconfigs.api-gateway.consul.hashicorp.com consul-api-gateway --type merge --patch '{"metadata":{"finalizers":[]}}'
 	kubectl delete --kustomize "github.com/hashicorp/consul-api-gateway/config/crd?ref=v0.2.1"
 
 clean-certs:

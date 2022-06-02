@@ -9,7 +9,7 @@ spec:
     name: nginx
   # The set of traffic sources affected by this ServiceIntentions entry
   sources:
-    - name: ingress-gateway
+    - name: api-gateway
       action: allow
 ---
 apiVersion: consul.hashicorp.com/v1alpha1

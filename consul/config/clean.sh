@@ -12,6 +12,6 @@ export CONSUL_HTTP_SSL_VERIFY=false
 
 export TF_VAR_products_database=$(cd infrastructure && terraform output -raw product_database_address)
 
-cd consul/database/terraform && terraform destroy -auto-approve
+cd consul/config/terraform && terraform destroy -auto-approve
 
 cd .. && kubectl delete -f kubernetes.yaml
