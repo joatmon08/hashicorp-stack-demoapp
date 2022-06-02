@@ -19,8 +19,11 @@ configure-certs:
 configure-kubernetes:
 	kubectl apply --kustomize "github.com/hashicorp/consul-api-gateway/config/crd?ref=v0.2.1"
 
+configure-api-gateway:
+	kubectl patch deployment consul-api-gateway-controller -p '{"spec": {"template":{"metadata":{"annotations":{"vault.hashicorp.com/namespace":"admin"}}}}}'
+
 configure-consul:
-	bash consul/database/configure.sh
+	bash consul/config/configure.sh
 
 configure-db: boundary-appdev-auth
 	bash database/configure.sh
@@ -63,7 +66,7 @@ clean-vault:
 	vault lease revoke -force -prefix database/creds
 
 clean-consul:
-	bash consul/database/clean.sh
+	bash consul/config/clean.sh
 
 clean-kubernetes:
 	kubectl delete --kustomize "github.com/hashicorp/consul-api-gateway/config/crd?ref=v0.2.1"

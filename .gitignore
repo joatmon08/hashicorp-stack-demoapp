@@ -12,3 +12,4 @@ database-service/terraform.auto.tfvars
 
 certs/connect
 certs/server
+certs/gateway
