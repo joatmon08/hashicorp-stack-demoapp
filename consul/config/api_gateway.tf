@@ -1,5 +1,6 @@
 locals {
-  consul_api_gateway_secret_name = "consul-api-gateway"
+  consul_api_gateway_secret_name            = "consul-api-gateway"
+  consul_api_gateway_kubernetes_secret_name = "consul-api-gateway-cert"
 }
 
 resource "kubernetes_service_account" "consul_api_gateway" {
@@ -54,7 +55,7 @@ resource "kubernetes_manifest" "consul_api_gateway_secret_provider" {
               "objectName" = "consul-api-gateway-ca-key"
             },
           ]
-          "secretName" = "consul-api-gateway-cert"
+          "secretName" = local.consul_api_gateway_kubernetes_secret_name
           "type"       = "kubernetes.io/tls"
         },
       ]
@@ -62,7 +63,7 @@ resource "kubernetes_manifest" "consul_api_gateway_secret_provider" {
   }
 }
 
-resource "kubernetes_manifest" "secret_provider_pki" {
+resource "kubernetes_manifest" "csi_secrets_store_inline" {
   depends_on = [
     kubernetes_manifest.consul_api_gateway_secret_provider
   ]
@@ -126,35 +127,39 @@ resource "kubernetes_manifest" "secret_provider_pki" {
   }
 }
 
-# resource "kubernetes_manifest" "api_gateway" {
-#   manifest = {
-#     "apiVersion" = "gateway.networking.k8s.io/v1alpha2"
-#     "kind"       = "Gateway"
-#     "metadata" = {
-#       "name"      = "api-gateway"
-#       "namespace" = var.namespace
-#     }
-#     "spec" = {
-#       "gatewayClassName" = "consul-api-gateway"
-#       "listeners" = [
-#         {
-#           "allowedRoutes" = {
-#             "namespaces" = {
-#               "from" = "Same"
-#             }
-#           }
-#           "name"     = "https"
-#           "port"     = 8443
-#           "protocol" = "HTTPS"
-#           "tls" = {
-#             "certificateRefs" = [
-#               {
-#                 "name" = "consul-server-cert"
-#               },
-#             ]
-#           }
-#         },
-#       ]
-#     }
-#   }
-# }
+resource "kubernetes_manifest" "api_gateway" {
+  depends_on = [
+    kubernetes_manifest.consul_api_gateway_secret_provider,
+    kubernetes_manifest.csi_secrets_store_inline
+  ]
+  manifest = {
+    "apiVersion" = "gateway.networking.k8s.io/v1alpha2"
+    "kind"       = "Gateway"
+    "metadata" = {
+      "name"      = "api-gateway"
+      "namespace" = var.namespace
+    }
+    "spec" = {
+      "gatewayClassName" = "consul-api-gateway"
+      "listeners" = [
+        {
+          "allowedRoutes" = {
+            "namespaces" = {
+              "from" = "Same"
+            }
+          }
+          "name"     = "https"
+          "port"     = 443
+          "protocol" = "HTTPS"
+          "tls" = {
+            "certificateRefs" = [
+              {
+                "name" = local.consul_api_gateway_kubernetes_secret_name
+              },
+            ]
+          }
+        },
+      ]
+    }
+  }
+}
