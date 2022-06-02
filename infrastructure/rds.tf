@@ -42,7 +42,7 @@ resource "random_password" "database" {
   min_numeric      = 2
   min_special      = 2
   special          = true
-  override_special = "`~!@#$%^&*()_-+={}[]<>,.?':"
+  override_special = "`~!#$%^&*?"
 }
 
 resource "aws_db_instance" "products" {
