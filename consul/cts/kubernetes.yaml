@@ -1,0 +1,117 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: consul-terraform-sync
+  labels:
+    app: consul-terraform-sync
+spec:
+  type: ClusterIP
+  ports:
+    - port: 8558
+      targetPort: 8558
+  selector:
+    app: consul-terraform-sync
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: consul-terraform-sync
+automountServiceAccountToken: true
+---
+apiVersion: consul.hashicorp.com/v1alpha1
+kind: ServiceDefaults
+metadata:
+  name: consul-terraform-sync
+spec:
+  protocol: "http"
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: consul-terraform-sync
+data:
+  config.hcl: |
+    log_level   = "INFO"
+    working_dir = "sync-tasks"
+    port        = 8558
+
+    syslog {}
+
+    buffer_period {
+      enabled = true
+      min     = "5s"
+      max     = "20s"
+    }
+
+    consul {
+      address = "https://a445f6fa7837a40e7813fa9aa0e53057-650476096.us-west-2.elb.amazonaws.com"
+      tls {
+        enabled = true
+        verify  = false
+      }
+    }
+
+    driver "terraform" {
+      log         = false
+      persist_log = false
+
+      backend "local" {}
+    }
+
+    task {
+      name        = "products-database"
+      description = "Task to create database secrets engine for product PostgreSQL database"
+      module      = "github.com/joatmon08/terraform-vault-postgres-nia"
+
+      variable_files = ["/vault/secrets/terraform.tfvars"]
+
+      condition "services" {
+        names      = ["database"]
+        datacenter = "dc1"
+      }
+    }
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: consul-terraform-sync
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      service: consul-terraform-sync
+      app: consul-terraform-sync
+  template:
+    metadata:
+      labels:
+        service: consul-terraform-sync
+        app: consul-terraform-sync
+      annotations:
+        consul.hashicorp.com/connect-inject: "true"
+        consul.hashicorp.com/transparent-proxy: "false"
+        vault.hashicorp.com/agent-inject: "true"
+        vault.hashicorp.com/role: "consul-terraform-sync"
+        vault.hashicorp.com/namespace: "admin"
+        vault.hashicorp.com/agent-inject-secret-terraform.tfvars: "static/admin/products/data/postgres"
+        vault.hashicorp.com/agent-inject-template-terraform.tfvars: |
+          name                             = "product"
+          {{ with secret "static/admin/products/data/postgres" -}}
+          postgres_username                = "{{ .Data.data.username }}"
+          postgres_password                = "{{ .Data.data.password }}"
+          {{- end }}
+          postgres_database_name           = "products"
+          vault_kubernetes_auth_path       = "kubernetes"
+          bound_service_account_names      = ["product"]
+          bound_service_account_namespaces = ["default"]
+          allowed_roles                    = ["product"]
+    spec:
+      serviceAccountName: consul-terraform-sync
+      containers:
+        - name: consul-terraform-sync
+          image: hashicorp/consul-terraform-sync:0.6.0
+          ports:
+            - containerPort: 8558
+          env:
+            - name: NEXT_PUBLIC_PUBLIC_API_URL
+              value: "/"
