@@ -149,7 +149,7 @@ resource "kubernetes_manifest" "api_gateway" {
             }
           }
           "name"     = "https"
-          "port"     = 443
+          "port"     = 8443
           "protocol" = "HTTPS"
           "tls" = {
             "certificateRefs" = [
