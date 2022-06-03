@@ -151,6 +151,7 @@ resource "kubernetes_manifest" "api_gateway" {
           "name"     = "https"
           "port"     = 8443
           "protocol" = "HTTPS"
+          "hostname" = "gateway.${local.certificate_allowed_domain}"
           "tls" = {
             "certificateRefs" = [
               {
