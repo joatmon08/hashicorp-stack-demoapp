@@ -6,7 +6,12 @@ spec:
   parentRefs:
   - name: api-gateway
   rules:
-  - backendRefs:
+  - matches:
+    - path:
+        type: PathPrefix
+        value: /
+    backendRefs:
     - kind: Service
       name: nginx
+      namespace: default
       port: 80
