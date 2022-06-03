@@ -29,7 +29,13 @@ configure-db: boundary-appdev-auth
 	bash database/configure.sh
 
 configure-application:
-	kubectl apply -f application/
+	kubectl apply -f application/intentions.yaml
+	kubectl apply -f application/product-api.yaml
+	kubectl apply -f application/payments.yaml
+	kubectl apply -f application/public-api.yaml
+	kubectl apply -f application/frontend.yaml
+	kubectl apply -f application/nginx.yaml
+	kubectl apply -f application/route.yaml
 
 boundary-operations-auth:
 	@boundary authenticate password -login-name=ops \

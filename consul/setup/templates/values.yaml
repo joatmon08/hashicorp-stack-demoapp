@@ -53,6 +53,7 @@ terminatingGateways:
 
 apiGateway:
   enabled: true
+  logLevel: debug
   image: "hashicorp/consul-api-gateway:0.2.1"
   managedGatewayClass:
     serviceType: LoadBalancer

@@ -1,17 +1,12 @@
----
 apiVersion: gateway.networking.k8s.io/v1alpha2
 kind: HTTPRoute
 metadata:
-  name: nginx
+  name: hashicups
 spec:
   parentRefs:
   - name: api-gateway
   rules:
-  - matches:
-    - path:
-        type: PathPrefix
-        value: /
-    backendRefs:
+  - backendRefs:
     - kind: Service
       name: nginx
       port: 80
