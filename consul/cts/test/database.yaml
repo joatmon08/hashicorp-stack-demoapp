@@ -65,3 +65,14 @@ spec:
       volumes:
         - name: pgdata
           emptyDir: {}
+---
+apiVersion: consul.hashicorp.com/v1alpha1
+kind: ServiceIntentions
+metadata:
+  name: database
+spec:
+  destination:
+    name: database
+  sources:
+    - name: product
+      action: allow

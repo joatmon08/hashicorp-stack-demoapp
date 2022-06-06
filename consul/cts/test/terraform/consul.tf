@@ -12,7 +12,7 @@ resource "consul_acl_policy" "cts" {
     node_prefix "" {
       policy = "read"
     }
-    RULE
+  RULE
 }
 
 resource "consul_acl_token" "cts" {
@@ -25,16 +25,13 @@ data "consul_acl_token_secret_id" "cts" {
   accessor_id = consul_acl_token.cts.id
 }
 
-## Set up CTS required secrets in Kubernetes ConfigMap
-resource "kubernetes_secret" "cts" {
-  metadata {
-    name = "consul-terraform-sync"
-  }
+resource "vault_generic_secret" "consul_terraform_sync" {
+  path = "${vault_mount.static.path}/consul-terraform-sync"
 
-  data = {
-    vault_addr   = "http://vault:8200"
-    consul_token = data.consul_acl_token_secret_id.cts.secret_id
-  }
-
-  type = "Opaque"
+  data_json = <<EOT
+{
+  "token": "${data.consul_acl_token_secret_id.cts.secret_id}",
+  "vault_addr": "${local.vault_addr}"
+}
+EOT
 }

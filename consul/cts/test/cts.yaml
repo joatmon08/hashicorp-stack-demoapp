@@ -102,7 +102,8 @@ data:
     task {
       name        = "products-database"
       description = "Task to create database secrets engine for product PostgreSQL database"
-      module      = "/consul-terraform-sync/module"
+      module      = "joatmon08/postgres-nia/vault"
+      version     = "0.0.1"
       providers   = ["vault"]
 
       variable_files = ["/vault/secrets/terraform.tfvars"]
@@ -144,48 +145,26 @@ spec:
           bound_service_account_names      = ["product"]
           bound_service_account_namespaces = ["default"]
           allowed_roles                    = ["product"]
+        vault.hashicorp.com/agent-inject-secret-auth: "static/admin/products/data/consul-terraform-sync"
+        vault.hashicorp.com/agent-inject-template-auth: |
+          {{ with secret "static/admin/products/data/consul-terraform-sync" -}}
+          export VAULT_ADDR="{{ .Data.data.vault_addr }}"
+          export CONSUL_HTTP_TOKEN="{{ .Data.data.token }}"
+          {{- end }}
     spec:
       serviceAccountName: consul-terraform-sync
-      initContainers:
-      - name: git-clone
-        image: alpine/git
-        args:
-            - clone
-            - --single-branch
-            - --
-            - https://github.com/joatmon08/terraform-vault-postgres-nia.git
-            - /consul-terraform-sync/module
-        volumeMounts:
-        - mountPath: /consul-terraform-sync/module
-          name: module
       containers:
         - name: consul-terraform-sync
           image: hashicorp/consul-terraform-sync:0.6.0
           ports:
             - containerPort: 8558
           command: ["/bin/sh"]
-          args: ["-c", "export VAULT_TOKEN=$(cat /vault/secrets/token) && /bin/docker-entrypoint.sh /bin/consul-terraform-sync"]
-          env:
-            - name: VAULT_ADDR
-              valueFrom:
-                secretKeyRef:
-                  name: consul-terraform-sync
-                  key: vault_addr
-            - name: CONSUL_HTTP_TOKEN
-              valueFrom:
-                secretKeyRef:
-                  name: consul-terraform-sync
-                  key: consul_token
+          args: ["-c", "source /vault/secrets/auth && export VAULT_TOKEN=$(cat /vault/secrets/token) && /bin/docker-entrypoint.sh /bin/consul-terraform-sync"]
           volumeMounts:
             - name: config
               mountPath: "/consul-terraform-sync/config"
-              readOnly: true
-            - name: module
-              mountPath: "/consul-terraform-sync/module"
               readOnly: true
       volumes:
         - name: config
           configMap:
             name: consul-terraform-sync
-        - name: module
-          emptyDir: {}

@@ -7,6 +7,12 @@ data "vault_policy_document" "cts" {
   }
 
   rule {
+    path         = "${vault_mount.static.path}/data/consul-terraform-sync"
+    capabilities = ["read"]
+    description  = "Allow CTS to access Consul token and Vault address"
+  }
+
+  rule {
     path         = "auth/token/create"
     capabilities = ["update"]
     description  = "Allow CTS to create child token for additional configuration"
