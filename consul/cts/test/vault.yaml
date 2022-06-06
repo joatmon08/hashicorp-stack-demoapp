@@ -1,0 +1,13 @@
+global:
+  name: vault
+
+server:
+  dev:
+    enabled: true
+    devRootToken: test
+
+ui:
+  enabled: true
+
+csi:
+  enabled: false

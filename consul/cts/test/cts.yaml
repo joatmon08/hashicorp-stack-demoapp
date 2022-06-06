@@ -1,0 +1,191 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: consul-terraform-sync
+  labels:
+    app: consul-terraform-sync
+spec:
+  type: ClusterIP
+  ports:
+    - port: 8558
+      targetPort: 8558
+  selector:
+    app: consul-terraform-sync
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: consul-terraform-sync
+automountServiceAccountToken: true
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: secrets-writer
+rules:
+- apiGroups: [""]
+  resources: ["secrets"]
+  verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+- apiGroups: ["coordination.k8s.io"]
+  resources: ["leases"]
+  verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: consul-terraform-sync
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: secrets-writer
+subjects:
+- kind: ServiceAccount
+  name: consul-terraform-sync
+---
+apiVersion: consul.hashicorp.com/v1alpha1
+kind: ServiceDefaults
+metadata:
+  name: consul-terraform-sync
+spec:
+  protocol: "http"
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: consul-terraform-sync
+data:
+  config.hcl: |
+    log_level   = "INFO"
+    working_dir = "sync-tasks"
+    port        = 8558
+
+    syslog {}
+
+    buffer_period {
+      enabled = true
+      min     = "5s"
+      max     = "20s"
+    }
+
+    consul {
+      address = "https://consul-server:8501"
+
+      tls {
+        enabled = true
+        verify  = false
+      }
+
+      service_registration {
+        enabled = true
+        address = "127.0.0.1"
+        service_name = "Consul-Terraform-Sync"
+        default_check {
+          enabled = true
+          address = "http://consul-terraform-sync:8558"
+        }
+      }
+    }
+
+    driver "terraform" {
+      log         = false
+      persist_log = false
+
+      backend "kubernetes" {
+        secret_suffix     = "state"
+        in_cluster_config = true
+      }
+    }
+
+    terraform_provider "vault" {}
+
+    task {
+      name        = "products-database"
+      description = "Task to create database secrets engine for product PostgreSQL database"
+      module      = "/consul-terraform-sync/module"
+      providers   = ["vault"]
+
+      variable_files = ["/vault/secrets/terraform.tfvars"]
+
+      condition "services" {
+        names      = ["database"]
+        datacenter = "dc1"
+      }
+    }
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: consul-terraform-sync
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      service: consul-terraform-sync
+      app: consul-terraform-sync
+  template:
+    metadata:
+      labels:
+        service: consul-terraform-sync
+        app: consul-terraform-sync
+      annotations:
+        vault.hashicorp.com/agent-inject: "true"
+        vault.hashicorp.com/role: "consul-terraform-sync"
+        vault.hashicorp.com/agent-inject-token: "true"
+        vault.hashicorp.com/agent-inject-secret-terraform.tfvars: "static/admin/products/data/postgres"
+        vault.hashicorp.com/agent-inject-template-terraform.tfvars: |
+          name                             = "product"
+          {{ with secret "static/admin/products/data/postgres" -}}
+          postgres_username                = "{{ .Data.data.username }}"
+          postgres_password                = "{{ .Data.data.password }}"
+          {{- end }}
+          postgres_database_name           = "products"
+          vault_kubernetes_auth_path       = "kubernetes"
+          bound_service_account_names      = ["product"]
+          bound_service_account_namespaces = ["default"]
+          allowed_roles                    = ["product"]
+    spec:
+      serviceAccountName: consul-terraform-sync
+      initContainers:
+      - name: git-clone
+        image: alpine/git
+        args:
+            - clone
+            - --single-branch
+            - --
+            - https://github.com/joatmon08/terraform-vault-postgres-nia.git
+            - /consul-terraform-sync/module
+        volumeMounts:
+        - mountPath: /consul-terraform-sync/module
+          name: module
+      containers:
+        - name: consul-terraform-sync
+          image: hashicorp/consul-terraform-sync:0.6.0
+          ports:
+            - containerPort: 8558
+          command: ["/bin/sh"]
+          args: ["-c", "export VAULT_TOKEN=$(cat /vault/secrets/token) && /bin/docker-entrypoint.sh /bin/consul-terraform-sync"]
+          env:
+            - name: VAULT_ADDR
+              valueFrom:
+                secretKeyRef:
+                  name: consul-terraform-sync
+                  key: vault_addr
+            - name: CONSUL_HTTP_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: consul-terraform-sync
+                  key: consul_token
+          volumeMounts:
+            - name: config
+              mountPath: "/consul-terraform-sync/config"
+              readOnly: true
+            - name: module
+              mountPath: "/consul-terraform-sync/module"
+              readOnly: true
+      volumes:
+        - name: config
+          configMap:
+            name: consul-terraform-sync
+        - name: module
+          emptyDir: {}
