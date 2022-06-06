@@ -47,12 +47,12 @@ spec:
         vault.hashicorp.com/agent-inject: "true"
         vault.hashicorp.com/role: "product"
         vault.hashicorp.com/namespace: "admin"
-        vault.hashicorp.com/agent-inject-secret-conf.json: "database/creds/product"
+        vault.hashicorp.com/agent-inject-secret-conf.json: "database/product/creds/product"
         vault.hashicorp.com/agent-inject-template-conf.json: |
           {
             "bind_address": ":9090",
             "metrics_address": ":9103",
-            {{ with secret "database/creds/product" -}}
+            {{ with secret "database/product/creds/product" -}}
             "db_connection": "host=127.0.0.1 port=5432 user={{ .Data.username }} password={{ .Data.password }} dbname=products sslmode=disable"
             {{- end }}
           }
