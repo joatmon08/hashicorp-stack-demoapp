@@ -16,6 +16,11 @@ terraform {
       source  = "hashicorp/aws"
       version = "~> 4.14"
     }
+
+    vault = {
+      source  = "hashicorp/vault"
+      version = "~> 3.6"
+    }
   }
 }
 
@@ -41,8 +46,14 @@ provider "kubernetes" {
 }
 
 provider "consul" {
-  address        = data.terraform_remote_state.consul.outputs.consul_address
-  scheme         = "https"
-  token          = data.terraform_remote_state.consul.outputs.consul_token
-  insecure_https = true
+  address        = local.consul_addr
+  scheme         = local.consul_scheme
+  token          = local.consul_token
+  insecure_https = local.consul_skip_tls_verify
+}
+
+provider "vault" {
+  address   = local.vault_public_addr
+  token     = local.vault_token
+  namespace = local.vault_namespace
 }
