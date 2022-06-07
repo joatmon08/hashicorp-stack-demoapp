@@ -30,13 +30,13 @@ resource "kubernetes_manifest" "consul_api_gateway_secret_provider" {
         secretPath: "consul/gateway/pki_int/issue/${kubernetes_service_account.consul_api_gateway.metadata.0.name}"
         secretKey: "certificate"
         secretArgs:
-          common_name: "gateway.${local.certificate_allowed_domain}"
+          uri_sans: "spiffe://hostname/nginx"
       - objectName: "consul-api-gateway-ca-key"
         method: "POST"
         secretPath: "consul/gateway/pki_int/issue/${kubernetes_service_account.consul_api_gateway.metadata.0.name}"
         secretKey: "private_key"
         secretArgs:
-          common_name: "gateway.${local.certificate_allowed_domain}"
+          uri_sans: "spiffe://hostname/nginx"
       EOT
         "roleName"       = kubernetes_service_account.consul_api_gateway.metadata.0.name
         "vaultAddress"   = local.vault_addr
@@ -127,45 +127,8 @@ resource "kubernetes_manifest" "csi_secrets_store_inline" {
   }
 }
 
-## Commenting out for now in favor of HTTP. Ran into
-## https://github.com/hashicorp/consul-api-gateway/issues/208.
-# resource "kubernetes_manifest" "api_gateway" {
-#   depends_on = [
-#     kubernetes_manifest.consul_api_gateway_secret_provider,
-#     kubernetes_manifest.csi_secrets_store_inline
-#   ]
-#   manifest = {
-#     "apiVersion" = "gateway.networking.k8s.io/v1alpha2"
-#     "kind"       = "Gateway"
-#     "metadata" = {
-#       "name"      = "api-gateway"
-#       "namespace" = var.namespace
-#     }
-#     "spec" = {
-#       "gatewayClassName" = "consul-api-gateway"
-#       "listeners" = [
-#         {
-#           "allowedRoutes" = {
-#             "namespaces" = {
-#               "from" = "Same"
-#             }
-#           }
-#           "name"     = "https"
-#           "port"     = 8443
-#           "protocol" = "HTTPS"
-#           "tls" = {
-#             "certificateRefs" = [
-#               {
-#                 "name" = local.consul_api_gateway_kubernetes_secret_name
-#               },
-#             ]
-#           }
-#         },
-#       ]
-#     }
-#   }
-# }
-
+# Commenting out for now in favor of HTTP. Ran into
+# https://github.com/hashicorp/consul-api-gateway/issues/208.
 resource "kubernetes_manifest" "api_gateway" {
   depends_on = [
     kubernetes_manifest.consul_api_gateway_secret_provider,
@@ -187,11 +150,48 @@ resource "kubernetes_manifest" "api_gateway" {
               "from" = "Same"
             }
           }
-          "name"     = "http"
-          "port"     = 80
-          "protocol" = "HTTP"
+          "name"     = "https"
+          "port"     = 8443
+          "protocol" = "HTTPS"
+          "tls" = {
+            "certificateRefs" = [
+              {
+                "name" = local.consul_api_gateway_kubernetes_secret_name
+              },
+            ]
+          }
         },
       ]
     }
   }
 }
+
+# resource "kubernetes_manifest" "api_gateway" {
+#   depends_on = [
+#     kubernetes_manifest.consul_api_gateway_secret_provider,
+#     kubernetes_manifest.csi_secrets_store_inline
+#   ]
+#   manifest = {
+#     "apiVersion" = "gateway.networking.k8s.io/v1alpha2"
+#     "kind"       = "Gateway"
+#     "metadata" = {
+#       "name"      = "api-gateway"
+#       "namespace" = var.namespace
+#     }
+#     "spec" = {
+#       "gatewayClassName" = "consul-api-gateway"
+#       "listeners" = [
+#         {
+#           "allowedRoutes" = {
+#             "namespaces" = {
+#               "from" = "Same"
+#             }
+#           }
+#           "name"     = "http"
+#           "port"     = 80
+#           "protocol" = "HTTP"
+#         },
+#       ]
+#     }
+#   }
+# }
