@@ -62,5 +62,7 @@ resource "vault_kubernetes_auth_backend_role" "consul_terraform_sync" {
   bound_service_account_names      = ["consul-terraform-sync"]
   bound_service_account_namespaces = ["default"]
   token_ttl                        = 3600
-  token_policies                   = [vault_policy.cts.name]
+  token_policies = [
+    vault_policy.cts.name
+  ]
 }

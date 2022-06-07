@@ -93,14 +93,13 @@ data "terraform_remote_state" "setup" {
 
 locals {
   hcp_vault_cluster_id       = var.hcp_vault_cluster_id == "" ? data.terraform_remote_state.infrastructure.outputs.hcp_vault_cluster : var.hcp_vault_cluster_id
+  hcp_vault_public_address   = data.terraform_remote_state.infrastructure.outputs.hcp_vault_public_address
+  hcp_vault_private_address  = data.terraform_remote_state.infrastructure.outputs.hcp_vault_private_address
+  hcp_vault_namespace        = data.terraform_remote_state.infrastructure.outputs.hcp_vault_namespace
   hcp_vault_cluster_token    = var.hcp_vault_cluster_token == "" ? data.terraform_remote_state.infrastructure.outputs.hcp_vault_token : var.hcp_vault_cluster_token
   vault_kubernetes_auth_path = data.terraform_remote_state.setup.outputs.vault_kubernetes_auth_path
   vault_database_static_path = data.terraform_remote_state.setup.outputs.database_static_path
   vault_database_secret_name = data.terraform_remote_state.setup.outputs.database_secret_name
-}
-
-data "hcp_vault_cluster" "cluster" {
-  cluster_id = local.hcp_vault_cluster_id
 }
 
 variable "hcp_vault_cluster_id" {

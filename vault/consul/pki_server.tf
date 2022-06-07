@@ -44,9 +44,9 @@ resource "vault_pki_secret_backend_role" "consul_server" {
 resource "vault_pki_secret_backend_config_urls" "consul_server" {
   backend = local.consul_pki_backend
   issuing_certificates = [
-    "${data.hcp_vault_cluster.cluster.vault_private_endpoint_url}/v1/${local.consul_pki_backend}/ca"
+    "${local.hcp_vault_private_address}/v1/${local.consul_pki_backend}/ca"
   ]
   crl_distribution_points = [
-    "${data.hcp_vault_cluster.cluster.vault_private_endpoint_url}/v1/${local.consul_pki_backend}/crl"
+    "${local.hcp_vault_private_address}/v1/${local.consul_pki_backend}/crl"
   ]
 }
