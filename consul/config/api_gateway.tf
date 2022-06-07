@@ -3,168 +3,168 @@ locals {
   consul_api_gateway_kubernetes_secret_name = "consul-api-gateway-cert"
 }
 
-resource "kubernetes_service_account" "consul_api_gateway" {
-  metadata {
-    name      = "consul-api-gateway"
-    namespace = var.namespace
-  }
-  automount_service_account_token = true
-}
+# resource "kubernetes_service_account" "consul_api_gateway" {
+#   metadata {
+#     name      = "consul-api-gateway"
+#     namespace = var.namespace
+#   }
+#   automount_service_account_token = true
+# }
 
-resource "kubernetes_manifest" "consul_api_gateway_secret_provider" {
-  depends_on = [
-    kubernetes_service_account.consul_api_gateway
-  ]
-  manifest = {
-    "apiVersion" = "secrets-store.csi.x-k8s.io/v1"
-    "kind"       = "SecretProviderClass"
-    "metadata" = {
-      "name"      = local.consul_api_gateway_secret_name
-      "namespace" = var.namespace
-    }
-    "spec" = {
-      "parameters" = {
-        "objects"        = <<-EOT
-      - objectName: "consul-api-gateway-ca-cert"
-        method: "POST"
-        secretPath: "consul/gateway/pki_int/issue/${kubernetes_service_account.consul_api_gateway.metadata.0.name}"
-        secretKey: "certificate"
-        secretArgs:
-          uri_sans: "spiffe://hostname/nginx"
-      - objectName: "consul-api-gateway-ca-key"
-        method: "POST"
-        secretPath: "consul/gateway/pki_int/issue/${kubernetes_service_account.consul_api_gateway.metadata.0.name}"
-        secretKey: "private_key"
-        secretArgs:
-          uri_sans: "spiffe://hostname/nginx"
-      EOT
-        "roleName"       = kubernetes_service_account.consul_api_gateway.metadata.0.name
-        "vaultAddress"   = local.vault_addr
-        "vaultNamespace" = "admin"
-      }
-      "provider" = "vault"
-      "secretObjects" = [
-        {
-          "data" = [
-            {
-              "key"        = "tls.crt"
-              "objectName" = "consul-api-gateway-ca-cert"
-            },
-            {
-              "key"        = "tls.key"
-              "objectName" = "consul-api-gateway-ca-key"
-            },
-          ]
-          "secretName" = local.consul_api_gateway_kubernetes_secret_name
-          "type"       = "kubernetes.io/tls"
-        },
-      ]
-    }
-  }
-}
+# resource "kubernetes_manifest" "consul_api_gateway_secret_provider" {
+#   depends_on = [
+#     kubernetes_service_account.consul_api_gateway
+#   ]
+#   manifest = {
+#     "apiVersion" = "secrets-store.csi.x-k8s.io/v1"
+#     "kind"       = "SecretProviderClass"
+#     "metadata" = {
+#       "name"      = local.consul_api_gateway_secret_name
+#       "namespace" = var.namespace
+#     }
+#     "spec" = {
+#       "parameters" = {
+#         "objects"        = <<-EOT
+#       - objectName: "consul-api-gateway-ca-cert"
+#         method: "POST"
+#         secretPath: "consul/gateway/pki_int/issue/${kubernetes_service_account.consul_api_gateway.metadata.0.name}"
+#         secretKey: "certificate"
+#         secretArgs:
+#           uri_sans: "spiffe://hostname/nginx"
+#       - objectName: "consul-api-gateway-ca-key"
+#         method: "POST"
+#         secretPath: "consul/gateway/pki_int/issue/${kubernetes_service_account.consul_api_gateway.metadata.0.name}"
+#         secretKey: "private_key"
+#         secretArgs:
+#           uri_sans: "spiffe://hostname/nginx"
+#       EOT
+#         "roleName"       = kubernetes_service_account.consul_api_gateway.metadata.0.name
+#         "vaultAddress"   = local.vault_addr
+#         "vaultNamespace" = "admin"
+#       }
+#       "provider" = "vault"
+#       "secretObjects" = [
+#         {
+#           "data" = [
+#             {
+#               "key"        = "tls.crt"
+#               "objectName" = "consul-api-gateway-ca-cert"
+#             },
+#             {
+#               "key"        = "tls.key"
+#               "objectName" = "consul-api-gateway-ca-key"
+#             },
+#           ]
+#           "secretName" = local.consul_api_gateway_kubernetes_secret_name
+#           "type"       = "kubernetes.io/tls"
+#         },
+#       ]
+#     }
+#   }
+# }
 
-resource "kubernetes_manifest" "csi_secrets_store_inline" {
-  depends_on = [
-    kubernetes_manifest.consul_api_gateway_secret_provider
-  ]
-  manifest = {
-    "apiVersion" = "apps/v1"
-    "kind"       = "Deployment"
-    "metadata" = {
-      "labels" = {
-        "app" = "secrets-store-inline"
-      }
-      "name"      = "secrets-store-inline"
-      "namespace" = var.namespace
-    }
-    "spec" = {
-      "replicas" = 1
-      "selector" = {
-        "matchLabels" = {
-          "app" = "secrets-store-inline"
-        }
-      }
-      "template" = {
-        "metadata" = {
-          "labels" = {
-            "app" = "secrets-store-inline"
-          }
-        }
-        "spec" = {
-          "containers" = [
-            {
-              "command" = [
-                "/bin/sleep",
-                "10000",
-              ]
-              "image" = "k8s.gcr.io/e2e-test-images/busybox:1.29"
-              "name"  = "busybox"
-              "volumeMounts" = [
-                {
-                  "mountPath" = "/mnt/secrets-store"
-                  "name"      = "secrets-store"
-                  "readOnly"  = true
-                },
-              ]
-            },
-          ]
-          "serviceAccountName" = kubernetes_service_account.consul_api_gateway.metadata.0.name
-          "volumes" = [
-            {
-              "csi" = {
-                "driver"   = "secrets-store.csi.k8s.io"
-                "readOnly" = true
-                "volumeAttributes" = {
-                  "secretProviderClass" = local.consul_api_gateway_secret_name
-                }
-              }
-              "name" = "secrets-store"
-            },
-          ]
-        }
-      }
-    }
-  }
-}
+# resource "kubernetes_manifest" "csi_secrets_store_inline" {
+#   depends_on = [
+#     kubernetes_manifest.consul_api_gateway_secret_provider
+#   ]
+#   manifest = {
+#     "apiVersion" = "apps/v1"
+#     "kind"       = "Deployment"
+#     "metadata" = {
+#       "labels" = {
+#         "app" = "secrets-store-inline"
+#       }
+#       "name"      = "secrets-store-inline"
+#       "namespace" = var.namespace
+#     }
+#     "spec" = {
+#       "replicas" = 1
+#       "selector" = {
+#         "matchLabels" = {
+#           "app" = "secrets-store-inline"
+#         }
+#       }
+#       "template" = {
+#         "metadata" = {
+#           "labels" = {
+#             "app" = "secrets-store-inline"
+#           }
+#         }
+#         "spec" = {
+#           "containers" = [
+#             {
+#               "command" = [
+#                 "/bin/sleep",
+#                 "10000",
+#               ]
+#               "image" = "k8s.gcr.io/e2e-test-images/busybox:1.29"
+#               "name"  = "busybox"
+#               "volumeMounts" = [
+#                 {
+#                   "mountPath" = "/mnt/secrets-store"
+#                   "name"      = "secrets-store"
+#                   "readOnly"  = true
+#                 },
+#               ]
+#             },
+#           ]
+#           "serviceAccountName" = kubernetes_service_account.consul_api_gateway.metadata.0.name
+#           "volumes" = [
+#             {
+#               "csi" = {
+#                 "driver"   = "secrets-store.csi.k8s.io"
+#                 "readOnly" = true
+#                 "volumeAttributes" = {
+#                   "secretProviderClass" = local.consul_api_gateway_secret_name
+#                 }
+#               }
+#               "name" = "secrets-store"
+#             },
+#           ]
+#         }
+#       }
+#     }
+#   }
+# }
 
-# Commenting out for now in favor of HTTP. Ran into
-# https://github.com/hashicorp/consul-api-gateway/issues/208.
-resource "kubernetes_manifest" "api_gateway" {
-  depends_on = [
-    kubernetes_manifest.consul_api_gateway_secret_provider,
-    kubernetes_manifest.csi_secrets_store_inline
-  ]
-  manifest = {
-    "apiVersion" = "gateway.networking.k8s.io/v1alpha2"
-    "kind"       = "Gateway"
-    "metadata" = {
-      "name"      = "api-gateway"
-      "namespace" = var.namespace
-    }
-    "spec" = {
-      "gatewayClassName" = "consul-api-gateway"
-      "listeners" = [
-        {
-          "allowedRoutes" = {
-            "namespaces" = {
-              "from" = "Same"
-            }
-          }
-          "name"     = "https"
-          "port"     = 8443
-          "protocol" = "HTTPS"
-          "tls" = {
-            "certificateRefs" = [
-              {
-                "name" = local.consul_api_gateway_kubernetes_secret_name
-              },
-            ]
-          }
-        },
-      ]
-    }
-  }
-}
+## Commenting out for now in favor of HTTP. Ran into
+## https://github.com/hashicorp/consul-api-gateway/issues/208.
+# resource "kubernetes_manifest" "api_gateway" {
+#   depends_on = [
+#     kubernetes_manifest.consul_api_gateway_secret_provider,
+#     kubernetes_manifest.csi_secrets_store_inline
+#   ]
+#   manifest = {
+#     "apiVersion" = "gateway.networking.k8s.io/v1alpha2"
+#     "kind"       = "Gateway"
+#     "metadata" = {
+#       "name"      = "api-gateway"
+#       "namespace" = var.namespace
+#     }
+#     "spec" = {
+#       "gatewayClassName" = "consul-api-gateway"
+#       "listeners" = [
+#         {
+#           "allowedRoutes" = {
+#             "namespaces" = {
+#               "from" = "Same"
+#             }
+#           }
+#           "name"     = "https"
+#           "port"     = 8443
+#           "protocol" = "HTTPS"
+#           "tls" = {
+#             "certificateRefs" = [
+#               {
+#                 "name" = local.consul_api_gateway_kubernetes_secret_name
+#               },
+#             ]
+#           }
+#         },
+#       ]
+#     }
+#   }
+# }
 
 # resource "kubernetes_manifest" "api_gateway" {
 #   depends_on = [
