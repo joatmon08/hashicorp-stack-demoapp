@@ -15,15 +15,14 @@ data "terraform_remote_state" "infrastructure" {
 }
 
 locals {
-  kubernetes_host         = var.kubernetes_host == "" ? data.aws_eks_cluster.cluster.endpoint : var.kubernetes_host
-  postgres_username       = data.terraform_remote_state.infrastructure.outputs.product_database_username
-  postgres_password       = data.terraform_remote_state.infrastructure.outputs.product_database_password
-  hcp_vault_cluster_id    = var.hcp_vault_cluster_id == "" ? data.terraform_remote_state.infrastructure.outputs.hcp_vault_cluster : var.hcp_vault_cluster_id
-  hcp_vault_cluster_token = var.hcp_vault_cluster_token == "" ? data.terraform_remote_state.infrastructure.outputs.hcp_vault_token : var.hcp_vault_cluster_token
-}
-
-data "hcp_vault_cluster" "cluster" {
-  cluster_id = local.hcp_vault_cluster_id
+  kubernetes_host           = var.kubernetes_host == "" ? data.aws_eks_cluster.cluster.endpoint : var.kubernetes_host
+  postgres_username         = data.terraform_remote_state.infrastructure.outputs.product_database_username
+  postgres_password         = data.terraform_remote_state.infrastructure.outputs.product_database_password
+  hcp_vault_cluster_id      = var.hcp_vault_cluster_id == "" ? data.terraform_remote_state.infrastructure.outputs.hcp_vault_cluster : var.hcp_vault_cluster_id
+  hcp_vault_public_address  = data.terraform_remote_state.infrastructure.outputs.hcp_vault_public_address
+  hcp_vault_private_address = data.terraform_remote_state.infrastructure.outputs.hcp_vault_private_address
+  hcp_vault_namespace       = data.terraform_remote_state.infrastructure.outputs.hcp_vault_namespace
+  hcp_vault_cluster_token   = var.hcp_vault_cluster_token == "" ? data.terraform_remote_state.infrastructure.outputs.hcp_vault_token : var.hcp_vault_cluster_token
 }
 
 variable "hcp_vault_cluster_id" {
@@ -38,7 +37,6 @@ variable "hcp_vault_cluster_token" {
   default     = ""
   sensitive   = true
 }
-
 
 variable "kubernetes_host" {
   type        = string

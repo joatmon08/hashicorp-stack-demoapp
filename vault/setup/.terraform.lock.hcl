@@ -2,48 +2,27 @@
 # Manual edits may be lost in future updates.
 
 provider "registry.terraform.io/hashicorp/aws" {
-  version     = "4.15.0"
+  version     = "4.17.1"
   constraints = "~> 4.14"
   hashes = [
-    "h1:naW0xGOUXq+OX+b8KLToVXvD8VA4FRWg2UP/cvTvRec=",
-    "zh:005a4b78becbcf5ead8c0bf0a3b7b3c17990f4d030951948088ff9f9867e192f",
-    "zh:21c2cf1de303d6bd83d11a11966ec2553ccfd27166a6bcec9f67a4d69af1e8aa",
-    "zh:22c43c99e8140654dd84a25183c5d5ba92a0b7524573bba11950d3dc59ac6846",
-    "zh:4da4fa8dd7689c84b712b743084ad5483fd0b20b97bf43eff8eede9dcffd3751",
-    "zh:532b297b3fa0c5dddc1603d755b27d7bf952eb639177b66c7ea5e5ca328a37cf",
-    "zh:6681db82e988ffd1880993494d191b98a1bf89ad6aa39727d838fd3720227bf8",
-    "zh:8adf567cc3b787e8400eeb5da0c3057123d67cf06055b76018947109596e2605",
-    "zh:8fbc009feed7b58a5bed6d36fe4fbcf093537cc406cd61b7a5ae452f292f6302",
-    "zh:912040f3a60da22622eabdd0c295c3bff1de98606ab559c4d9020196604a33b8",
+    "h1:Oso/TFSIASSroiCyJYKA4Dm7gPxKfcmoU4qXpkgSAm8=",
+    "zh:095c2ad4e42667b6e4c599f3fb7c1d0755b762983474fd3916e89867c30871a2",
+    "zh:0a987960f796289db7eac887d03dcde0311005cbf625499f4eea0a8882295aeb",
+    "zh:1fbe5f897afe3a9e5a41c2ecd1f312e79fb6745367a53f7bad11704aedb3b3e2",
+    "zh:52687f0753fa05a744bd37bb40bcba8ac5e0838cdcd227035b9ccb151635e5f9",
+    "zh:629835a96c682f4e168c12f6d3c0631409d8e6d28165a283d2fe232c4a8ba75a",
+    "zh:6fa6e6fbdc0b0377d750a7960768e22f71d8bd97d30e289b823a3923eb92fce7",
+    "zh:8dfef513861a7c779b34e2f3ea5692f5fb1fb51aa1ee9de78bc755f5652cb597",
     "zh:9b12af85486a96aedd8d7984b0ff811a4b42e3d88dad1a3fb4c0b580d04fa425",
-    "zh:d95b42e326574ec35dc44785fbe5a716ff4b0593c42e9e20fc4598d913082516",
-    "zh:f7e1733dc990524420d4ac027c581cf40e6c4751aaf7dd2c9da19dc473d741a5",
-  ]
-}
-
-provider "registry.terraform.io/hashicorp/hcp" {
-  version     = "0.29.0"
-  constraints = "~> 0.29"
-  hashes = [
-    "h1:Cdr3Xx5DPjFAnhri+MO+aF/Z/pJB7+7Q2k1moGx8rRM=",
-    "zh:0fa82a384b25a58b65523e0ea4768fa1212b1f5cfc0c9379d31162454fedcc9d",
-    "zh:51b4cb7d13f800ca87c94619ba636f0fe4d8debd4913fb738756c312c4a704fb",
-    "zh:6903aae93c687efa4cac54760199a8cb3d0fe95ef1f0bf7a21dc75e127bf6c39",
-    "zh:69096cfca77655f43f346c55787e0ee5d1e5965cc15db7ff7a2d84b6b14bde5d",
-    "zh:6d800d253e4a2a378fc2e02f2da1dd4cc86be9f9533203fde5d465f1e399e5ac",
-    "zh:74ca9986120ecf6fc84167d66d1f753feadb4ebfb8d50a306abcff8f99eaf205",
-    "zh:79f26cceae9ddc06fe5ed86a4dae9af34122dc8d0f69e03369eb651a0ffabf13",
-    "zh:7b9bbf1c93b6e9afdb0da9ace5e7b98505853c9d7f063eb9bee95d67e7994088",
-    "zh:ba8d67f673fcd920864679449f850a8a7d27414982dc85344850a18e6eefbf3a",
-    "zh:e0839b4de9851439198d2f4ec1bf23cac38b7c79d4cea7aa7f0338cfe7a53d62",
-    "zh:eaf2967a3a21bb2f3bf76bcf47361ff006d3a9736291821bac36a666a5b1e9aa",
-    "zh:fad34cd9ce02dbede8adb43671afb8c6cefb5407bffa7b9298f4b6959d09a54d",
+    "zh:baf507b37a667c773f46d9779277ab9de44a5432694ef95fe9ef03a6af70435f",
+    "zh:bd006bd8f1403f71be8f490e33ea1bcbdd8135678ebe3f1c3c0ebd82615d9b33",
+    "zh:dd0a61fb654837d186376b1dbccc8a93ed1e2f176e3663daac2d5bc9190c7895",
+    "zh:f8db068265495a48476a5ea68aa7148ceb046cbfaad308ef8e12d8fd6f463126",
   ]
 }
 
 provider "registry.terraform.io/hashicorp/helm" {
-  version     = "2.5.1"
-  constraints = "~> 2.5"
+  version = "2.5.1"
   hashes = [
     "h1:a9KwjqINdNy6IsEbkHUB1vwvYfy5OJ2VxFL9/NDFLoY=",
     "zh:140b9748f0ad193a20d69e59d672f3c4eda8a56cede56a92f931bd3af020e2e9",
@@ -62,8 +41,7 @@ provider "registry.terraform.io/hashicorp/helm" {
 }
 
 provider "registry.terraform.io/hashicorp/kubernetes" {
-  version     = "2.11.0"
-  constraints = "~> 2.11"
+  version = "2.11.0"
   hashes = [
     "h1:T65SZhN/tQgsAsHe/G5PCgpjofi+aTKPZ+nZg6WOJpc=",
     "zh:143a19dd0ea3b07fc5e3d9231f3c2d01f92894385c98a67327de74c76c715843",
@@ -82,8 +60,7 @@ provider "registry.terraform.io/hashicorp/kubernetes" {
 }
 
 provider "registry.terraform.io/hashicorp/vault" {
-  version     = "3.6.0"
-  constraints = "~> 3.6"
+  version = "3.6.0"
   hashes = [
     "h1:HECX5EGlh1HeIG8T7eRPfKYl4iG+bxvRRt6oer2oSKE=",
     "zh:0444c2c29f4a2d06f62676d388be7b4366234f5be926320fad6fba5636e51a74",

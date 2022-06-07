@@ -30,7 +30,7 @@ resource "helm_release" "vault" {
 
   set {
     name  = "injector.externalVaultAddr"
-    value = data.hcp_vault_cluster.cluster.vault_private_endpoint_url
+    value = local.hcp_vault_private_address
   }
 
   set {

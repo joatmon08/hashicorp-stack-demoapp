@@ -4,9 +4,12 @@ resource "vault_mount" "static" {
   description = "For static secrets"
 }
 
+locals {
+  database_secret_name = "postgres"
+}
 
 resource "vault_generic_secret" "postgres" {
-  path = "${vault_mount.static.path}/postgres"
+  path = "${vault_mount.static.path}/${local.database_secret_name}"
 
   data_json = <<EOT
 {
@@ -18,7 +21,7 @@ EOT
 
 data "vault_policy_document" "postgres" {
   rule {
-    path         = "${vault_mount.static.path}/data/postgres"
+    path         = "${vault_mount.static.path}/data/${local.database_secret_name}"
     capabilities = ["read"]
     description  = "Allow access to PostgreSQL database admin credentials"
   }
@@ -27,13 +30,4 @@ data "vault_policy_document" "postgres" {
 resource "vault_policy" "postgres" {
   name   = "products-db-admin"
   policy = data.vault_policy_document.postgres.hcl
-}
-
-resource "vault_kubernetes_auth_backend_role" "consul_terraform_sync" {
-  backend                          = vault_auth_backend.kubernetes.path
-  role_name                        = "consul-terraform-sync"
-  bound_service_account_names      = ["consul-terraform-sync"]
-  bound_service_account_namespaces = ["default"]
-  token_ttl                        = 3600
-  token_policies                   = [vault_policy.postgres.name]
 }

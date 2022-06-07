@@ -11,11 +11,6 @@ terraform {
       version = "~> 2.5"
     }
 
-    hcp = {
-      source  = "hashicorp/hcp"
-      version = "~> 0.29"
-    }
-
     aws = {
       source  = "hashicorp/aws"
       version = "~> 4.14"
@@ -55,9 +50,7 @@ provider "helm" {
 }
 
 provider "vault" {
-  address   = data.hcp_vault_cluster.cluster.vault_public_endpoint_url
+  address   = local.hcp_vault_public_address
   token     = local.hcp_vault_cluster_token
-  namespace = data.hcp_vault_cluster.cluster.namespace
+  namespace = local.hcp_vault_namespace
 }
-
-provider "hcp" {}
