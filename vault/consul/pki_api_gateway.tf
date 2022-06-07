@@ -6,7 +6,9 @@ resource "vault_pki_secret_backend_role" "consul_gateway" {
   backend          = local.consul_gateway_pki_backend
   name             = "consul-api-gateway"
   max_ttl          = 2592000
-  allowed_uri_sans = ["spiffe://hostname/*"]
+  allowed_domains  = ["svc"]
+  allow_subdomains = true
+  allowed_uri_sans = ["spiffe://cluster.local/*"]
   require_cn       = false
 }
 
