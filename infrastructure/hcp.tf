@@ -6,7 +6,7 @@ locals {
 
 module "hcp" {
   source                        = "joatmon08/hcp/aws"
-  version                       = "2.1.0"
+  version                       = "2.2.0"
   hvn_cidr_block                = var.hcp_cidr_block
   hvn_name                      = var.name
   hvn_region                    = local.hcp_region

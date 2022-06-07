@@ -43,6 +43,10 @@ output "hcp_vault_token" {
   sensitive = true
 }
 
+output "hcp_vault_namespace" {
+  value = module.hcp.hcp_vault_namespace
+}
+
 output "hcp_vault_private_address" {
   value = module.hcp.hcp_vault_private_endpoint
 }
