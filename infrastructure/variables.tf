@@ -1,28 +1,28 @@
 variable "name" {
-  description = "Name of the EKS cluster"
   type        = string
+  description = "Name of the EKS cluster"
 }
 
 variable "region" {
-  description = "AWS Region"
   type        = string
+  description = "AWS Region"
 }
 
 variable "hcp_region" {
-  description = "HCP Region"
   type        = string
   default     = ""
+  description = "HCP Region"
 }
 
 variable "key_pair_name" {
-  description = "SSH keypair name for Boundary and EKS nodes"
   type        = string
+  description = "SSH keypair name for Boundary and EKS nodes"
 }
 
 variable "vpc_cidr_block" {
-  description = "CIDR Block for VPC"
   type        = string
   default     = "10.0.0.0/16"
+  description = "CIDR Block for VPC"
 }
 
 variable "hcp_cidr_block" {
@@ -32,9 +32,9 @@ variable "hcp_cidr_block" {
 }
 
 variable "hcp_consul_datacenter" {
+  type        = string
   default     = ""
   description = "HCP Consul datacenter name"
-  type        = string
 }
 
 variable "hcp_consul_public_endpoint" {
@@ -55,8 +55,8 @@ variable "tags" {
 }
 
 variable "additional_tags" {
-  default     = {}
   type        = map(any)
+  default     = {}
   description = "Tags to add resources"
 }
 
