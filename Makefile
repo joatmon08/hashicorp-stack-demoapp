@@ -25,6 +25,9 @@ configure-api-gateway:
 configure-consul:
 	bash consul/config/configure.sh
 
+configure-cts:
+	kubectl apply -f consul/cts/kubernetes.yaml
+
 configure-db: boundary-appdev-auth
 	bash database/configure.sh
 
@@ -71,6 +74,9 @@ clean-application:
 clean-vault:
 	vault lease revoke -force -prefix database/creds
 
+clean-cts:
+	bash cts/clean.sh
+
 clean-consul:
 	kubectl patch gatewayclasses.gateway.networking.k8s.io consul-api-gateway --type merge --patch '{"metadata":{"finalizers":[]}}'
 	kubectl patch gatewayclassconfigs.api-gateway.consul.hashicorp.com consul-api-gateway --type merge --patch '{"metadata":{"finalizers":[]}}'
@@ -80,7 +86,7 @@ clean-kubernetes:
 
 clean-certs:
 	cd certs/terraform && terraform destroy -auto-approve -var="signed_cert=true"
-	rm -rf certs/root/ certs/intermediate/
+	rm -rf certs/connect/ certs/gateway/ certs/server/
 
 vault-commands:
 	vault list sys/leases/lookup/database/creds/product
