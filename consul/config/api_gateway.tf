@@ -11,6 +11,34 @@ resource "kubernetes_service_account" "consul_api_gateway" {
   automount_service_account_token = true
 }
 
+resource "kubernetes_manifest" "api_gateway_issuer" {
+  manifest = {
+    "apiVersion" = "cert-manager.io/v1"
+    "kind"       = "Issuer"
+    "metadata" = {
+      "name"      = "consul-api-gateway-issuer"
+      "namespace" = var.namespace
+    }
+    "spec" = {
+      "vault" = {
+        "auth" = {
+          "kubernetes" = {
+            "mountPath" = "/v1/auth/kubernetes"
+            "role"      = kubernetes_service_account.consul_api_gateway.metadata.0.name
+            "secretRef" = {
+              "key"  = "token"
+              "name" = kubernetes_service_account.consul_api_gateway.secret.0.name
+            }
+          }
+        }
+        "namespace" = "admin"
+        "path"      = "consul/gateway/pki_int/sign/${kubernetes_service_account.consul_api_gateway.metadata.0.name}"
+        "server"    = local.vault_addr
+      }
+    }
+  }
+}
+
 # resource "kubernetes_manifest" "consul_api_gateway_secret_provider" {
 #   depends_on = [
 #     kubernetes_service_account.consul_api_gateway
