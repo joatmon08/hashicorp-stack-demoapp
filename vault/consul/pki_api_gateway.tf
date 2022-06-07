@@ -3,14 +3,11 @@ locals {
 }
 
 resource "vault_pki_secret_backend_role" "consul_gateway" {
-  backend            = local.consul_gateway_pki_backend
-  name               = "consul-api-gateway"
-  max_ttl            = 2592000
-  allowed_domains    = [var.consul_api_gateway_allowed_domain]
-  allow_subdomains   = true
-  allow_bare_domains = true
-  allow_localhost    = true
-  generate_lease     = true
+  backend          = local.consul_gateway_pki_backend
+  name             = "consul-api-gateway"
+  max_ttl          = 2592000
+  allowed_uri_sans = ["spiffe://hostname/*"]
+  require_cn       = false
 }
 
 resource "vault_pki_secret_backend_config_urls" "consul_gateway" {
