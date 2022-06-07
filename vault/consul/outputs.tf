@@ -34,3 +34,11 @@ output "vault_addr" {
 output "vault_namespace" {
   value = data.hcp_vault_cluster.cluster.namespace
 }
+
+output "vault_database_static_path" {
+  value = local.vault_database_static_path
+}
+
+output "consul_terraform_sync_secret_name" {
+  value = local.consul_terraform_sync_secret_name
+}

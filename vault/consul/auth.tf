@@ -55,3 +55,12 @@ resource "vault_kubernetes_auth_backend_role" "server_acl_init" {
     vault_policy.consul_bootstrap.name
   ]
 }
+
+resource "vault_kubernetes_auth_backend_role" "consul_terraform_sync" {
+  backend                          = local.vault_kubernetes_auth_path
+  role_name                        = "consul-terraform-sync"
+  bound_service_account_names      = ["consul-terraform-sync"]
+  bound_service_account_namespaces = ["default"]
+  token_ttl                        = 3600
+  token_policies                   = [vault_policy.cts.name]
+}
