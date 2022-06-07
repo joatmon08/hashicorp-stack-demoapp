@@ -75,7 +75,7 @@ clean-vault:
 	vault lease revoke -force -prefix database/creds
 
 clean-cts:
-	bash cts/clean.sh
+	bash consul/cts/clean.sh
 
 clean-consul:
 	kubectl patch gatewayclasses.gateway.networking.k8s.io consul-api-gateway --type merge --patch '{"metadata":{"finalizers":[]}}'
@@ -83,6 +83,7 @@ clean-consul:
 
 clean-kubernetes:
 	kubectl delete --kustomize "github.com/hashicorp/consul-api-gateway/config/crd?ref=v0.2.1"
+	kubectl delete -f https://github.com/cert-manager/cert-manager/releases/download/v1.8.0/cert-manager.crds.yaml
 
 clean-certs:
 	cd certs/terraform && terraform destroy -auto-approve -var="signed_cert=true"

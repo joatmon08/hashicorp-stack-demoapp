@@ -1,4 +1,5 @@
 install:
+	minikube start --kubernetes-version 1.22.0
 	helm upgrade --install consul hashicorp/consul --values consul.yaml
 	helm upgrade --install vault hashicorp/vault --values vault.yaml
 	kubectl apply -f database.yaml
@@ -13,3 +14,4 @@ deploy:
 
 clean:
 	bash clean.sh
+	minikube delete
