@@ -27,7 +27,7 @@ resource "kubernetes_manifest" "api_gateway_issuer" {
             "role"      = kubernetes_service_account.consul_api_gateway.metadata.0.name
             "secretRef" = {
               "key"  = "token"
-              "name" = kubernetes_service_account.consul_api_gateway.secret.0.name
+              "name" = kubernetes_service_account.consul_api_gateway.default_secret_name
             }
           }
         }
