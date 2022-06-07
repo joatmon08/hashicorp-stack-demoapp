@@ -43,6 +43,12 @@ variable "consul_helm_version" {
   default     = "0.44.0"
 }
 
+variable "cert_manager_helm_version" {
+  type        = string
+  description = "cert-manager Helm chart version"
+  default     = "1.8.0"
+}
+
 variable "aws_eks_cluster_id" {
   type        = string
   description = "AWS EKS Cluster ID"
