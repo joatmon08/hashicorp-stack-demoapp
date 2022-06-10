@@ -18,6 +18,7 @@ resource "vault_pki_secret_backend_intermediate_cert_request" "consul_connect_pk
   country      = "US"
   locality     = "San Francisco"
   province     = "California"
+  uri_sans     = ["spiffe://${var.trusted_domain}"]
 }
 
 resource "local_file" "connect_csr" {
@@ -52,6 +53,7 @@ resource "vault_pki_secret_backend_intermediate_cert_request" "consul_connect_pk
   country      = "US"
   locality     = "San Francisco"
   province     = "California"
+  uri_sans     = ["spiffe://${var.trusted_domain}"]
 }
 
 resource "vault_pki_secret_backend_root_sign_intermediate" "consul_connect_pki_int" {

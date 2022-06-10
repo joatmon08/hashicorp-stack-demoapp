@@ -23,7 +23,7 @@ configure-api-gateway:
 	kubectl patch deployment consul-api-gateway-controller -p '{"spec": {"template":{"metadata":{"annotations":{"vault.hashicorp.com/namespace":"admin"}}}}}'
 
 configure-consul:
-	bash consul/config/configure.sh
+	bash certs/reconfigure.sh
 
 configure-cts:
 	kubectl apply -f consul/cts/kubernetes.yaml
@@ -72,7 +72,7 @@ clean-application:
 	kubectl delete -f application/
 
 clean-vault:
-	vault lease revoke -force -prefix database/creds
+	vault lease revoke -force -prefix database/product/creds
 
 clean-cts:
 	bash consul/cts/clean.sh
@@ -83,7 +83,6 @@ clean-consul:
 
 clean-kubernetes:
 	kubectl delete --kustomize "github.com/hashicorp/consul-api-gateway/config/crd?ref=v0.2.1"
-	kubectl delete -f https://github.com/cert-manager/cert-manager/releases/download/v1.8.0/cert-manager.crds.yaml
 
 clean-certs:
 	cd certs/terraform && terraform destroy -auto-approve -var="signed_cert=true"
