@@ -16,7 +16,7 @@ resource "kubernetes_manifest" "api_gateway_issuer" {
     "apiVersion" = "cert-manager.io/v1"
     "kind"       = "Issuer"
     "metadata" = {
-      "name"      = "consul-api-gateway-issuer"
+      "name"      = "consul-api-gateway"
       "namespace" = var.namespace
     }
     "spec" = {
@@ -38,6 +38,69 @@ resource "kubernetes_manifest" "api_gateway_issuer" {
     }
   }
 }
+
+resource "kubernetes_manifest" "api_gateway_certificate" {
+  depends_on = [
+    kubernetes_manifest.api_gateway_issuer
+  ]
+  manifest = {
+    "apiVersion" = "cert-manager.io/v1"
+    "kind"       = "Certificate"
+    "metadata" = {
+      "name"      = "consul-api-gateway"
+      "namespace" = var.namespace
+    }
+    "spec" = {
+      "dnsNames" = [
+        "gateway.${local.certificate_allowed_domain}"
+      ]
+      "issuerRef" = {
+        name = kubernetes_manifest.api_gateway_issuer.manifest.metadata.name
+      }
+      "secretName" = local.consul_api_gateway_kubernetes_secret_name
+    }
+  }
+}
+
+resource "kubernetes_manifest" "api_gateway" {
+  depends_on = [
+    kubernetes_manifest.api_gateway_issuer,
+    kubernetes_manifest.api_gateway_certificate
+  ]
+  manifest = {
+    "apiVersion" = "gateway.networking.k8s.io/v1alpha2"
+    "kind"       = "Gateway"
+    "metadata" = {
+      "name"      = "api-gateway"
+      "namespace" = var.namespace
+    }
+    "spec" = {
+      "gatewayClassName" = "consul-api-gateway"
+      "listeners" = [
+        {
+          "allowedRoutes" = {
+            "namespaces" = {
+              "from" = "Same"
+            }
+          }
+          "name"     = "https"
+          "port"     = 443
+          "protocol" = "HTTPS"
+          "tls" = {
+            "certificateRefs" = [
+              {
+                "name" = local.consul_api_gateway_kubernetes_secret_name
+              },
+            ]
+          }
+        },
+      ]
+    }
+  }
+}
+
+## Commenting out for now due to lack of support for direct Vault PKI.
+## https://github.com/hashicorp/consul-api-gateway/issues/208.
 
 # resource "kubernetes_manifest" "consul_api_gateway_secret_provider" {
 #   depends_on = [
