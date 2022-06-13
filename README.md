@@ -459,3 +459,12 @@ for the `infrastructure` workspace.
   with slight modifications.
 
 - The demo application comes from the [HashiCorp Demo Application](https://github.com/hashicorp-demoapp).
+
+## References
+
+- portal.cloud.hashicorp.com/sign-up
+- consul.io/docs/k8s/installation/vault
+- vaultproject.io/docs/secrets/pki
+- consul.io/docs/nia
+- vaultproject.io/docs/auth/kubernetes
+- consul.io/docs/security/acl/auth-methods/kubernetes
