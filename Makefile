@@ -25,19 +25,25 @@ configure-api-gateway:
 configure-consul:
 	bash certs/reconfigure.sh
 
-configure-cts:
-	kubectl apply -f consul/cts/kubernetes.yaml
+configure-terminating-gateway:
+	kubectl apply -f application/intentions.yaml
+	bash consul/config/configure.sh
 
 configure-db: boundary-appdev-auth
 	bash database/configure.sh
 
+configure-cts:
+	kubectl apply -f consul/cts/kubernetes.yaml
+
 configure-application:
-	kubectl apply -f application/intentions.yaml
 	kubectl apply -f application/product-api.yaml
+	kubectl rollout status deployment product
 	kubectl apply -f application/payments.yaml
 	kubectl apply -f application/public-api.yaml
 	kubectl apply -f application/frontend.yaml
 	kubectl apply -f application/nginx.yaml
+
+configure-route:
 	kubectl apply -f application/route.yaml
 
 boundary-operations-auth:
@@ -86,11 +92,13 @@ clean-kubernetes:
 
 clean-certs:
 	cd certs/terraform && terraform destroy -auto-approve -var="signed_cert=true"
-	rm -rf certs/connect/ certs/gateway/ certs/server/
+	rm -rf certs/connect/ certs/gateway/ certs/server/ certs/new_config.json
 
 vault-commands:
-	vault list sys/leases/lookup/database/creds/product
-	kubectl exec -it $(shell kubectl get pods -l="app=product" -o name) -- cat /vault/secrets/conf.json
+	vault read database/product/config/product
+
+consul-commands:
+	curl -k -H "X-Consul-Token:${CONSUL_HTTP_TOKEN}" ${CONSUL_HTTP_ADDR}/v1/connect/ca/roots | jq .
 
 db-commands:
 	psql -h 127.0.0.1 -p 62079 -U postgres -d products -f database-service/products.sql

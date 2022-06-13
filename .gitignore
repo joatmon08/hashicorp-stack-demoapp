@@ -13,6 +13,7 @@ database-service/terraform.auto.tfvars
 certs/connect
 certs/server
 certs/gateway
+certs/new_config.json
 
 consul/cts/sync-tasks
 consul/cts/terraform

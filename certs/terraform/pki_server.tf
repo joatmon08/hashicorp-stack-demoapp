@@ -36,7 +36,7 @@ resource "vault_mount" "consul_server_pki_int" {
   path                      = "consul/server/pki_int"
   type                      = "pki"
   description               = "PKI engine hosting intermediate Server CA2 v1 for Consul"
-  default_lease_ttl_seconds = local.seconds_in_1_hour
+  default_lease_ttl_seconds = local.seconds_in_30_minutes
   max_lease_ttl_seconds     = local.seconds_in_1_year
 }
 

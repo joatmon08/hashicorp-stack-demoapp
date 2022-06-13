@@ -5,9 +5,10 @@ variable "signed_cert" {
 }
 
 locals {
-  seconds_in_1_hour  = 3600
-  seconds_in_1_year  = 31536000
-  seconds_in_3_years = 94608000
+  seconds_in_30_minutes = 1800
+  seconds_in_1_hour     = 3600
+  seconds_in_1_year     = 31536000
+  seconds_in_3_years    = 94608000
 }
 
 variable "trusted_domain" {
