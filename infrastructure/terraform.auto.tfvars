@@ -1,7 +1,7 @@
-region                     = "us-west-2"
-hcp_region                 = "us-west-2"
-key_pair_name              = "rosemary-us-west-2"
-name                       = "lemur"
+region                     = "eu-west-1"
+hcp_region                 = "eu-west-1"
+key_pair_name              = "rosemary-eu-west-1"
+name                       = "lynx"
 hcp_consul_public_endpoint = true
 hcp_vault_public_endpoint  = true
 

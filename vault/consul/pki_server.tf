@@ -16,9 +16,9 @@ resource "vault_pki_secret_backend_root_cert" "consul" {
   ttl          = "31536000"
   ou           = "HashiConf Europe"
   organization = "HashiCorp"
-  country      = "US"
-  locality     = "San Francisco"
-  province     = "California"
+  country      = "NL"
+  locality     = "Amsterdam"
+  province     = "North Holland"
 }
 
 locals {

@@ -15,7 +15,7 @@ mkdir -p certs/server/intermediate
 openssl genrsa -des3 -out certs/server/root/ca.key 4096
 openssl req -new -x509 -days 3650 -key certs/server/root/ca.key \
     -out certs/server/root/ca.crt -config certs/openssl.cnf \
-    -subj "/C=US/ST=California/L=San Francisco/O=HashiCorp/OU=HashiConf Europe/CN=Consul Server Root CA"
+    -subj "/C=NL/ST=North Holland/L=Amsterdam/O=HashiCorp/OU=HashiConf Europe/CN=Consul Server Root CA"
 
 ## Generate offline root CA for Consul Connect
 
@@ -25,7 +25,7 @@ mkdir -p certs/connect/intermediate
 openssl genrsa -des3 -out certs/connect/root/ca.key 4096
 openssl req -new -x509 -days 3650 -key certs/connect/root/ca.key \
     -out certs/connect/root/ca.crt -config certs/openssl.cnf \
-    -subj "/C=US/ST=California/L=San Francisco/O=HashiCorp/OU=HashiConf Europe/CN=Consul Connect Root CA"
+    -subj "/C=NL/ST=North Holland/L=Amsterdam/O=HashiCorp/OU=HashiConf Europe/CN=Consul Connect Root CA"
 
 
 ## Generate offline root CA for Consul API Gateway
@@ -36,7 +36,7 @@ mkdir -p certs/gateway/intermediate
 openssl genrsa -des3 -out certs/gateway/root/ca.key 4096
 openssl req -new -x509 -days 3650 -key certs/gateway/root/ca.key \
     -out certs/gateway/root/ca.crt -config certs/openssl.cnf \
-    -subj "/C=US/ST=California/L=San Francisco/O=HashiCorp/OU=HashiConf Europe/CN=Consul API Gateway Root CA"
+    -subj "/C=NL/ST=North Holland/L=Amsterdam/O=HashiCorp/OU=HashiConf Europe/CN=Consul API Gateway Root CA"
 
 ## Set up PKI secrets engine and set the intermediate
 

@@ -15,9 +15,9 @@ resource "vault_pki_secret_backend_intermediate_cert_request" "consul_gateway_pk
   key_bits     = "4096"
   ou           = "HashiConf Europe"
   organization = "HashiCorp"
-  country      = "US"
-  locality     = "San Francisco"
-  province     = "California"
+  country      = "NL"
+  locality     = "Amsterdam"
+  province     = "North Holland"
 }
 
 resource "local_file" "csr_gateway" {
@@ -49,9 +49,9 @@ resource "vault_pki_secret_backend_intermediate_cert_request" "consul_gateway_pk
   key_bits     = "4096"
   ou           = "HashiConf Europe"
   organization = "HashiCorp"
-  country      = "US"
-  locality     = "San Francisco"
-  province     = "California"
+  country      = "NL"
+  locality     = "Amsterdam"
+  province     = "North Holland"
 }
 
 resource "vault_pki_secret_backend_root_sign_intermediate" "consul_gateway_pki_int" {
@@ -67,8 +67,8 @@ resource "vault_pki_secret_backend_root_sign_intermediate" "consul_gateway_pki_i
   ou                   = "HashiConf Europe"
   organization         = "HashiCorp"
   country              = "US"
-  locality             = "San Francisco"
-  province             = "California"
+  locality             = "Amsterdam"
+  province             = "North Holland"
   max_path_length      = 1
   ttl                  = local.seconds_in_1_year
 }

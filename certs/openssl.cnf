@@ -181,15 +181,15 @@ string_mask = nombstr
 
 [ req_distinguished_name ]
 countryName         = Country Name (2 letter code)
-countryName_default     = US
+countryName_default     = NL
 countryName_min         = 2
 countryName_max         = 2
 
 stateOrProvinceName     = State or Province Name (full name)
-stateOrProvinceName_default = California
+stateOrProvinceName_default = North Holland
 
 localityName            = Locality Name (eg, city)
-localityName_default        = San Francisco
+localityName_default        = Amsterdam
 
 0.organizationName      = Organization Name (eg, company)
 0.organizationName_default  = HashiCorp

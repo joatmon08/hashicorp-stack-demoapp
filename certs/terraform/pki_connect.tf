@@ -16,9 +16,9 @@ resource "vault_pki_secret_backend_intermediate_cert_request" "consul_connect_ro
   key_bits     = "4096"
   ou           = "HashiConf Europe"
   organization = "HashiCorp"
-  country      = "US"
-  locality     = "San Francisco"
-  province     = "California"
+  country      = "NL"
+  locality     = "Amsterdam"
+  province     = "North Holland"
   uri_sans     = ["spiffe://${var.trusted_domain}"]
 }
 
@@ -112,9 +112,9 @@ resource "vault_pki_secret_backend_intermediate_cert_request" "consul_connect_pk
   key_bits     = "4096"
   ou           = "HashiConf Europe"
   organization = "HashiCorp"
-  country      = "US"
-  locality     = "San Francisco"
-  province     = "California"
+  country      = "NL"
+  locality     = "Amsterdam"
+  province     = "North Holland"
   uri_sans     = ["spiffe://${var.trusted_domain}"]
 }
 
@@ -131,10 +131,10 @@ resource "vault_pki_secret_backend_root_sign_intermediate" "consul_connect_pki_i
   ou                   = "HashiConf Europe"
   organization         = "HashiCorp"
   country              = "US"
-  locality             = "San Francisco"
-  province             = "California"
-  uri_sans             = ["spiffe://${var.trusted_domain}"]
+  locality             = "Amsterdam"
+  province             = "North Holland"
   max_path_length      = 1
+  uri_sans             = ["spiffe://${var.trusted_domain}"]
   ttl                  = local.seconds_in_1_year
 }
 
