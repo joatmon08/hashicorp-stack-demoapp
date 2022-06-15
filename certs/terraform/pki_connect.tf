@@ -44,7 +44,7 @@ resource "vault_mount" "consul_connect_pki" {
   path                      = "consul/connect/pki"
   type                      = "pki"
   description               = "PKI engine hosting intermediate Connect CA2 v1 for Consul"
-  default_lease_ttl_seconds = local.seconds_in_30_minutes
+  default_lease_ttl_seconds = local.seconds_in_20_minutes
   max_lease_ttl_seconds     = local.seconds_in_1_year
 }
 
@@ -102,7 +102,7 @@ resource "vault_mount" "consul_connect_pki_int" {
   path                      = "consul/connect/pki_int"
   type                      = "pki"
   description               = "PKI engine hosting intermediate Connect CA3 v1 for Consul"
-  default_lease_ttl_seconds = local.seconds_in_30_minutes
+  default_lease_ttl_seconds = local.seconds_in_20_minutes
   max_lease_ttl_seconds     = local.seconds_in_1_year
 }
 
