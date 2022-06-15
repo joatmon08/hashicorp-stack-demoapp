@@ -63,8 +63,9 @@ Each folder contains a few different configurations.
 ### Versions
 
 - Terraform 1.2.2
-- HashiCorp Cloud Platform (HCP) Consul 1.12.0
-- HashiCorp Cloud Platform (HCP) Vault 1.10.0
+- Consul 1.12.0 (on Kubernetes)
+- HashiCorp Cloud Platform (HCP) Vault 1.10.3
+- HashiCorp Cloud Platform (HCP) Consul 1.11.6
 - Boundary 0.8.1
 
 ### Platforms
@@ -479,3 +480,5 @@ for the `infrastructure` workspace.
 - consul.io/docs/nia
 - vaultproject.io/docs/auth/kubernetes
 - consul.io/docs/security/acl/auth-methods/kubernetes
+- hashi.co/k8s-vault-consul
+- hashi.co/k8s-consul-api-gateway
