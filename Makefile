@@ -99,6 +99,8 @@ vault-commands:
 
 consul-commands:
 	curl -k -H "X-Consul-Token:${CONSUL_HTTP_TOKEN}" ${CONSUL_HTTP_ADDR}/v1/connect/ca/roots | jq .
+	curl -k -H "X-Consul-Token:${CONSUL_HTTP_TOKEN}" ${CONSUL_HTTP_ADDR}/v1/connect/ca/roots | jq -r '.Roots[0].RootCert' > tmp.crt
+	openssl x509 -noout -text -in tmp.crt
 
 db-commands:
 	psql -h 127.0.0.1 -p 62079 -U postgres -d products -f database-service/products.sql

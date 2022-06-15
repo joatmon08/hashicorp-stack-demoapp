@@ -441,14 +441,14 @@ Remove additional Consul resources.
 make clean-consul
 ```
 
-Renove API Gateway manifests.
+Go into Terraform Cloud and destroy resources
+for the `consul-setup` workspace.
+
+Remove API Gateway manifests.
 
 ```shell
 make clean-kubernetes
 ```
-
-Go into Terraform Cloud and destroy resources
-for the `consul-setup` workspace.
 
 Go into Terraform Cloud and destroy resources
 for the `vault-consul` workspace.
