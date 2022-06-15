@@ -27,7 +27,6 @@ openssl req -new -x509 -days 3650 -key certs/connect/root/ca.key \
     -out certs/connect/root/ca.crt -config certs/openssl.cnf \
     -subj "/C=NL/ST=North Holland/L=Amsterdam/O=HashiCorp/OU=HashiConf Europe/CN=Consul Connect Root CA"
 
-
 ## Generate offline root CA for Consul API Gateway
 
 mkdir -p certs/gateway/root

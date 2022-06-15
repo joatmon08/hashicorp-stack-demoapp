@@ -51,12 +51,15 @@ Each folder contains a few different configurations.
    - `vault/app/`: Set up secrets engines for applications.
       Archived in favor of `consul/cts/`.
 
-- Kubernetes
+- Other
 
    - `consul/cts/`: Deploys CTS to Kubernetes for setting up Vault database secrets
       based on database service's address
 
-   - `application/`: Deploys the HashiCorp Demo Application (AKA HashiCups)
+   - `application/`: Deploys the HashiCorp Demo Application (AKA HashiCups) to
+      Kubernetes
+
+   - `database/`: Configures HashiCorp Demo Application database
 
 ## Prerequisites
 

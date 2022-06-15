@@ -42,8 +42,6 @@ configure-application:
 	kubectl apply -f application/public-api.yaml
 	kubectl apply -f application/frontend.yaml
 	kubectl apply -f application/nginx.yaml
-
-configure-route:
 	kubectl apply -f application/route.yaml
 
 boundary-operations-auth:
