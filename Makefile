@@ -22,7 +22,7 @@ configure-kubernetes:
 configure-api-gateway:
 	kubectl patch deployment consul-api-gateway-controller -p '{"spec": {"template":{"metadata":{"annotations":{"vault.hashicorp.com/namespace":"admin"}}}}}'
 
-configure-consul:
+configure-certs-spiffe:
 	bash certs/reconfigure.sh
 
 configure-terminating-gateway:

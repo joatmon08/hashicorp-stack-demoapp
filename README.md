@@ -1,22 +1,29 @@
 # HashiCorp Demo Application with Boundary, Consul, & Vault on Kubernetes
 
-This is the HashiCorp demo application on Amazon EKS. It incorporates the following
-tools:
+This is a demo of using Boundary, Consul, and Vault to secure
+an application on Kubernetes.
 
-- Terraform 1.0.3
-- HashiCorp Cloud Platform (HCP) Consul 1.9.8
-- HashiCorp Cloud Platform (HCP) Vault 1.7.3
-- Boundary 0.6.0
+Boundary controls user access to databases and test endpoints.
+Consul secures service-to-service communication.
+Vault secures the Consul cluster and issues temporary credentials
+for an application to access a database
+
+* [Navigation](#navigation)
+* [Prerequisites](#prerequisites)
+* [Setup](#setup)
+* [Explore](#explore)
+* [Clean Up](#clean-up)
+* [Credits](#credits)
+* [Additional References](#additional-references)
 
 ![Architecture diagram with HashiCorp Cloud Platform Consul and Vault connecting to an AWS EKS cluster and Boundary](./assets/diagram.png)
 
+## Navigation
+
 Each folder contains a few different configurations.
 
-- Terraform Modules
-  - `boundary-deployment/`: This is a __local__ Terraform module because it includes
-    the Boundary binary and an SSH key. It is referenced by `infrastructure/`.
-
 - Terraform Configurations
+
   - `infrastructure/`: All the infrastructure to run the system.
      - VPC (3 private subnets, 3 public subnets)
      - Boundary cluster (controllers, workers, and AWS RDS PostgreSQL database)
@@ -25,30 +32,56 @@ Each folder contains a few different configurations.
      - HashiCorp Virtual Network (peered to VPC)
      - HCP Consul
      - HCP Vault
+
    - `boundary`: Configures Boundary with two projects, one for operations
       and the other for development teams.
+
    - `vault/setup/`: Deploy a Vault cluster via Helm chart and set up Kubernetes auth method
+
+   - `certs/`: Sets up offline root CA and signs intermediate CA in Vault for Consul-related
+      certificates.
+
    - `vault/consul/`: Set up Consul-related secrets engines.
-   - `consul/setup/`: Deploys a Consul cluster via Helm chart.
+
+   - `consul/setup/`: Deploys a Consul cluster via Helm chart. For demonstration
+      of Vault as a secrets backend, deploys Consul servers + clients.
+
    - `consul/config/`: Sets up external service to database.
+
    - `vault/app/`: Set up secrets engines for applications.
+      Archived in favor of `consul/cts/`.
 
 - Kubernetes
+
+   - `consul/cts/`: Deploys CTS to Kubernetes for setting up Vault database secrets
+      based on database service's address
+
    - `application/`: Deploys the HashiCorp Demo Application (AKA HashiCups)
 
 ## Prerequisites
 
-1. Terraform Cloud
-1. AWS Account
-   1. Create an AWS EC2 keypair.
-1. HashiCorp Cloud Platform account
-   1. You need access to HCP Consul and Vault.
-   1. Create a [service principal](https://portal.cloud.hashicorp.com/access/service-principals)
-      for the HCP Terraform provider.
-1. `jq` installed
-1. Fork this repository.
+### Versions
 
-## Deploy infrastructure.
+- Terraform 1.2.2
+- HashiCorp Cloud Platform (HCP) Consul 1.12.0
+- HashiCorp Cloud Platform (HCP) Vault 1.10.0
+- Boundary 0.8.1
+
+### Platforms
+
+- Terraform Cloud
+- AWS Account
+   - Create an AWS EC2 keypair.
+- HashiCorp Cloud Platform account
+   - You need access to HCP Consul and Vault.
+   - Create a [service principal](https://portal.cloud.hashicorp.com/access/service-principals)
+      for the HCP Terraform provider.
+- `jq` installed
+- Fork this repository.
+
+## Setup
+
+### Deploy infrastructure.
 
 > Note: When you run this, you might get the error `Provider produced inconsistent final plan`.
 > This is because we're using [`default_tags`](https://registry.terraform.io/providers/hashicorp/aws/latest/docs#default_tags).
@@ -82,7 +115,7 @@ the `infrastructure/terraform.auto.tfvars` file.
 
 Finally, start a new plan and apply it. It can take more than 15 minutes to provision!
 
-## Configure Boundary
+### Configure Boundary
 
 First, set up the Terraform workspace.
 
@@ -106,7 +139,6 @@ retrieves a set of variables using `terraform_remote_state` data source.
    - `AWS_SECRET_ACCESS_KEY` (sensitive): AWS secret access key
    - `AWS_SESSION_TOKEN` (sensitive): If applicable, the token for session
 
-
 Queue to plan and apply. This creates an organization with two scopes:
 - `core_infra`, which allows you to SSH into EKS nodes
 - `product_infra`, which allows you to access the PostgreSQL database
@@ -115,45 +147,7 @@ Only `product` users will be able to access `product_infra`.
 `operations` users will be able to access both `core_infra`
 and `product_infra`.
 
-To use Boundary, use your terminal in the top level of this repository.
-
-1. Set the `BOUNDARY_ADDR` environment variable to the Boundary endpoint.
-   ```shell
-   export BOUNDARY_ADDR=$(cd boundary && terraform output -raw boundary_endpoint)
-   ```
-
-1. Use the example command in top-level `Makefile` to SSH to the EKS nodes as the operations team.
-   ```shell
-   make ssh-operations
-   ```
-
-1. Go to the Boundary UI and examine the "Sessions". You should get an active session
-   in the Boundary list because you accessed the EKS node over SSH.
-   ![List of active sessions in Boundary UI, one session listed as active and another listed as terminated](./assets/boundary_sessions.png)
-
-## Add Coffee Data to Database
-
-To add data, you need to log into the PostgreSQL database. However, it's on a private
-network. You need to use Boundary to proxy to the database.
-
-1. Authenticate to Boundary as the operations team.
-   ```shell
-   make boundary-operations-auth
-   ```
-
-1. Run the following commands to log in and load data into the `products`
-   database.
-   ```shell
-   make configure-db
-   ```
-
-1. If you try to log in as a user of the `products` team, you can print
-   out the tables.
-   ```shell
-   make postgres-products
-   ```
-
-## Configure Vault (Kubernetes Auth Method)
+### Configure Vault (Kubernetes Auth Method)
 
 First, set up the Terraform workspace.
 
@@ -182,24 +176,35 @@ retrieves a set of variables using `terraform_remote_state` data source.
 Terraform will set up [Kubernetes authentication method](https://www.vaultproject.io/docs/auth/kubernetes)
 and deploy the [Vault Helm chart](https://github.com/hashicorp/vault-helm) to the cluster.
 
-## Configure Offline Root CA for Consul
+### Configure Offline Root CA for Consul
 
 As a best practice, store root CAs away from Vault. To demonstrate this, we generate
-a root CA offline. We use two separate root CAs:
+a root CA offline. We use three separate root CAs:
 
 - Cluster Root CA
-- Service Mesh Root CA for mTLS
+  - Level 1 Intermediate CA (server root)
+  - Level 2 Intermediate CA (server intermediate)
+
+- Service Mesh Root CA for mTLS: This requires three levels because
+  we will need to reconfigure the CA for the correct SPIFFE URI.
+  - Level 1 Intermediate CA
+  - Level 2 Intermediate CA (service mesh root)
+  - Level 3 Intermediate CA (service mesh intermediate)
+
+- API Gateway Root CA
+  - Level 1 Intermediate CA (gateway root)
+  - Level 2 Intermediate CA (gateway intermediate)
 
 > __NOTE:__ This is a local Terraform command in order to secure the offline root CA.
 
-Run the command to create a root CA as well as an intermediate CA, and store the intermediate
-CA in Vault.
+Run the command to create a root CA as well as the intermediate CAs, and
+store the intermediate CAs in Vault.
 
 ```shell
 make configure-certs
 ```
 
-## Configure Vault for Consul (PKI Secrets Engine)
+### Configure Vault for Consul (PKI Secrets Engine)
 
 First, set up the Terraform workspace.
 
@@ -225,9 +230,14 @@ retrieves a set of variables using `terraform_remote_state` data source.
 Terraform will set up the PKI secrets engine for TLS in the Consul cluster
 (not the service mesh).
 
-## Configure Consul
+### Configure Consul
 
-First, set up the Terraform workspace.
+Using kustomize, deploy the Gateway CRDs.
+```shell
+make configure-kubernetes
+```
+
+Then, set up the Terraform workspace.
 
 1. Create a new Terraform workspace.
 1. Choose "Version control workflow".
@@ -254,22 +264,35 @@ retrieves a set of variables using `terraform_remote_state` data source.
 1. Queue to plan and apply. This deploys Consul clients and a terminating gateway
    via the Consul Helm chart to the EKS cluster to join the HCP Consul servers.
 
-## Configure Consul External Services & API Gateway
-
-Deploy the Consul API Gateway specifications.
+The Helm chart will get stuck because of
+[this issue](https://github.com/hashicorp/consul-k8s/issues/1246).
+Patch the API gateway to resolve.
 
 ```shell
-make configure-kubernetes
+make configure-api-gateway
 ```
+
+### Reconfigure Certificates with Consul Cluster ID
+
+API Gateway requires a SPIFFE-compliant URI in the service mesh certificate.
+To bypass [this issue](https://github.com/hashicorp/consul-api-gateway/issues/208),
+you will need to reconfigure the root CA with a SPIFFE URI that contains
+the correct Consul cluster ID.
+
+```shell
+make configure-certs-spiffe
+```
+
+This forces a root certificate rotation for Consul service mesh.
+
+### Configure Consul External Services & API Gateway
 
 Update the [terminating gateway](https://www.consul.io/docs/k8s/connect/terminating-gateways#update-terminating-gateway-acl-token-if-acls-are-enabled)
 with a write policy to the database.
 
 ```shell
-make configure-consul
+make configure-terminating-gateway
 ```
-
-> __NOTE:__ To delete, you will need to run `make clean-consul` before destroying the infrastructure with Terraform.
 
 Then, set up the Terraform workspace.
 
@@ -279,7 +302,7 @@ Then, set up the Terraform workspace.
 1. Choose your fork of this repository.
 1. Name the workpsace `consul-config`.
 1. Select the "Advanced Options" dropdown.
-1. Use the working directory `consul/database`.
+1. Use the working directory `consul/config`.
 1. Select "Create workspace".
 
 Next, configure the workspace's variables. This Terraform configuration
@@ -293,53 +316,50 @@ retrieves a set of variables using `terraform_remote_state` data source.
    - `AWS_SECRET_ACCESS_KEY` (sensitive): AWS secret access key
    - `AWS_SESSION_TOKEN` (sensitive): If applicable, the token for session
 
-1. Queue to plan and apply. This registers the database as an
-   external service to Consul.
+1. Queue to plan and apply. This does a few things, including:
+   - registers the database as an external service to Consul
+   - deploys the Consul API Gateway
+   - sets up the application intentions.
 
-## Configure Consul for Database
+### Add Coffee Data to Database
 
-> __NOTE:__ This is a local Terraform command in order to secure the Consul bootstrap token.
+To add data, you need to log into the PostgreSQL database. However, it's on a private
+network. You need to use Boundary to proxy to the database.
 
-Run the command to attach policies to the terminating gateway role and deploy
-Kubernetes CR's for the terminating gateway.
+1. Set up all the variables you need in your environment variables.
+   ```shell
+   source set_terminal.sh
+   ```
 
+1. Run the following commands to log in and load data into the `products`
+   database.
+   ```shell
+   make configure-db
+   ```
+
+If you try to log in as a user of the `products` team, you can print
+out the tables.
 ```shell
-make configure-consul
+make postgres-products
 ```
 
-## Configure Vault for Applications
+### Configure Vault for Applications to Access Database
 
-First, set up the Terraform workspace.
+You can use
+[Consul-Terraform-Sync](https://learn.hashicorp.com/tutorials/consul/consul-terraform-sync-intro?in=consul/network-infrastructure-automation)
+to read the database
+address from Consul and automatically configure a database
+secrets engine in Vault using a Terraform module.
 
-1. Create a new Terraform workspace.
-1. Choose "Version control workflow".
-1. Connect to GitHub.
-1. Choose your fork of this repository.
-1. Name the workpsace `vault-app`.
-1. Select the "Advanced Options" dropdown.
-1. Use the working directory `vault/app`.
-1. Select "Create workspace".
+To do this, deploy CTS to Kubernetes.
 
-Next, configure the workspace's variables. This Terraform configuration
-retrieves a set of variables using `terraform_remote_state` data source.
+```shell
+make configure-cts
+```
 
-1. Variables should include:
-   - `tfc_organization`: your Terraform Cloud organization name
-   - `tfc_workspace`: `infrastructure`
-
-1. Environment Variables should include:
-   - `HCP_CLIENT_ID`: HCP service principal ID
-   - `HCP_CLIENT_SECRET` (sensitive): HCP service principal secret
-
-Terraform will set up [PostgreSQL database secrets engine](https://www.vaultproject.io/docs/secrets/databases/postgresql).
-
-> __NOTE:__ To delete, you will need to run `make clean-vault` before destroying the infrastructure with Terraform.
-
-## Deploy Example Application
+### Deploy Example Application
 
 To deploy the example application, run `make configure-application`.
-
-> __NOTE:__ To delete, you will need to run `make clean-application`.
 
 You can check if everything by checking the pods in Kubernetes.
 
@@ -363,42 +383,33 @@ kubectl port-forward svc/nginx 8080:80
 
 You'll get a UI where you can order your coffee.
 
-## Use Boundary to access the application UI
+### Set up a route to the frontend through the API Gateway
 
- Make sure you set your environment variables in your terminal.
+To set up a route on the API gateway, deploy
+an `HTTPRoute`.
 
 ```shell
-bash set_terminal.sh
+make configure-route
 ```
 
-Rather than port-forward the service with Kubernetes, you can authenticate to Boundary
-to access the application UI over its internal load balancer.
+## Explore
 
-1. Get the internal load balancer's DNS name. If you try to access the load balancer from your machine,
-   you won't be able to because it is an internal one!
+To use Boundary, use your terminal in the top level of this repository.
+
+1. Set the `BOUNDARY_ADDR` environment variable to the Boundary endpoint.
    ```shell
-   export FRONTEND_DNS=$(kubectl get svc frontend -o jsonpath="{.status.loadBalancer.ingress[*].hostname}")
+   source set_terminal.sh
    ```
 
-1. Define a variable for `products_frontend_address` in `boundary/terraform.auto.tfvars`.
+1. Use the example command in top-level `Makefile` to
+   SSH to the EKS nodes as the operations team.
    ```shell
-   products_frontend_address=<set to FRONTEND_DNS environment variable>
+   make ssh-operations
    ```
 
-1. Queue to plan and apply. This adds a target to the `products_infra` scope in Boundary.
-
-1. Use Boundary to proxy to the frontend UI's load balancer. Access the UI on the `Address` and `Port`
-   fields.
-   ```shell
-   $ make frontend-products
-
-   # omitted
-   Proxy listening information:
-   Address:             127.0.0.1
-   Port:                61169
-   ```
-
-You'll get a UI with a "Packer-Spiced Latte".
+1. Go to the Boundary UI and examine the "Sessions". You should get an active session
+   in the Boundary list because you accessed the EKS node over SSH.
+   ![List of active sessions in Boundary UI, one session listed as active and another listed as terminated](./assets/boundary_sessions.png)
 
 ## Clean Up
 
@@ -414,8 +425,11 @@ Revoke Vault credentials for applications.
 make clean-vault
 ```
 
-Go into Terraform Cloud and destroy resources
-for the `vault-app` workspace.
+Disable CTS task, remove resources, and delete CTS.
+
+```shell
+make clean-cts
+```
 
 Go into Terraform Cloud and destroy resources
 for the `consul-config` workspace.
@@ -455,12 +469,9 @@ for the `infrastructure` workspace.
 
 ## Credits
 
-- The module for Boundary is based on the [Boundary AWS Reference Architecture](https://github.com/hashicorp/boundary-reference-architecture/tree/main/deployment)
-  with slight modifications.
-
 - The demo application comes from the [HashiCorp Demo Application](https://github.com/hashicorp-demoapp).
 
-## References
+## Additional References
 
 - portal.cloud.hashicorp.com/sign-up
 - consul.io/docs/k8s/installation/vault
