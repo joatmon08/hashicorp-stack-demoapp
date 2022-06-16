@@ -413,7 +413,6 @@ To use Boundary, use your terminal in the top level of this repository.
 
 1. Go to the Boundary UI and examine the "Sessions". You should get an active session
    in the Boundary list because you accessed the EKS node over SSH.
-   ![List of active sessions in Boundary UI, one session listed as active and another listed as terminated](./assets/boundary_sessions.png)
 
 ## Clean Up
 
