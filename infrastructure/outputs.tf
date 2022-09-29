@@ -30,8 +30,17 @@ output "hcp_consul_private_address" {
   value = module.hcp.hcp_consul_private_endpoint
 }
 
+output "hcp_consul_datacenter" {
+  value = module.hcp.hcp_consul_datacenter
+}
+
 output "hcp_consul_public_address" {
   value = var.hcp_consul_public_endpoint ? trim(module.hcp.hcp_consul_public_endpoint, "/") : ""
+}
+
+output "hcp_consul_token" {
+  value     = hcp_consul_cluster_root_token.token.secret_id
+  sensitive = true
 }
 
 output "hcp_vault_cluster" {

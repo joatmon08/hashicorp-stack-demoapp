@@ -16,42 +16,62 @@ kubeconfig:
 configure-certs:
 	bash certs/ca_root.sh
 
-configure-kubernetes:
-	kubectl apply --kustomize "github.com/hashicorp/consul-api-gateway/config/crd?ref=v0.2.1"
-
-configure-api-gateway:
-	kubectl patch deployment consul-api-gateway-controller -p '{"spec": {"template":{"metadata":{"annotations":{"vault.hashicorp.com/namespace":"admin"}}}}}'
-
-configure-certs-spiffe:
+configure-hcp-certs:
 	bash certs/reconfigure.sh
 
+configure-kubernetes:
+	kubectl apply --kustomize "github.com/hashicorp/consul-api-gateway/config/crd?ref=v0.4.0"
+
 configure-terminating-gateway:
-	kubectl apply -f application/intentions.yaml
 	bash consul/config/configure.sh
 
 configure-db: boundary-appdev-auth
 	bash database/configure.sh
 
-configure-cts:
-	kubectl apply -f consul/cts/kubernetes.yaml
-
-configure-application:
-	kubectl apply -f application/product-api.yaml
+hashicups:
+	kubectl apply -f application/hashicups/intentions.yaml
+	kubectl apply -f application/hashicups/product-api.yaml
 	kubectl rollout status deployment product
-	kubectl apply -f application/payments.yaml
-	kubectl apply -f application/public-api.yaml
-	kubectl apply -f application/frontend.yaml
-	kubectl apply -f application/nginx.yaml
-	kubectl apply -f application/route.yaml
+	kubectl apply -f application/hashicups/payments.yaml
+	kubectl rollout status deployment payments
+	kubectl apply -f application/hashicups/public-api.yaml
+	kubectl rollout status deployment public
+	kubectl apply -f application/hashicups/frontend.yaml
+	kubectl rollout status deployment frontend
+	kubectl apply -f application/hashicups/nginx.yaml
+	kubectl rollout status deployment nginx
+	kubectl apply -f application/hashicups/route.yaml
+
+clean-hashicups:
+	kubectl delete -f application/hashicups/
+
+expense-report:
+	kubectl apply -f application/expense-report/intentions.yaml
+	kubectl apply -f application/expense-report/expense.yaml
+	kubectl rollout status deployment expense
+	kubectl apply -f application/expense-report/report.yaml
+	kubectl rollout status deployment report
+	kubectl apply -f application/expense-report/route.yaml
+	kubectl apply -f application/expense-report/reconciliation.yaml
+	kubectl rollout status deployment reconciliation
+
+clean-expense-report:
+	kubectl delete -f application/expense-report/
+
+clean-applications: clean-expense-report clean-hashicups
 
 boundary-operations-auth:
-	@boundary authenticate password -login-name=ops \
-		-password $(shell cd boundary && terraform output -raw boundary_operations_password) \
+	mkdir -p secrets
+	@echo $(shell cd boundary && terraform output -raw boundary_operations_password) > secrets/ops
+	boundary authenticate password -login-name=ops \
+		-password file://secrets/ops \
 		-auth-method-id=$(shell cd boundary && terraform output -raw boundary_auth_method_id)
 
 boundary-appdev-auth:
-	@boundary authenticate password -login-name=appdev \
-		-password $(shell cd boundary && terraform output -raw boundary_products_password) \
+	mkdir -p secrets
+	@echo $(shell cd boundary && terraform output -raw boundary_products_password) > secrets/appdev
+	boundary authenticate password -login-name=appdev \
+		-password file://secrets/appdev \
 		-auth-method-id=$(shell cd boundary && terraform output -raw boundary_auth_method_id)
 
 ssh-operations:

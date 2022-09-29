@@ -30,22 +30,31 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: public
+  labels:
+    app: public
+    tags.datadoghq.com/service: public
 spec:
   replicas: 1
   selector:
     matchLabels:
-      service: public
       app: public
   template:
     metadata:
       labels:
-        service: public
         app: public
+        tags.datadoghq.com/service: public
       annotations:
-        prometheus.io/scrape: "true"
-        prometheus.io/port: "9102"
+        admission.datadoghq.com/enabled: "true"
+        ad.datadoghq.com/envoy-sidecar.tags: '{"service": "envoy-proxy"}'
+        ad.datadoghq.com/envoy-sidecar.checks: |
+          {
+            "envoy": {
+              "instances": [{"openmetrics_endpoint": "http://%%host%%:20200/metrics"}]
+            }
+          }
         consul.hashicorp.com/connect-inject: "true"
         consul.hashicorp.com/connect-service-upstreams: "product:9090,payments:1800"
+        consul.hashicorp.com/transparent-proxy-exclude-outbound-ports: "8125,8126"
     spec:
       serviceAccountName: public
       containers:
@@ -55,6 +64,18 @@ spec:
           ports:
             - containerPort: 8080
           env:
+            - name: DD_SERVICE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.labels['tags.datadoghq.com/service']
+            - name: DD_AGENT_HOST
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.hostIP
+            - name: HOST_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.hostIP
             - name: BIND_ADDRESS
               value: ":8080"
             - name: PRODUCT_API_URI

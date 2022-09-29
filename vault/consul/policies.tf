@@ -84,3 +84,33 @@ path "/${var.vault_consul_connect_pki_int_backend}/*" {
 }
 EOT
 }
+
+resource "vault_policy" "connect_ca_hcp" {
+  name = "connect-ca-hcp"
+
+  policy = <<EOT
+path "/sys/mounts" {
+  capabilities = [ "read" ]
+}
+
+path "/sys/mounts/connect_root" {
+  capabilities = [ "create", "read", "update", "delete", "list" ]
+}
+
+path "/sys/mounts/connect_inter" {
+  capabilities = [ "create", "read", "update", "delete", "list" ]
+}
+
+path "/sys/mounts/connect_inter/tune" {
+  capabilities = [ "create", "read", "update", "delete", "list" ]
+}
+
+path "/connect_root/*" {
+  capabilities = [ "create", "read", "update", "delete", "list" ]
+}
+
+path "/connect_inter/*" {
+  capabilities = [ "create", "read", "update", "delete", "list" ]
+}
+EOT
+}

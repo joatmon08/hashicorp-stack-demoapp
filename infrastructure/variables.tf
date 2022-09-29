@@ -65,3 +65,14 @@ variable "client_cidr_block" {
   description = "Client CIDR block"
   sensitive   = true
 }
+
+variable "datadog_api_key" {
+  type        = string
+  description = "API Key for Datadog"
+  sensitive   = true
+}
+
+variable "datadog_region" {
+  type        = string
+  description = "Region for Datadog"
+}

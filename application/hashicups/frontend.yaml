@@ -30,21 +30,30 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: frontend
+  labels:
+    app: frontend
+    tags.datadoghq.com/service: frontend
 spec:
   replicas: 1
   selector:
     matchLabels:
-      service: frontend
       app: frontend
   template:
     metadata:
       labels:
-        service: frontend
         app: frontend
+        tags.datadoghq.com/service: frontend
       annotations:
-        prometheus.io/scrape: "true"
-        prometheus.io/port: "9102"
+        admission.datadoghq.com/enabled: "true"
+        ad.datadoghq.com/envoy-sidecar.tags: '{"service": "envoy-proxy"}'
+        ad.datadoghq.com/envoy-sidecar.checks: |
+          {
+            "envoy": {
+              "instances": [{"openmetrics_endpoint": "http://%%host%%:20200/metrics"}]
+            }
+          }
         consul.hashicorp.com/connect-inject: "true"
+        consul.hashicorp.com/transparent-proxy-exclude-outbound-ports: "8125,8126"
     spec:
       serviceAccountName: frontend
       containers:
@@ -54,5 +63,17 @@ spec:
           ports:
             - containerPort: 3000
           env:
+            - name: DD_SERVICE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.labels['tags.datadoghq.com/service']
+            - name: DD_AGENT_HOST
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.hostIP
+            - name: HOST_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.hostIP
             - name: NEXT_PUBLIC_PUBLIC_API_URL
               value: "/"

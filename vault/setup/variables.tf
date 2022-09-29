@@ -15,6 +15,9 @@ data "terraform_remote_state" "infrastructure" {
 }
 
 locals {
+  region           = var.region == "" ? data.terraform_remote_state.infrastructure.outputs.region : var.region
+  eks_cluster_name = var.aws_eks_cluster_id == "" ? data.terraform_remote_state.infrastructure.outputs.eks_cluster_id : var.aws_eks_cluster_id
+
   kubernetes_host           = var.kubernetes_host == "" ? data.aws_eks_cluster.cluster.endpoint : var.kubernetes_host
   postgres_username         = data.terraform_remote_state.infrastructure.outputs.product_database_username
   postgres_password         = data.terraform_remote_state.infrastructure.outputs.product_database_password
@@ -59,11 +62,11 @@ variable "region" {
 variable "vault_helm_version" {
   type        = string
   description = "Vault Helm chart version"
-  default     = "0.20.0"
+  default     = "0.22.0"
 }
 
 variable "csi_helm_version" {
   type        = string
   description = "Secrets Store CSI Driver Helm chart version"
-  default     = "1.1.2"
+  default     = "1.2.4"
 }

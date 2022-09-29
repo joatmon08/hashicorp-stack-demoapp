@@ -19,8 +19,6 @@ resource "vault_pki_secret_backend_intermediate_cert_request" "consul_connect_ro
   country      = "NL"
   locality     = "Amsterdam"
   province     = "North Holland"
-  // TODO: remove upon merge of https://github.com/hashicorp/consul-api-gateway/issues/208
-  uri_sans = ["spiffe://${var.trusted_domain}"]
 }
 
 resource "local_file" "connect_csr" {
@@ -60,8 +58,6 @@ resource "vault_pki_secret_backend_intermediate_cert_request" "consul_connect_pk
   country      = "US"
   locality     = "San Francisco"
   province     = "California"
-  // TODO: remove upon merge of https://github.com/hashicorp/consul-api-gateway/issues/208
-  uri_sans = ["spiffe://${var.trusted_domain}"]
 }
 
 resource "vault_pki_secret_backend_root_sign_intermediate" "consul_connect_pki" {
@@ -81,8 +77,6 @@ resource "vault_pki_secret_backend_root_sign_intermediate" "consul_connect_pki" 
   province             = "California"
   max_path_length      = 1
   ttl                  = local.seconds_in_1_year
-  // TODO: remove upon merge of https://github.com/hashicorp/consul-api-gateway/issues/208
-  uri_sans = ["spiffe://${var.trusted_domain}"]
 }
 
 resource "vault_pki_secret_backend_intermediate_set_signed" "consul_connect_pki" {
@@ -118,8 +112,6 @@ resource "vault_pki_secret_backend_intermediate_cert_request" "consul_connect_pk
   country      = "NL"
   locality     = "Amsterdam"
   province     = "North Holland"
-  // TODO: remove upon merge of https://github.com/hashicorp/consul-api-gateway/issues/208
-  uri_sans = ["spiffe://${var.trusted_domain}"]
 }
 
 resource "vault_pki_secret_backend_root_sign_intermediate" "consul_connect_pki_int" {
@@ -139,8 +131,6 @@ resource "vault_pki_secret_backend_root_sign_intermediate" "consul_connect_pki_i
   province             = "North Holland"
   max_path_length      = 1
   ttl                  = local.seconds_in_1_year
-  // TODO: remove upon merge of https://github.com/hashicorp/consul-api-gateway/issues/208
-  uri_sans = ["spiffe://${var.trusted_domain}"]
 }
 
 resource "vault_pki_secret_backend_intermediate_set_signed" "consul_connect_pki_int" {

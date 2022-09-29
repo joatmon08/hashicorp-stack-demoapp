@@ -9,7 +9,7 @@ resource "random_password" "boundary_database" {
 module "boundary" {
   depends_on                   = [module.vpc]
   source                       = "joatmon08/boundary/aws"
-  version                      = "0.2.0"
+  version                      = "0.3.1"
   vpc_id                       = module.vpc.vpc_id
   vpc_cidr_block               = module.vpc.vpc_cidr_block
   public_subnet_ids            = module.vpc.public_subnets
@@ -19,4 +19,5 @@ module "boundary" {
   allow_cidr_blocks_to_workers = var.client_cidr_block
   allow_cidr_blocks_to_api     = ["0.0.0.0/0"] # Allow TFC to configure
   boundary_db_password         = random_password.boundary_database.result
+  datadog_api_key              = var.datadog_api_key
 }

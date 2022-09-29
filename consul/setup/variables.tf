@@ -40,13 +40,7 @@ locals {
 variable "consul_helm_version" {
   type        = string
   description = "Consul Helm chart version"
-  default     = "0.44.0"
-}
-
-variable "cert_manager_helm_version" {
-  type        = string
-  description = "cert-manager Helm chart version"
-  default     = "1.8.0"
+  default     = "0.49.0"
 }
 
 variable "aws_eks_cluster_id" {
@@ -64,5 +58,5 @@ variable "region" {
 variable "use_hcp_consul" {
   type        = bool
   description = "Use HCP Consul Cluster"
-  default     = false
+  default     = true
 }

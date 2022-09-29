@@ -1,0 +1,24 @@
+global:
+  metrics:
+    enabled: true
+    enableAgentMetrics: true
+
+controller:
+  enabled: true
+
+terminatingGateways:
+  enabled: true
+  defaults:
+    replicas: 1
+
+apiGateway:
+  enabled: true
+  image: "hashicorp/consul-api-gateway:0.4.0"
+
+client:
+  extraLabels:
+    tags.datadoghq.com/service: "consul-client"
+
+connectInject:
+  replicas: 1
+  enabled: true

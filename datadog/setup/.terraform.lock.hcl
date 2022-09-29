@@ -62,8 +62,7 @@ provider "registry.terraform.io/hashicorp/kubernetes" {
 }
 
 provider "registry.terraform.io/hashicorp/vault" {
-  version     = "3.8.2"
-  constraints = "~> 3.8"
+  version = "3.8.2"
   hashes = [
     "h1:EzqgPMt20qzRlnX2DFTzyQuVeYCwZWB3Vfr9q5Pra0s=",
     "zh:3dd0f4f12f5a479941422bc413ea147a76253c9d1bdb8dd2d098146c80f90aa5",

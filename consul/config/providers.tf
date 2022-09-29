@@ -4,22 +4,22 @@ terraform {
   required_providers {
     kubernetes = {
       source  = "hashicorp/kubernetes"
-      version = "~> 2.11"
+      version = "~> 2.13"
     }
 
     consul = {
       source  = "hashicorp/consul"
-      version = "~> 2.15"
+      version = "~> 2.16"
     }
 
     aws = {
       source  = "hashicorp/aws"
-      version = "~> 4.14"
+      version = "~> 4.32"
     }
 
     vault = {
       source  = "hashicorp/vault"
-      version = "~> 3.6"
+      version = "~> 3.8"
     }
   }
 }

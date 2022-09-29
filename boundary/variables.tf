@@ -31,16 +31,6 @@ variable "products_frontend_address" {
   default = ""
 }
 
-variable "vault_private_address" {
-  type    = string
-  default = ""
-}
-
-variable "consul_private_address" {
-  type    = string
-  default = ""
-}
-
 data "aws_instances" "eks" {
   instance_tags = {
     "eks:cluster-name" = local.eks_cluster_name

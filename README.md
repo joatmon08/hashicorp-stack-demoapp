@@ -97,7 +97,7 @@ First, set up the Terraform workspace.
 1. Choose "Version control workflow".
 1. Connect to GitHub.
 1. Choose your fork of this repository.
-1. Name the workpsace `infrastructure`.
+1. Name the workspace `infrastructure`.
 1. Select the "Advanced Options" dropdown.
 1. Use the working directory `infrastructure`.
 1. Select "Create workspace".
@@ -106,6 +106,7 @@ Next, configure the workspace's variables.
 
 1. Variables should include:
    - `client_cidr_block` (sensitive): list including the public IP address of your machine, in [`00.00.00.00/32`] form. You get it by running `curl ifconfig.me` in your terminal.
+   - `datadog_api_key` (sensitive): API Key to send Boundary and HCP Vault logs and metrics to Datadog
 
 1. Environment Variables should include:
    - `HCP_CLIENT_ID`: HCP service principal ID
@@ -127,7 +128,7 @@ First, set up the Terraform workspace.
 1. Choose "Version control workflow".
 1. Connect to GitHub.
 1. Choose your fork of this repository.
-1. Name the workpsace `boundary`.
+1. Name the workspace `boundary`.
 1. Select the "Advanced Options" dropdown.
 1. Use the working directory `boundary`.
 1. Select "Create workspace".
@@ -151,6 +152,33 @@ Only `product` users will be able to access `product_infra`.
 `operations` users will be able to access both `core_infra`
 and `product_infra`.
 
+### Configure Datadog on Kubernetes
+
+For logging and other metrics, deploy a Datadog agent to the Kubernetes cluster.
+
+Set up the Terraform workspace.
+
+1. Create a new Terraform workspace.
+1. Choose "Version control workflow".
+1. Connect to GitHub.
+1. Choose your fork of this repository.
+1. Name the workspace `datadog-setup`.
+1. Select the "Advanced Options" dropdown.
+1. Use the working directory `datadog/setup`.
+1. Select "Create workspace".
+
+Next, configure the workspace's variables. This Terraform configuration
+retrieves a set of variables using `terraform_remote_state` data source.
+
+1. Variables should include:
+   - `tfc_organization`: your Terraform Cloud organization name
+   - `datadog_api_key` (sensitive): API Key to send Boundary and HCP Vault logs and metrics to Datadog
+
+1. Environment Variables should include:
+   - `AWS_ACCESS_KEY_ID`: AWS access key ID
+   - `AWS_SECRET_ACCESS_KEY` (sensitive): AWS secret access key
+   - `AWS_SESSION_TOKEN` (sensitive): If applicable, the token for session
+
 ### Configure Vault (Kubernetes Auth Method)
 
 First, set up the Terraform workspace.
@@ -159,7 +187,7 @@ First, set up the Terraform workspace.
 1. Choose "Version control workflow".
 1. Connect to GitHub.
 1. Choose your fork of this repository.
-1. Name the workpsace `vault-setup`.
+1. Name the workspace `vault-setup`.
 1. Select the "Advanced Options" dropdown.
 1. Use the working directory `vault/setup`.
 1. Select "Create workspace".
@@ -216,7 +244,7 @@ First, set up the Terraform workspace.
 1. Choose "Version control workflow".
 1. Connect to GitHub.
 1. Choose your fork of this repository.
-1. Name the workpsace `vault-consul`.
+1. Name the workspace `vault-consul`.
 1. Select the "Advanced Options" dropdown.
 1. Use the working directory `vault/consul`.
 1. Select "Create workspace".
@@ -234,6 +262,14 @@ retrieves a set of variables using `terraform_remote_state` data source.
 Terraform will set up the PKI secrets engine for TLS in the Consul cluster
 (not the service mesh).
 
+### [HCP ONLY] Reconfigure HCP Consul Root CA to use HCP Vault
+
+Reconfigure HCP Consul's root service mesh CA to use HCP Vault.
+
+```shell
+make configure-hcp-certs
+```
+
 ### Configure Consul
 
 Using kustomize, deploy the Gateway CRDs.
@@ -247,7 +283,7 @@ Then, set up the Terraform workspace.
 1. Choose "Version control workflow".
 1. Connect to GitHub.
 1. Choose your fork of this repository.
-1. Name the workpsace `consul-setup`.
+1. Name the workspace `consul-setup`.
 1. Select the "Advanced Options" dropdown.
 1. Use the working directory `consul/setup`.
 1. Select "Create workspace".
@@ -268,27 +304,6 @@ retrieves a set of variables using `terraform_remote_state` data source.
 1. Queue to plan and apply. This deploys Consul clients and a terminating gateway
    via the Consul Helm chart to the EKS cluster to join the HCP Consul servers.
 
-The Helm chart will get stuck because of
-[this issue](https://github.com/hashicorp/consul-k8s/issues/1246).
-Patch the API gateway to resolve.
-
-```shell
-make configure-api-gateway
-```
-
-### Reconfigure Certificates with Consul Cluster ID
-
-API Gateway requires a SPIFFE-compliant URI in the service mesh certificate.
-To bypass [this issue](https://github.com/hashicorp/consul-api-gateway/issues/208),
-you will need to reconfigure the root CA with a SPIFFE URI that contains
-the correct Consul cluster ID.
-
-```shell
-make configure-certs-spiffe
-```
-
-This forces a root certificate rotation for Consul service mesh.
-
 ### Configure Consul External Services & API Gateway
 
 Update the [terminating gateway](https://www.consul.io/docs/k8s/connect/terminating-gateways#update-terminating-gateway-acl-token-if-acls-are-enabled)
@@ -304,7 +319,7 @@ Then, set up the Terraform workspace.
 1. Choose "Version control workflow".
 1. Connect to GitHub.
 1. Choose your fork of this repository.
-1. Name the workpsace `consul-config`.
+1. Name the workspace `consul-config`.
 1. Select the "Advanced Options" dropdown.
 1. Use the working directory `consul/config`.
 1. Select "Create workspace".
@@ -357,13 +372,33 @@ secrets engine in Vault using a Terraform module.
 
 To do this, deploy CTS to Kubernetes.
 
-```shell
-make configure-cts
-```
+Set up the Terraform workspace.
+
+1. Create a new Terraform workspace.
+1. Choose "Version control workflow".
+1. Connect to GitHub.
+1. Choose your fork of this repository.
+1. Name the workspace `consul-cts`.
+1. Select the "Advanced Options" dropdown.
+1. Use the working directory `consul/cts`.
+1. Select "Create workspace".
+
+Next, configure the workspace's variables. This Terraform configuration
+retrieves a set of variables using `terraform_remote_state` data source.
+
+1. Variables should include:
+   - `tfc_organization`: your Terraform Cloud organization name
+
+1. Environment Variables should include:
+   - `AWS_ACCESS_KEY_ID`: AWS access key ID
+   - `AWS_SECRET_ACCESS_KEY` (sensitive): AWS secret access key
+   - `AWS_SESSION_TOKEN` (sensitive): If applicable, the token for session
+
+## Explore
 
 ### Deploy Example Application
 
-To deploy the example application, run `make configure-application`.
+To deploy the example application, run `make hashicups`.
 
 You can check if everything by checking the pods in Kubernetes.
 
@@ -379,24 +414,35 @@ product-55989bf685-ll5t7                       3/3     Running   0          5m5s
 public-64ccfc4fc7-jd7v7                        2/2     Running   0          8m17s
 ```
 
-Port forward the `nginx` service to [http://localhost:8080](http://localhost:8080).
+Check the Consul API Gateway for the address of the load balancer to connect to HashiCups.
 
 ```shell
-kubectl port-forward svc/nginx 8080:80
+kubectl get gateway
 ```
 
-You'll get a UI where you can order your coffee.
 
-### Set up a route to the frontend through the API Gateway
+### Deploy Example Application (with Datadog Tracing)
 
-To set up a route on the API gateway, deploy
-an `HTTPRoute`.
+Deploy an example application with Datadog tracing enabled.
 
 ```shell
-make configure-route
+make expense-report
 ```
 
-## Explore
+Check the Consul API Gateway for the address of the load balancer to connect to
+the expense reporting example application.
+
+```shell
+kubectl get gateway
+```
+
+Send some traffic.
+
+```shell
+curl -k https://<gateway load balancer dns>/report
+```
+
+### Boundary
 
 To use Boundary, use your terminal in the top level of this repository.
 
@@ -435,16 +481,19 @@ make clean-cts
 ```
 
 Go into Terraform Cloud and destroy resources
+for the `consul-cts` workspace.
+
+Go into Terraform Cloud and destroy resources
 for the `consul-config` workspace.
+
+Go into Terraform Cloud and destroy resources
+for the `consul-setup` workspace.
 
 Remove additional Consul resources.
 
 ```shell
 make clean-consul
 ```
-
-Go into Terraform Cloud and destroy resources
-for the `consul-setup` workspace.
 
 Remove API Gateway manifests.
 
@@ -463,6 +512,9 @@ make clean-certs
 
 Go into Terraform Cloud and destroy resources
 for the `vault-setup` workspace.
+
+Go into Terraform Cloud and destroy resources
+for the `datadog-setup` workspace.
 
 Go into Terraform Cloud and destroy resources
 for the `boundary` workspace.

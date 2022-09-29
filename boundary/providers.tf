@@ -3,11 +3,11 @@ terraform {
   required_providers {
     aws = {
       source  = "hashicorp/aws"
-      version = "~> 4.14"
+      version = "~> 4.32"
     }
     boundary = {
       source  = "hashicorp/boundary"
-      version = "1.0.6"
+      version = "~> 1.0"
     }
   }
 }

@@ -1,0 +1,81 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: reconciliation
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: reconciliation
+spec:
+  selector:
+    app: reconciliation
+  ports:
+    - port: 9091
+      targetPort: 9091
+---
+apiVersion: consul.hashicorp.com/v1alpha1
+kind: ServiceDefaults
+metadata:
+  name: reconciliation
+spec:
+  protocol: "http"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: reconciliation
+  labels:
+    app: reconciliation
+    tags.datadoghq.com/service: reconciliation
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: reconciliation
+  template:
+    metadata:
+      labels:
+        app: reconciliation
+        tags.datadoghq.com/service: reconciliation
+      annotations:
+        admission.datadoghq.com/enabled: "true"
+        ad.datadoghq.com/envoy-sidecar.tags: '{"service": "envoy-proxy"}'
+        ad.datadoghq.com/envoy-sidecar.checks: |
+          {
+            "envoy": {
+              "instances": [{"openmetrics_endpoint": "http://%%host%%:20200/metrics"}]
+            }
+          }
+        consul.hashicorp.com/connect-inject: 'true'
+        consul.hashicorp.com/transparent-proxy-exclude-outbound-ports: "8125,8126"
+    spec:
+      serviceAccountName: reconciliation
+      containers:
+        - name: reconciliation
+          image: joatmon08/fake-service:v0.25.0
+          ports:
+            - containerPort: 9091
+          env:
+            - name: DD_SERVICE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.labels['tags.datadoghq.com/service']
+            - name: 'LISTEN_ADDR'
+              value: '0.0.0.0:9091'
+            - name: 'NAME'
+              value: 'reconciliation'
+            - name: 'MESSAGE'
+              value: 'A service that tracks reconciliations'
+            - name: TRACING_DATADOG_HOST
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.hostIP
+            - name: METRICS_DATADOG_HOST
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.hostIP
+            - name: DD_AGENT_HOST
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.hostIP

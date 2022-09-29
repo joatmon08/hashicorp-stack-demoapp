@@ -4,10 +4,8 @@ kind: ServiceIntentions
 metadata:
   name: nginx
 spec:
-  # Name of the destination service affected by this ServiceIntentions entry
   destination:
     name: nginx
-  # The set of traffic sources affected by this ServiceIntentions entry
   sources:
     - name: api-gateway
       action: allow

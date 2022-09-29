@@ -61,26 +61,12 @@ resource "helm_release" "consul_hcp" {
   version    = var.consul_helm_version
 
   values = [
-    data.hcp_consul_agent_helm_config.cluster.config
+    data.hcp_consul_agent_helm_config.cluster.config,
+    file("templates/hcp.yaml")
   ]
 
   set {
     name  = "global.image"
     value = "hashicorp/consul:${replace(data.hcp_consul_cluster.cluster.consul_version, "v", "")}"
-  }
-
-  set {
-    name  = "controller.enabled"
-    value = "true"
-  }
-
-  set {
-    name  = "terminatingGateways.enabled"
-    value = "true"
-  }
-
-  set {
-    name  = "terminatingGateways.defaults.replicas"
-    value = "1"
   }
 }

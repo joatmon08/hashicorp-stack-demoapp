@@ -1,0 +1,84 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: report
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: report
+spec:
+  selector:
+    app: report
+  ports:
+    - port: 9091
+      targetPort: 9091
+---
+apiVersion: consul.hashicorp.com/v1alpha1
+kind: ServiceDefaults
+metadata:
+  name: report
+spec:
+  protocol: "http"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: report
+  labels:
+    app: report
+    tags.datadoghq.com/service: report
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: report
+  template:
+    metadata:
+      labels:
+        app: report
+        tags.datadoghq.com/service: report
+      annotations:
+        admission.datadoghq.com/enabled: "true"
+        ad.datadoghq.com/envoy-sidecar.tags: '{"service": "envoy-proxy"}'
+        ad.datadoghq.com/envoy-sidecar.checks: |
+          {
+            "envoy": {
+              "instances": [{"openmetrics_endpoint": "http://%%host%%:20200/metrics"}]
+            }
+          }
+        consul.hashicorp.com/connect-inject: 'true'
+        consul.hashicorp.com/transparent-proxy-exclude-outbound-ports: "8125,8126"
+    spec:
+      serviceAccountName: report
+      containers:
+        - name: report
+          image: joatmon08/fake-service:v0.25.0
+          ports:
+            - containerPort: 9091
+          env:
+            - name: DD_SERVICE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.labels['tags.datadoghq.com/service']
+            - name: 'LISTEN_ADDR'
+              value: '0.0.0.0:9091'
+            - name: 'NAME'
+              value: 'report'
+            - name: 'MESSAGE'
+              value: 'A service that reports expenses'
+            - name: 'UPSTREAM_URIS'
+              value: 'http://expense:9091'
+              # value: 'http://expense:9091,http://reconciliation:9091'
+            - name: TRACING_DATADOG_HOST
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.hostIP
+            - name: METRICS_DATADOG_HOST
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.hostIP
+            - name: DD_AGENT_HOST
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.hostIP
