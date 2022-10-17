@@ -36,10 +36,13 @@ Each folder contains a few different configurations.
    - `boundary`: Configures Boundary with two projects, one for operations
       and the other for development teams.
 
+   - `datadog/setup/`: Deploy Datadog agents to Kubernetes cluster
+
    - `vault/setup/`: Deploy a Vault cluster via Helm chart and set up Kubernetes auth method
 
    - `certs/`: Sets up offline root CA and signs intermediate CA in Vault for Consul-related
-      certificates.
+      certificates. **Only applies if you set `use_hcp_consul = false` to deploy
+      Consul on Kubernetes.**
 
    - `vault/consul/`: Set up Consul-related secrets engines.
 
@@ -56,8 +59,11 @@ Each folder contains a few different configurations.
    - `consul/cts/`: Deploys CTS to Kubernetes for setting up Vault database secrets
       based on database service's address
 
-   - `application/`: Deploys the HashiCorp Demo Application (AKA HashiCups) to
+   - `application/hashicups`: Deploys the HashiCorp Demo Application (AKA HashiCups) to
       Kubernetes
+
+   - `application/expense-report`: Deploys [fake service](https://github.com/nicholasjackson/fake-service)
+      with Datadog tracing and metrics
 
    - `database/`: Configures HashiCorp Demo Application database
 
@@ -65,11 +71,11 @@ Each folder contains a few different configurations.
 
 ### Versions
 
-- Terraform 1.2.2
-- Consul 1.12.0 (on Kubernetes)
-- HashiCorp Cloud Platform (HCP) Vault 1.10.3
-- HashiCorp Cloud Platform (HCP) Consul 1.11.6
-- Boundary 0.8.1
+- Terraform 1.3
+- Consul 1.12 (on Kubernetes)
+- HashiCorp Cloud Platform (HCP) Vault 1.11
+- HashiCorp Cloud Platform (HCP) Consul 1.13
+- Boundary 0.11
 
 ### Platforms
 
