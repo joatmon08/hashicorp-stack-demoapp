@@ -102,3 +102,11 @@ consul-commands:
 
 db-commands:
 	psql -h 127.0.0.1 -p 62079 -U postgres -d products -f database-service/products.sql
+
+terraform-upgrade:
+	cd infrastructure && terraform init -upgrade
+	cd boundary && terraform init -upgrade
+	cd vault/setup && terraform init -upgrade
+	cd vault/consul && terraform init -upgrade
+	cd consul/setup && terraform init -upgrade
+	cd consul/config && terraform init -upgrade
