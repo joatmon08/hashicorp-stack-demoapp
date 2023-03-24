@@ -15,7 +15,7 @@ kubeconfig:
 
 get-ssh:
 	cd infrastructure && terraform output -raw boundary_worker_ssh | base64 -d > id_rsa.pem
-	chmod 400 id_rsa.pem
+	chmod 400 infrastructure/id_rsa.pem
 
 configure-certs:
 	bash certs/ca_root.sh
@@ -64,11 +64,11 @@ boundary-appdev-auth:
 
 ssh-operations:
 	boundary connect ssh -username=ec2-user -target-id \
-		$(shell cd boundary && terraform output -raw boundary_target_eks) -- -i ./id_rsa.pem
+		$(shell cd boundary && terraform output -raw boundary_target_eks) -- -i infrastructure/id_rsa.pem
 
 ssh-products:
 	boundary connect ssh -username=ec2-user -target-id \
-		$(shell cd boundary && terraform output -raw boundary_target_eks) -- -i ./id_rsa.pem
+		$(shell cd boundary && terraform output -raw boundary_target_eks) -- -i infrastructure/id_rsa.pem
 
 postgres-operations: boundary-appdev-auth
 	boundary connect postgres \
