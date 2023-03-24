@@ -15,7 +15,7 @@ module "boundary" {
   public_subnet_ids            = module.vpc.public_subnets
   private_subnet_ids           = module.vpc.database_subnets
   name                         = var.name
-  key_pair_name                = var.key_pair_name
+  key_pair_name                = aws_key_pair.boundary.key_name
   allow_cidr_blocks_to_workers = var.client_cidr_block
   allow_cidr_blocks_to_api     = ["0.0.0.0/0"] # Allow TFC to configure
   boundary_db_password         = random_password.boundary_database.result

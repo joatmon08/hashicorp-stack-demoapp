@@ -9,6 +9,7 @@ id_rsa
 kubernetes/terraform.auto.tfvars
 vault/terraform.auto.tfvars
 database-service/terraform.auto.tfvars
+bootstrap/terraform.auto.tfvars
 
 certs/connect
 certs/server
@@ -17,3 +18,9 @@ certs/new_config.json
 
 consul/cts/sync-tasks
 consul/cts/terraform
+
+!*/backend.tf
+!*/*/backend.tf
+
+secrets
+id_rsa.pem

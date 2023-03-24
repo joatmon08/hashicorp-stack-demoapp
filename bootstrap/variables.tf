@@ -19,7 +19,6 @@ variable "github_token" {
 variable "github_repository" {
   type        = string
   description = "Github Repository to reference in workspaces"
-  default     = "joatmon08/hashicorp-stack-demoapp"
 }
 
 variable "github_branch" {
@@ -67,4 +66,10 @@ variable "allow_cidr_blocks" {
   type        = list(string)
   description = "Allow CIDR blocks to access infrastructure resources. Limit using `curl ifconfig.me`. Should be of format [\"x.x.x.x/x\"]"
   default     = ["0.0.0.0/0"]
+}
+
+variable "consul_gossip_key" {
+  type        = string
+  description = "Consul gossip encryption key. Generate with `consul keygen`"
+  sensitive   = true
 }

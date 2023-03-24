@@ -71,3 +71,9 @@ output "product_database_password" {
   value     = aws_db_instance.products.password
   sensitive = true
 }
+
+output "boundary_worker_ssh" {
+  value       = base64encode(tls_private_key.boundary.private_key_openssh)
+  description = "Boundary worker SSH key"
+  sensitive   = true
+}

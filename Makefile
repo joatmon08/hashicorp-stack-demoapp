@@ -13,6 +13,10 @@ kubeconfig:
 		update-kubeconfig \
 		--name $(shell cd infrastructure && terraform output -raw eks_cluster_name)
 
+get-ssh:
+	cd infrastructure && terraform output -raw boundary_worker_ssh | base64 -d > id_rsa.pem
+	chmod 400 id_rsa.pem
+
 configure-certs:
 	bash certs/ca_root.sh
 
@@ -45,22 +49,26 @@ configure-application:
 	kubectl apply -f application/route.yaml
 
 boundary-operations-auth:
-	@boundary authenticate password -login-name=ops \
-		-password $(shell cd boundary && terraform output -raw boundary_operations_password) \
+	mkdir -p secrets
+	@echo $(shell cd boundary && terraform output -raw boundary_operations_password) > secrets/ops
+	boundary authenticate password -login-name=ops \
+		-password file://secrets/ops \
 		-auth-method-id=$(shell cd boundary && terraform output -raw boundary_auth_method_id)
 
 boundary-appdev-auth:
-	@boundary authenticate password -login-name=appdev \
-		-password $(shell cd boundary && terraform output -raw boundary_products_password) \
+	mkdir -p secrets
+	@echo $(shell cd boundary && terraform output -raw boundary_products_password) > secrets/appdev
+	boundary authenticate password -login-name=appdev \
+		-password file://secrets/appdev \
 		-auth-method-id=$(shell cd boundary && terraform output -raw boundary_auth_method_id)
 
 ssh-operations:
 	boundary connect ssh -username=ec2-user -target-id \
-		$(shell cd boundary && terraform output -raw boundary_target_eks) -- -i ${SSH_KEYPAIR_FILE}
+		$(shell cd boundary && terraform output -raw boundary_target_eks) -- -i ./id_rsa.pem
 
 ssh-products:
 	boundary connect ssh -username=ec2-user -target-id \
-		$(shell cd boundary && terraform output -raw boundary_target_eks) -- -i ${SSH_KEYPAIR_FILE}
+		$(shell cd boundary && terraform output -raw boundary_target_eks) -- -i ./id_rsa.pem
 
 postgres-operations: boundary-appdev-auth
 	boundary connect postgres \
@@ -110,3 +118,11 @@ terraform-upgrade:
 	cd vault/consul && terraform init -upgrade
 	cd consul/setup && terraform init -upgrade
 	cd consul/config && terraform init -upgrade
+
+terraform-init:
+	cd infrastructure && terraform init -reconfigure
+	cd boundary && terraform init -reconfigure
+	cd vault/setup && terraform init -reconfigure
+	cd vault/consul && terraform init -reconfigure
+	cd consul/setup && terraform init -reconfigure
+	cd consul/config && terraform init -reconfigure

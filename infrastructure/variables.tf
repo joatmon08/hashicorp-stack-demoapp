@@ -14,11 +14,6 @@ variable "hcp_region" {
   description = "HCP Region"
 }
 
-variable "key_pair_name" {
-  type        = string
-  description = "SSH keypair name for Boundary and EKS nodes"
-}
-
 variable "vpc_cidr_block" {
   type        = string
   default     = "10.0.0.0/16"

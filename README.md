@@ -63,19 +63,24 @@ Each folder contains a few different configurations.
 
 ## Prerequisites
 
-### Versions
+### CLIs
 
-- Terraform 1.2.2
-- Consul 1.12.0 (on Kubernetes)
-- HashiCorp Cloud Platform (HCP) Vault 1.10.3
-- HashiCorp Cloud Platform (HCP) Consul 1.11.6
-- Boundary 0.8.1
+Be sure to download the CLIs for the following.
+
+- Terraform 1.4
+- Consul 1.12 (on Kubernetes)
+- Vault 1.10
+- Boundary 0.8
+- Kubernetes 1.22
 
 ### Platforms
 
 - Terraform Cloud
+   - [Create an account](https://developer.hashicorp.com/terraform/tutorials/cloud-get-started/cloud-sign-up).
+   - [Download the Terraform CLI](https://developer.hashicorp.com/terraform/downloads).
+   - [Log into Terraform Cloud from the CLI](https://developer.hashicorp.com/terraform/tutorials/cloud-get-started/cloud-login).
 - AWS Account
-   - Create an AWS EC2 keypair.
+   - [Create an AWS EC2 keypair.](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/create-key-pairs.html)
 - HashiCorp Cloud Platform account
    - You need access to HCP Consul and Vault.
    - Create a [service principal](https://portal.cloud.hashicorp.com/access/service-principals)
@@ -85,65 +90,93 @@ Each folder contains a few different configurations.
 
 ## Setup
 
+### Bootstrap Terraform Cloud workspaces.
+
+Start by setting up Terraform Cloud workspaces for all infrastructure. We divide the infrastructure provisioning
+from the deployment of services into separate states. This enforces a unidirectional dependency.
+
+Before you start, make sure you:
+   - [Create a Terraform Cloud account](https://developer.hashicorp.com/terraform/tutorials/cloud-get-started/cloud-sign-up).
+   - [Download the Terraform CLI](https://developer.hashicorp.com/terraform/downloads).
+   - [Log into Terraform Cloud from the CLI](https://developer.hashicorp.com/terraform/tutorials/cloud-get-started/cloud-login).
+
+Go to the `bootstrap` directory.
+
+```shell
+cd bootstrap
+```
+
+Copy `tfvars.example` to `terraform.auto.tfvars`.
+
+```shell
+cp tfvars.example terraform.auto.tfvars
+```
+
+Update `terraform.auto.tfvars` with the required variables
+and credentials. **DO NOT COMMIT THIS FILE AS IT CONTAINS
+CREDENTIALS.**
+
+> Note: For the HashiCorp folks, use doormat to push credentials
+> up to the Terraform Cloud workspaces individually and leave AWS credentials
+> blank in `terraform.auto.tfvars`. The session
+> tokens cannot be loaded into variable sets. Use the command
+> `doormat aws --account $AWS_ACCOUNT_ID tf-push --organization hashicorp-stack-demoapp --workspace infrastructure,boundary,consul-config,consul-setup,vault-setup`.
+
+```shell
+vim terraform.auto.tfvars
+```
+
+Initialize Terraform.
+
+```shell
+terraform init
+```
+
+Run Terraform and enter "yes" to apply.
+
+```shell
+terraform apply
+```
+
+If you log into Terraform Cloud and navigate to the `hashicorp-stack-demoapp`
+organization, all the workspaces will be set up.
+
+Next, set up all backends locally to point to Terraform Cloud. This demo
+needs access to output variables from specific workspaces in order to
+configure some things locally.
+
+```shell
+make terraform-init
+```
+
+> Note: If you are using a different organization name other than `hashicorp-stack-demoapp`,
+> update all `backend.tf` files to use the correct TFC organization.
+
 ### Deploy infrastructure.
 
 > Note: When you run this, you might get the error `Provider produced inconsistent final plan`.
 > This is because we're using [`default_tags`](https://registry.terraform.io/providers/hashicorp/aws/latest/docs#default_tags).
 > Re-run the plan and apply to resolve the error.
 
-First, set up the Terraform workspace.
+Go to the `infrastructure` workspace in Terraform Cloud.
 
-1. Create a new Terraform workspace.
-1. Choose "Version control workflow".
-1. Connect to GitHub.
-1. Choose your fork of this repository.
-1. Name the workpsace `infrastructure`.
-1. Select the "Advanced Options" dropdown.
-1. Use the working directory `infrastructure`.
-1. Select "Create workspace".
+Update the `infrastructure/terraform.auto.tfvars` file with
+your chosen region.
 
-Next, configure the workspace's variables.
+Commit it up to your fork.
 
-1. Variables should include:
-   - `client_cidr_block` (sensitive): list including the public IP address of your machine, in [`00.00.00.00/32`] form. You get it by running `curl ifconfig.me` in your terminal.
-
-1. Environment Variables should include:
-   - `HCP_CLIENT_ID`: HCP service principal ID
-   - `HCP_CLIENT_SECRET` (sensitive): HCP service principal secret
-   - `AWS_ACCESS_KEY_ID`: AWS access key ID
-   - `AWS_SECRET_ACCESS_KEY` (sensitive): AWS secret access key
-   - `AWS_SESSION_TOKEN` (sensitive): If applicable, the token for session
-
-If you have additional variables you want to customize, including __region__, make sure to update them in
-the `infrastructure/terraform.auto.tfvars` file.
-
-Finally, start a new plan and apply it. It can take more than 15 minutes to provision!
+Start a new plan and apply it. It can take more than 15 minutes to provision!
 
 ### Configure Boundary
 
-First, set up the Terraform workspace.
+Go to the `boundary` workspace in Terraform Cloud.
 
-1. Create a new Terraform workspace.
-1. Choose "Version control workflow".
-1. Connect to GitHub.
-1. Choose your fork of this repository.
-1. Name the workpsace `boundary`.
-1. Select the "Advanced Options" dropdown.
-1. Use the working directory `boundary`.
-1. Select "Create workspace".
+Optionally, update the `boundary/terraform.auto.tfvars` file with
+a list of users and groups you'd like to add.
 
-Next, configure the workspace's variables. This Terraform configuration
-retrieves a set of variables using `terraform_remote_state` data source.
+Commit it up to your fork.
 
-1. Variables should include:
-   - `tfc_organization`: your Terraform Cloud organization name
-
-1. Environment Variables should include:
-   - `AWS_ACCESS_KEY_ID`: AWS access key ID
-   - `AWS_SECRET_ACCESS_KEY` (sensitive): AWS secret access key
-   - `AWS_SESSION_TOKEN` (sensitive): If applicable, the token for session
-
-Queue to plan and apply. This creates an organization with two scopes:
+Start a new plan and apply it. This creates an organization with two scopes:
 - `core_infra`, which allows you to SSH into EKS nodes
 - `product_infra`, which allows you to access the PostgreSQL database
 
@@ -153,29 +186,9 @@ and `product_infra`.
 
 ### Configure Vault (Kubernetes Auth Method)
 
-First, set up the Terraform workspace.
+Go to the `vault/setup` workspace in Terraform Cloud.
 
-1. Create a new Terraform workspace.
-1. Choose "Version control workflow".
-1. Connect to GitHub.
-1. Choose your fork of this repository.
-1. Name the workpsace `vault-setup`.
-1. Select the "Advanced Options" dropdown.
-1. Use the working directory `vault/setup`.
-1. Select "Create workspace".
-
-Next, configure the workspace's variables. This Terraform configuration
-retrieves a set of variables using `terraform_remote_state` data source.
-
-1. Variables should include:
-   - `tfc_organization`: your Terraform Cloud organization name
-
-1. Environment Variables should include:
-   - `HCP_CLIENT_ID`: HCP service principal ID
-   - `HCP_CLIENT_SECRET` (sensitive): HCP service principal secret
-   - `AWS_ACCESS_KEY_ID`: AWS access key ID
-   - `AWS_SECRET_ACCESS_KEY` (sensitive): AWS secret access key
-   - `AWS_SESSION_TOKEN` (sensitive): If applicable, the token for session
+Start a new plan and apply it.
 
 Terraform will set up [Kubernetes authentication method](https://www.vaultproject.io/docs/auth/kubernetes)
 and deploy the [Vault Helm chart](https://github.com/hashicorp/vault-helm) to the cluster.
@@ -202,7 +215,8 @@ a root CA offline. We use three separate root CAs:
 > __NOTE:__ This is a local Terraform command in order to secure the offline root CA.
 
 Run the command to create a root CA as well as the intermediate CAs, and
-store the intermediate CAs in Vault.
+store the intermediate CAs in Vault. Enter "yes" for Terraform to configure
+Vault PKI secrets engine and add a passphrase as required.
 
 ```shell
 make configure-certs
@@ -210,26 +224,9 @@ make configure-certs
 
 ### Configure Vault for Consul (PKI Secrets Engine)
 
-First, set up the Terraform workspace.
+Go to the `vault/consul` workspace in Terraform Cloud.
 
-1. Create a new Terraform workspace.
-1. Choose "Version control workflow".
-1. Connect to GitHub.
-1. Choose your fork of this repository.
-1. Name the workpsace `vault-consul`.
-1. Select the "Advanced Options" dropdown.
-1. Use the working directory `vault/consul`.
-1. Select "Create workspace".
-
-Next, configure the workspace's variables. This Terraform configuration
-retrieves a set of variables using `terraform_remote_state` data source.
-
-1. Variables should include:
-   - `tfc_organization`: your Terraform Cloud organization name`
-
-1. Environment Variables should include:
-   - `HCP_CLIENT_ID`: HCP service principal ID
-   - `HCP_CLIENT_SECRET` (sensitive): HCP service principal secret
+Start a new plan and apply it.
 
 Terraform will set up the PKI secrets engine for TLS in the Consul cluster
 (not the service mesh).
@@ -241,32 +238,10 @@ Using kustomize, deploy the Gateway CRDs.
 make configure-kubernetes
 ```
 
-Then, set up the Terraform workspace.
+Go to the `consul/setup` workspace in Terraform Cloud.
 
-1. Create a new Terraform workspace.
-1. Choose "Version control workflow".
-1. Connect to GitHub.
-1. Choose your fork of this repository.
-1. Name the workpsace `consul-setup`.
-1. Select the "Advanced Options" dropdown.
-1. Use the working directory `consul/setup`.
-1. Select "Create workspace".
-
-Next, configure the workspace's variables. This Terraform configuration
-retrieves a set of variables using `terraform_remote_state` data source.
-
-1. Variables should include:
-   - `tfc_organization`: your Terraform Cloud organization name
-
-1. Environment Variables should include:
-   - `HCP_CLIENT_ID`: HCP service principal ID
-   - `HCP_CLIENT_SECRET` (sensitive): HCP service principal secret
-   - `AWS_ACCESS_KEY_ID`: AWS access key ID
-   - `AWS_SECRET_ACCESS_KEY` (sensitive): AWS secret access key
-   - `AWS_SESSION_TOKEN` (sensitive): If applicable, the token for session
-
-1. Queue to plan and apply. This deploys Consul clients and a terminating gateway
-   via the Consul Helm chart to the EKS cluster to join the HCP Consul servers.
+Start a new plan and apply it. This deploys Consul clients and a terminating gateway
+via the Consul Helm chart to the EKS cluster to join the HCP Consul servers.
 
 The Helm chart will get stuck because of
 [this issue](https://github.com/hashicorp/consul-k8s/issues/1246).
@@ -298,29 +273,9 @@ with a write policy to the database.
 make configure-terminating-gateway
 ```
 
-Then, set up the Terraform workspace.
+Go to the `consul/config` workspace in Terraform Cloud.
 
-1. Create a new Terraform workspace.
-1. Choose "Version control workflow".
-1. Connect to GitHub.
-1. Choose your fork of this repository.
-1. Name the workpsace `consul-config`.
-1. Select the "Advanced Options" dropdown.
-1. Use the working directory `consul/config`.
-1. Select "Create workspace".
-
-Next, configure the workspace's variables. This Terraform configuration
-retrieves a set of variables using `terraform_remote_state` data source.
-
-1. Variables should include:
-   - `tfc_organization`: your Terraform Cloud organization name
-
-1. Environment Variables should include:
-   - `AWS_ACCESS_KEY_ID`: AWS access key ID
-   - `AWS_SECRET_ACCESS_KEY` (sensitive): AWS secret access key
-   - `AWS_SESSION_TOKEN` (sensitive): If applicable, the token for session
-
-1. Queue to plan and apply. This does a few things, including:
+Start a new plan and apply it. This does a few things, including:
    - registers the database as an external service to Consul
    - deploys the Consul API Gateway
    - sets up the application intentions.
@@ -397,6 +352,15 @@ make configure-route
 ```
 
 ## Explore
+
+To log into any of the machines in this demo, you'll need the SSH key.
+
+```shell
+make get-ssh
+```
+
+This will save the private SSH key into `id_rsa.pem` at the top level
+of this repository.
 
 To use Boundary, use your terminal in the top level of this repository.
 

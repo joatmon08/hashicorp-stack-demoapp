@@ -23,7 +23,7 @@ module "eks" {
       instance_types            = ["m5.large"]
       k8s_labels                = var.tags
       additional_tags           = var.additional_tags
-      key_name                  = var.key_pair_name
+      key_name                  = aws_key_pair.boundary.key_name
       source_security_group_ids = [module.boundary.boundary_security_group]
     }
   }
