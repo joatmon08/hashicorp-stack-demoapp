@@ -37,16 +37,22 @@ locals {
   hcp_consul_cluster_id = data.terraform_remote_state.infrastructure.outputs.hcp_consul_cluster
 }
 
+variable "consul_version" {
+  type        = string
+  description = "Consul version"
+  default     = "hashicorp/consul:1.12.0"
+}
+
+variable "consul_values" {
+  type        = string
+  description = "Custom base64 encoded values.yaml file. If not specified, use default template"
+  default     = null
+}
+
 variable "consul_helm_version" {
   type        = string
   description = "Consul Helm chart version"
   default     = "0.44.0"
-}
-
-variable "cert_manager_helm_version" {
-  type        = string
-  description = "cert-manager Helm chart version"
-  default     = "1.8.0"
 }
 
 variable "aws_eks_cluster_id" {
