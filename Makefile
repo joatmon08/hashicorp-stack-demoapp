@@ -13,6 +13,10 @@ kubeconfig:
 		update-kubeconfig \
 		--name $(shell cd infrastructure && terraform output -raw eks_cluster_name)
 
+get-ssh:
+	cd infrastructure && terraform output -raw boundary_worker_ssh | base64 -d > id_rsa.pem
+	chmod 400 infrastructure/id_rsa.pem
+
 configure-certs:
 	bash certs/ca_root.sh
 
@@ -76,11 +80,11 @@ boundary-appdev-auth:
 
 ssh-operations:
 	boundary connect ssh -username=ec2-user -target-id \
-		$(shell cd boundary && terraform output -raw boundary_target_eks) -- -i ${SSH_KEYPAIR_FILE}
+		$(shell cd boundary && terraform output -raw boundary_target_eks) -- -i infrastructure/id_rsa.pem
 
 ssh-products:
 	boundary connect ssh -username=ec2-user -target-id \
-		$(shell cd boundary && terraform output -raw boundary_target_eks) -- -i ${SSH_KEYPAIR_FILE}
+		$(shell cd boundary && terraform output -raw boundary_target_eks) -- -i infrastructure/id_rsa.pem
 
 postgres-operations: boundary-appdev-auth
 	boundary connect postgres \
@@ -122,3 +126,19 @@ consul-commands:
 
 db-commands:
 	psql -h 127.0.0.1 -p 62079 -U postgres -d products -f database-service/products.sql
+
+terraform-upgrade:
+	cd infrastructure && terraform init -upgrade
+	cd boundary && terraform init -upgrade
+	cd vault/setup && terraform init -upgrade
+	cd vault/consul && terraform init -upgrade
+	cd consul/setup && terraform init -upgrade
+	cd consul/config && terraform init -upgrade
+
+terraform-init:
+	cd infrastructure && terraform init -reconfigure
+	cd boundary && terraform init -reconfigure
+	cd vault/setup && terraform init -reconfigure
+	cd vault/consul && terraform init -reconfigure
+	cd consul/setup && terraform init -reconfigure
+	cd consul/config && terraform init -reconfigure

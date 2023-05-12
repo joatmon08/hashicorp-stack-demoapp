@@ -1,0 +1,15 @@
+tfc_organization = "" ## can leave blank, defaults to `hashicorp-stack-demoapp`
+email             = ""
+
+aws_access_key_id     = "" ## HashiCorp folks can leave blank if using doormat to push credentials
+aws_secret_access_key = "" ## HashiCorp folks can leave blank if using doormat to push credentials
+
+github_repository = "<your-fork>/hashicorp-stack-demoapp" ## set to your fork
+github_branch    = "tfc-bootstrap" ## can leave blank, defaults to `main`
+github_token = "" ## generate GitHub personal access token
+
+hcp_client_id     = ""
+hcp_client_secret = ""
+
+allow_cidr_blocks = [""] ## use `curl ifconfig.me` to find your machine's public IP
+consul_gossip_key = "" ## generate locally using `consul keygen`
