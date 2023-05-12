@@ -1,40 +1,37 @@
 module "eks" {
-  depends_on      = [module.vpc]
-  source          = "terraform-aws-modules/eks/aws"
-  version         = "17.24.0"
+  source  = "terraform-aws-modules/eks/aws"
+  version = "19.13.1"
+
   cluster_name    = var.name
-  cluster_version = "1.23"
-  subnets         = module.vpc.private_subnets
+  cluster_version = "1.26"
 
-  vpc_id           = module.vpc.vpc_id
-  write_kubeconfig = false
+  vpc_id     = module.vpc.vpc_id
+  subnet_ids = module.vpc.private_subnets
 
-  node_groups_defaults = {
-    ami_type  = "AL2_x86_64"
-    disk_size = 50
+  eks_managed_node_group_defaults = {
+    create_iam_role = true
+    ami_type        = "AL2_x86_64"
+    disk_size       = 100
+    instance_types  = ["m5.large"]
   }
 
-  node_groups = {
-    hcp_consul = {
-      desired_capacity = 3
-      max_capacity     = 3
-      min_capacity     = 3
+  eks_managed_node_groups = {
+    hashicups = {
+      min_size     = 3
+      max_size     = 5
+      desired_size = 3
 
-      instance_types            = ["m5.large"]
-      k8s_labels                = var.tags
-      additional_tags           = var.additional_tags
-      key_name                  = var.key_pair_name
-      source_security_group_ids = [module.boundary.boundary_security_group]
+      instance_types = ["m5.large"]
     }
   }
 }
 
 data "aws_eks_cluster" "cluster" {
-  name = module.eks.cluster_id
+  name = module.eks.cluster_name
 }
 
 data "aws_eks_cluster_auth" "cluster" {
-  name = module.eks.cluster_id
+  name = module.eks.cluster_name
 }
 
 provider "kubernetes" {

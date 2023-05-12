@@ -11,31 +11,36 @@ output "eks_cluster_name" {
 }
 
 output "eks_cluster_id" {
-  value = module.eks.cluster_id
+  value = module.eks.cluster_name
 }
 
-output "boundary_endpoint" {
-  value = "http://${module.boundary.boundary_lb}:9200"
+output "hcp_boundary_endpoint" {
+  value = hcp_boundary_cluster.main.cluster_url
 }
 
-output "boundary_kms_recovery_key_id" {
-  value = module.boundary.kms_recovery_key_id
+output "hcp_boundary_username" {
+  value = hcp_boundary_cluster.main.username
+}
+
+output "hcp_boundary_password" {
+  value     = hcp_boundary_cluster.main.password
+  sensitive = true
 }
 
 output "hcp_consul_cluster" {
-  value = module.hcp.hcp_consul_id
+  value = hcp_consul_cluster.main.cluster_id
 }
 
 output "hcp_consul_private_address" {
-  value = module.hcp.hcp_consul_private_endpoint
+  value = hcp_consul_cluster.main.consul_private_endpoint_url
 }
 
 output "hcp_consul_datacenter" {
-  value = module.hcp.hcp_consul_datacenter
+  value = hcp_consul_cluster.main.datacenter
 }
 
 output "hcp_consul_public_address" {
-  value = var.hcp_consul_public_endpoint ? trim(module.hcp.hcp_consul_public_endpoint, "/") : ""
+  value = hcp_consul_cluster.main.consul_public_endpoint_url
 }
 
 output "hcp_consul_token" {
@@ -44,24 +49,24 @@ output "hcp_consul_token" {
 }
 
 output "hcp_vault_cluster" {
-  value = module.hcp.hcp_vault_id
+  value = hcp_vault_cluster.main.cluster_id
+}
+
+output "hcp_vault_namespace" {
+  value = hcp_vault_cluster.main.namespace
+}
+
+output "hcp_vault_private_address" {
+  value = hcp_vault_cluster.main.vault_private_endpoint_url
+}
+
+output "hcp_vault_public_address" {
+  value = hcp_vault_cluster.main.vault_public_endpoint_url
 }
 
 output "hcp_vault_token" {
   value     = hcp_vault_cluster_admin_token.cluster.token
   sensitive = true
-}
-
-output "hcp_vault_namespace" {
-  value = module.hcp.hcp_vault_namespace
-}
-
-output "hcp_vault_private_address" {
-  value = module.hcp.hcp_vault_private_endpoint
-}
-
-output "hcp_vault_public_address" {
-  value = var.hcp_vault_public_endpoint ? trim(module.hcp.hcp_vault_public_endpoint, "/") : ""
 }
 
 output "kubernetes_endpoint" {

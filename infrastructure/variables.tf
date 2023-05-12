@@ -6,17 +6,24 @@ variable "name" {
 variable "region" {
   type        = string
   description = "AWS Region"
+
+  validation {
+    condition     = can(regex("^us-", var.region))
+    error_message = "AWS Region must be in United States"
+  }
+
 }
 
 variable "hcp_region" {
   type        = string
   default     = ""
   description = "HCP Region"
-}
 
-variable "key_pair_name" {
-  type        = string
-  description = "SSH keypair name for Boundary and EKS nodes"
+  validation {
+    condition     = can(regex("^us-", var.hcp_region))
+    error_message = "HCP Region must be in United States"
+  }
+
 }
 
 variable "vpc_cidr_block" {
@@ -43,10 +50,40 @@ variable "hcp_consul_public_endpoint" {
   description = "Enable HCP Consul public endpoint for cluster"
 }
 
+variable "hcp_consul_tier" {
+  type        = string
+  description = "HCP Consul Tier"
+  default     = "standard"
+
+  validation {
+    condition = contains([
+      "development", "standard", "plus"
+    ], var.hcp_consul_tier)
+    error_message = "Enter a valid HCP Consul tier. https://registry.terraform.io/providers/hashicorp/hcp/latest/docs/resources/consul_cluster#tier"
+  }
+
+}
+
 variable "hcp_vault_public_endpoint" {
   type        = string
   default     = false
   description = "Enable HCP Vault public endpoint for cluster"
+}
+
+variable "hcp_vault_tier" {
+  type        = string
+  description = "HCP Vault Tier"
+  default     = "standard_small"
+
+  validation {
+    condition = contains([
+      "dev", "starter_small", "standard_small",
+      "standard_medium", "standard_large",
+      "plus_small", "plus_medium", "plus_large"
+    ], var.hcp_vault_tier)
+    error_message = "Enter a valid HCP Vault tier. https://registry.terraform.io/providers/hashicorp/hcp/latest/docs/resources/vault_cluster#tier"
+  }
+
 }
 
 variable "tags" {
@@ -70,9 +107,11 @@ variable "datadog_api_key" {
   type        = string
   description = "API Key for Datadog"
   sensitive   = true
+  default     = ""
 }
 
 variable "datadog_region" {
   type        = string
   description = "Region for Datadog"
+  default     = ""
 }
