@@ -40,10 +40,9 @@ data "aws_instances" "eks" {
 locals {
   eks_cluster_name                 = data.terraform_remote_state.infrastructure.outputs.eks_cluster_name
   region                           = data.terraform_remote_state.infrastructure.outputs.region
-  url                              = data.terraform_remote_state.infrastructure.outputs.boundary_endpoint
-  kms_recovery_key_id              = data.terraform_remote_state.infrastructure.outputs.boundary_kms_recovery_key_id
+  url                              = data.terraform_remote_state.infrastructure.outputs.hcp_boundary_endpoint
+  username                         = data.terraform_remote_state.infrastructure.outputs.hcp_boundary_username
+  password                         = data.terraform_remote_state.infrastructure.outputs.hcp_boundary_password
   eks_target_ips                   = toset(data.aws_instances.eks.private_ips)
   products_database_target_address = data.terraform_remote_state.infrastructure.outputs.product_database_address
-  consul_private_address           = replace(data.terraform_remote_state.infrastructure.outputs.hcp_consul_private_address, "https://", "")
-  vault_private_address            = replace(replace(data.terraform_remote_state.infrastructure.outputs.hcp_vault_private_address, "https://", ""), ":8200", "")
 }

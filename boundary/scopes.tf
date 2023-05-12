@@ -1,12 +1,5 @@
-resource "boundary_scope" "global" {
-  description  = "Global Scope"
-  global_scope = true
-  name         = "global"
-  scope_id     = "global"
-}
-
 resource "boundary_scope" "org" {
-  scope_id    = boundary_scope.global.id
+  scope_id    = "global"
   name        = "organization"
   description = "Organization scope"
 }
