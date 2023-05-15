@@ -14,6 +14,10 @@ output "eks_cluster_id" {
   value = module.eks.cluster_name
 }
 
+output "kubernetes_endpoint" {
+  value = module.eks.cluster_endpoint
+}
+
 output "hcp_boundary_endpoint" {
   value = hcp_boundary_cluster.main.cluster_url
 }
@@ -67,10 +71,6 @@ output "hcp_vault_public_address" {
 output "hcp_vault_token" {
   value     = hcp_vault_cluster_admin_token.cluster.token
   sensitive = true
-}
-
-output "kubernetes_endpoint" {
-  value = data.aws_eks_cluster.cluster.endpoint
 }
 
 output "product_database_address" {

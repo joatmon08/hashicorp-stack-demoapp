@@ -57,4 +57,13 @@ resource "aws_db_instance" "products" {
   db_subnet_group_name   = module.vpc.database_subnet_group_name
   vpc_security_group_ids = [aws_security_group.database.id]
   skip_final_snapshot    = true
+  storage_encrypted      = true
+
+  lifecycle {
+    postcondition {
+      condition     = self.storage_encrypted
+      error_message = "encrypt AWS RDS database storage"
+    }
+  }
+
 }
