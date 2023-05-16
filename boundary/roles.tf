@@ -39,7 +39,7 @@ resource "boundary_role" "org_readonly" {
     "id=*;type=target;actions=read,list,authorize-session",
     "id=*;type=session;actions=read,list"
   ]
-  scope_id       = boundary_scope.global.id
+  scope_id       = "global"
   grant_scope_id = boundary_scope.org.id
 }
 
