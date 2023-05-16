@@ -1,15 +1,3 @@
-resource "boundary_target" "eks_nodes_ssh" {
-  type                     = "tcp"
-  name                     = "eks_nodes_ssh"
-  description              = "EKS Nodes SSH target"
-  scope_id                 = boundary_scope.core_infra.id
-  session_connection_limit = 3
-  default_port             = 22
-  host_source_ids = [
-    boundary_host_set_static.eks_nodes.id
-  ]
-}
-
 resource "boundary_target" "products_database_postgres" {
   type                     = "tcp"
   name                     = "products_database_postgres"
