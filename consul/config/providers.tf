@@ -14,7 +14,7 @@ terraform {
 
     aws = {
       source  = "hashicorp/aws"
-      version = "~> 4.32"
+      version = ">=4.14,< 5.0"
     }
 
     vault = {

@@ -142,3 +142,6 @@ terraform-init:
 	cd vault/consul && terraform init -reconfigure
 	cd consul/setup && terraform init -reconfigure
 	cd consul/config && terraform init -reconfigure
+
+terraform-test-fixture:
+	curl --header "Content-Type: application/vnd.api+json" --header "Authorization: Bearer ${TF_TOKEN}" --location https://app.terraform.io/api/v2/plans/${TF_PLAN_ID}/json-output > infrastructure/policy/fixtures/terraform.json
