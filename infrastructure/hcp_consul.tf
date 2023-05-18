@@ -32,6 +32,11 @@ resource "hcp_consul_cluster" "main" {
 
   lifecycle {
     postcondition {
+      condition     = !contains(self.ip_allowlist.*.address, "0.0.0.0/0")
+      error_message = "Allow list must have specific CIDR block, not 0.0.0.0/0"
+    }
+
+    postcondition {
       condition     = data.aws_vpc_peering_connection.hvn.status == "active"
       error_message = "HVN peering connection is no longer active"
     }

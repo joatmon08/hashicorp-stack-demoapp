@@ -1,6 +1,5 @@
 region     = "us-east-1"
 hcp_region = "us-east-1"
-client_cidr_block = ["0.0.0.0/0"]
 
 name                       = "lynx"
 hcp_consul_public_endpoint = true
