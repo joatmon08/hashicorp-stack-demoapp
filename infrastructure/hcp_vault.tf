@@ -4,15 +4,9 @@ resource "hcp_vault_cluster" "main" {
   public_endpoint = var.hcp_vault_public_endpoint
   tier            = var.hcp_vault_tier
 
-  metrics_config {
-    datadog_api_key = var.datadog_api_key
-    datadog_region  = var.datadog_region
-  }
+  metrics_config {}
 
-  audit_log_config {
-    datadog_api_key = var.datadog_api_key
-    datadog_region  = var.datadog_region
-  }
+  audit_log_config {}
 }
 
 resource "hcp_vault_cluster_admin_token" "cluster" {

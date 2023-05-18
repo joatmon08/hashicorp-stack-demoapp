@@ -32,8 +32,13 @@ resource "hcp_consul_cluster" "main" {
 
   lifecycle {
     postcondition {
-      condition     = !contains(self.ip_allowlist.*.address, "0.0.0.0/0")
+      condition     = self.ip_allowlist.0.address == var.client_cidr_block.0
       error_message = "Allow list must have specific CIDR block, not 0.0.0.0/0"
+    }
+
+    postcondition {
+      condition     = length(self.ip_allowlist) == 1
+      error_message = "Allow list should only have one IP address range"
     }
 
     postcondition {
