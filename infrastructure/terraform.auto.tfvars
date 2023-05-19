@@ -1,5 +1,6 @@
-region     = "us-east-1"
-hcp_region = "us-east-1"
+region         = "us-east-1"
+hcp_region     = "us-east-1"
+datadog_region = "us1"
 
 name                       = "lynx"
 hcp_consul_public_endpoint = true
