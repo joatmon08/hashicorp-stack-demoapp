@@ -13,10 +13,7 @@ module "aws_hcp_consul" {
   security_group_ids = [module.eks.cluster_primary_security_group_id]
 }
 
-data "aws_vpc_peering_connection" "hvn" {
-  peer_vpc_id = module.vpc.vpc_id
-  cidr_block  = var.hcp_cidr_block
-}
+data "hcp_consul_versions" "default" {}
 
 resource "hcp_consul_cluster" "main" {
   cluster_id      = var.name
@@ -42,8 +39,8 @@ resource "hcp_consul_cluster" "main" {
     }
 
     postcondition {
-      condition     = data.aws_vpc_peering_connection.hvn.status == "active"
-      error_message = "HVN peering connection is no longer active"
+      condition     = self.consul_version == data.hcp_consul_versions.default.recommended
+      error_message = "Consul version not updated to recommended version"
     }
   }
 
