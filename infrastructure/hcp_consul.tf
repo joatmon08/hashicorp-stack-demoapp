@@ -21,6 +21,7 @@ resource "hcp_consul_cluster" "main" {
   public_endpoint    = var.hcp_consul_public_endpoint
   tier               = var.hcp_consul_tier
   datacenter         = local.datacenter
+  min_consul_version = "1.15.0"
 
   ip_allowlist {
     address     = var.client_cidr_block.0
