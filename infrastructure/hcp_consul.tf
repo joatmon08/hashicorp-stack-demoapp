@@ -16,11 +16,11 @@ module "aws_hcp_consul" {
 data "hcp_consul_versions" "default" {}
 
 resource "hcp_consul_cluster" "main" {
-  cluster_id      = var.name
-  hvn_id          = hcp_hvn.main.hvn_id
-  public_endpoint = var.hcp_consul_public_endpoint
-  tier            = var.hcp_consul_tier
-  datacenter      = local.datacenter
+  cluster_id         = var.name
+  hvn_id             = hcp_hvn.main.hvn_id
+  public_endpoint    = var.hcp_consul_public_endpoint
+  tier               = var.hcp_consul_tier
+  datacenter         = local.datacenter
 
   ip_allowlist {
     address     = var.client_cidr_block.0

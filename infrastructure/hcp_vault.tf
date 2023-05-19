@@ -14,7 +14,7 @@ resource "hcp_vault_cluster" "main" {
 
   lifecycle {
     postcondition {
-      condition = replace(self.vault_version, "v", "") != jsondecode(data.http.vault_version.response_body).version
+      condition     = replace(self.vault_version, "v", "") != jsondecode(data.http.vault_version.response_body).version
       error_message = "Avoid using latest Vault version until approved"
     }
   }
