@@ -22,6 +22,10 @@ output "kubernetes_endpoint" {
   value = module.eks.cluster_endpoint
 }
 
+output "hcp_boundary_cluster" {
+  value = hcp_boundary_cluster.main.cluster_id
+}
+
 output "hcp_boundary_endpoint" {
   value = hcp_boundary_cluster.main.cluster_url
 }

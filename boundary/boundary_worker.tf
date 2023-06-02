@@ -3,18 +3,17 @@ resource "tls_private_key" "boundary" {
 }
 
 resource "aws_key_pair" "boundary" {
-  key_name   = var.name
+  key_name   = local.name
   public_key = trimspace(tls_private_key.boundary.public_key_openssh)
 }
 
 module "boundary_worker" {
-  depends_on = [module.vpc]
-  source     = "joatmon08/boundary/aws//modules/hcp"
-  version    = "0.4.0"
+  source  = "joatmon08/boundary/aws//modules/hcp"
+  version = "0.4.0"
 
-  name                = var.name
-  boundary_cluster_id = split(".", replace(hcp_boundary_cluster.main.cluster_url, "https://", "", ))[0]
-  worker_tags         = [var.name, "ingress"]
+  name                = local.name
+  boundary_cluster_id = split(".", replace(local.url, "https://", "", ))[0]
+  worker_tags         = [local.name, "ingress"]
   vpc_id              = local.vpc_id
   key_pair_name       = aws_key_pair.boundary.key_name
   public_subnet_id    = local.public_subnets.0

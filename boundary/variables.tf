@@ -25,6 +25,12 @@ data "terraform_remote_state" "vault_setup" {
   }
 }
 
+variable "client_cidr_block" {
+  type        = list(string)
+  description = "Client CIDR block"
+  sensitive   = true
+}
+
 variable "operations_team" {
   type = set(string)
 }
@@ -53,6 +59,7 @@ locals {
   public_subnets                   = data.terraform_remote_state.infrastructure.outputs.public_subnets
   eks_cluster_name                 = data.terraform_remote_state.infrastructure.outputs.eks_cluster_name
   region                           = data.terraform_remote_state.infrastructure.outputs.region
+  name                             = data.terraform_remote_state.infrastructure.outputs.hcp_boundary_cluster
   url                              = data.terraform_remote_state.infrastructure.outputs.hcp_boundary_endpoint
   username                         = data.terraform_remote_state.infrastructure.outputs.hcp_boundary_username
   password                         = data.terraform_remote_state.infrastructure.outputs.hcp_boundary_password
