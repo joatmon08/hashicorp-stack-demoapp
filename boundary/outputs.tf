@@ -27,3 +27,7 @@ output "boundary_target_frontend" {
 output "boundary_endpoint" {
   value = local.url
 }
+
+output "boundary_worker" {
+  value = module.boundary_worker.worker.public_ip
+}

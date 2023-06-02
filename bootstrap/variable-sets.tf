@@ -76,3 +76,12 @@ resource "tfe_variable" "tfc_organization" {
   description     = "Terraform Cloud organization"
   variable_set_id = tfe_variable_set.common.id
 }
+
+resource "tfe_variable" "client_cidr_block" {
+  key             = "client_cidr_block"
+  value           = jsonencode(var.allow_cidr_blocks)
+  category        = "terraform"
+  description     = "Client CIDR blocks to allow traffic"
+  variable_set_id = tfe_variable_set.common.id
+  sensitive       = true
+}

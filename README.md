@@ -33,10 +33,10 @@ Each folder contains a few different configurations.
      - HCP Consul
      - HCP Vault
 
+   - `vault/setup/`: Deploy a Vault cluster via Helm chart and set up Kubernetes auth method
+
    - `boundary`: Configures Boundary with two projects, one for operations
       and the other for development teams.
-
-   - `vault/setup/`: Deploy a Vault cluster via Helm chart and set up Kubernetes auth method
 
    - `certs/`: Sets up offline root CA and signs intermediate CA in Vault for Consul-related
       certificates.
@@ -167,6 +167,15 @@ Commit it up to your fork.
 
 Start a new plan and apply it. It can take more than 15 minutes to provision!
 
+### Configure Vault (Kubernetes Auth Method)
+
+Go to the `vault/setup` workspace in Terraform Cloud.
+
+Start a new plan and apply it.
+
+Terraform will set up [Kubernetes authentication method](https://www.vaultproject.io/docs/auth/kubernetes)
+and deploy the [Vault Helm chart](https://github.com/hashicorp/vault-helm) to the cluster.
+
 ### Configure Boundary
 
 Go to the `boundary` workspace in Terraform Cloud.
@@ -183,15 +192,6 @@ Start a new plan and apply it. This creates an organization with two scopes:
 Only `product` users will be able to access `product_infra`.
 `operations` users will be able to access both `core_infra`
 and `product_infra`.
-
-### Configure Vault (Kubernetes Auth Method)
-
-Go to the `vault/setup` workspace in Terraform Cloud.
-
-Start a new plan and apply it.
-
-Terraform will set up [Kubernetes authentication method](https://www.vaultproject.io/docs/auth/kubernetes)
-and deploy the [Vault Helm chart](https://github.com/hashicorp/vault-helm) to the cluster.
 
 ### Configure Offline Root CA for Consul
 
