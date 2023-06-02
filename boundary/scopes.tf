@@ -1,7 +1,7 @@
 resource "boundary_scope" "org" {
-  scope_id    = "global"
-  name        = "hashicups"
-  description = "HashiCups scope"
+  scope_id                 = "global"
+  name                     = "hashicups"
+  description              = "HashiCups scope"
   auto_create_default_role = true
   auto_create_admin_role   = true
 }

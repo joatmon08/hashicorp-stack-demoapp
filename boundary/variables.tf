@@ -14,6 +14,17 @@ data "terraform_remote_state" "infrastructure" {
   }
 }
 
+data "terraform_remote_state" "vault_setup" {
+  backend = "remote"
+
+  config = {
+    organization = var.tfc_organization
+    workspaces = {
+      name = "vault-setup"
+    }
+  }
+}
+
 variable "operations_team" {
   type = set(string)
 }
@@ -38,6 +49,8 @@ data "aws_instances" "eks" {
 }
 
 locals {
+  vpc_id                           = data.terraform_remote_state.infrastructure.outputs.vpc_id
+  public_subnets                   = data.terraform_remote_state.infrastructure.outputs.public_subnets
   eks_cluster_name                 = data.terraform_remote_state.infrastructure.outputs.eks_cluster_name
   region                           = data.terraform_remote_state.infrastructure.outputs.region
   url                              = data.terraform_remote_state.infrastructure.outputs.hcp_boundary_endpoint
@@ -45,4 +58,8 @@ locals {
   password                         = data.terraform_remote_state.infrastructure.outputs.hcp_boundary_password
   eks_target_ips                   = toset(data.aws_instances.eks.private_ips)
   products_database_target_address = data.terraform_remote_state.infrastructure.outputs.product_database_address
+  vault_addr                       = data.terraform_remote_state.infrastructure.outputs.hcp_vault_public_address
+  vault_namespace                  = data.terraform_remote_state.infrastructure.outputs.hcp_vault_namespace
+  vault_token                      = data.terraform_remote_state.vault_setup.outputs.boundary_worker_token
+  vault_boundary_path              = data.terraform_remote_state.vault_setup.outputs.boundary_worker_path
 }
