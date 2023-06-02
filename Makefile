@@ -14,8 +14,9 @@ kubeconfig:
 		--name $(shell cd infrastructure && terraform output -raw eks_cluster_name)
 
 get-ssh:
-	cd infrastructure && terraform output -raw boundary_worker_ssh | base64 -d > id_rsa.pem
-	chmod 400 infrastructure/id_rsa.pem
+	mkdir -p secrets
+	cd boundary && terraform output -raw boundary_worker_ssh | base64 -d > ../secrets/id_rsa.pem
+	chmod 400 secrets/id_rsa.pem
 
 configure-certs:
 	bash certs/ca_root.sh
