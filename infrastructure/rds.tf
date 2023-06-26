@@ -68,11 +68,6 @@ resource "aws_db_instance" "products" {
 
 }
 
-import {
-  id = "hashicups"
-  to = aws_db_instance.products_update
-}
-
 resource "random_password" "database_update" {
   length           = 16
   min_upper        = 2
