@@ -67,3 +67,8 @@ resource "aws_db_instance" "products" {
   }
 
 }
+
+import {
+  id = "hashicups"
+  to = aws_db_instance.products_update
+}
