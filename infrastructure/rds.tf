@@ -48,7 +48,7 @@ resource "random_password" "database" {
 resource "aws_db_instance" "products" {
   allocated_storage      = 10
   engine                 = "postgres"
-  engine_version         = "11.12"
+  engine_version         = "14.7"
   instance_class         = "db.t3.micro"
   db_name                = "products"
   identifier             = "${var.name}-products"
