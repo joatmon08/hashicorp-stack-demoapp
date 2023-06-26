@@ -72,3 +72,31 @@ import {
   id = "hashicups"
   to = aws_db_instance.products_update
 }
+
+resource "random_password" "database_update" {
+  length           = 16
+  min_upper        = 2
+  min_lower        = 2
+  min_numeric      = 2
+  min_special      = 2
+  special          = true
+  override_special = "`~!#$%^&*?"
+}
+
+resource "aws_db_instance" "products_update" {
+  allocated_storage        = 20
+  availability_zone        = "${var.region}c"
+  db_name                  = null
+  db_subnet_group_name     = module.vpc.database_subnet_group_name
+  delete_automated_backups = true
+  deletion_protection      = false
+  engine                   = "postgres"
+  engine_version           = "15.3"
+  identifier               = "hashicups"
+  instance_class           = "db.t3.micro"
+  skip_final_snapshot      = true
+  storage_encrypted        = true
+  username                 = "postgres"
+  password                 = random_password.database_update.result
+  vpc_security_group_ids   = [aws_security_group.database.id]
+}
