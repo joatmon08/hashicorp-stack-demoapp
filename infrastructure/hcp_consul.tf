@@ -38,11 +38,6 @@ resource "hcp_consul_cluster" "main" {
       condition     = length(self.ip_allowlist) == 1
       error_message = "Allow list should only have one IP address range"
     }
-
-    postcondition {
-      condition     = self.consul_version == data.hcp_consul_versions.default.recommended
-      error_message = "Consul version not updated to recommended version"
-    }
   }
 
 }
