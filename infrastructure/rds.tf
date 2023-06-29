@@ -67,3 +67,8 @@ resource "aws_db_instance" "products" {
   }
 
 }
+
+import {
+  id = "products-v2"
+  to = aws_db_instance.products_v2
+}
