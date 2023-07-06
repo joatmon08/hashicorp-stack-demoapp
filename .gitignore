@@ -24,4 +24,4 @@ secrets/
 
 __pycache__
 
-plan.json
+mocks/

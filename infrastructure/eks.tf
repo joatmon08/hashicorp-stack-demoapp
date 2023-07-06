@@ -1,3 +1,5 @@
+
+
 module "eks" {
   source  = "terraform-aws-modules/eks/aws"
   version = "19.13.1"
@@ -8,7 +10,7 @@ module "eks" {
   cluster_endpoint_public_access = true
 
   vpc_id     = module.vpc.vpc_id
-  subnet_ids = module.vpc.public_subnets
+  subnet_ids = module.vpc.private_subnets
 
   eks_managed_node_group_defaults = {
     create_iam_role = true
@@ -24,6 +26,22 @@ module "eks" {
       desired_size = 3
 
       instance_types = ["m5.large"]
+    }
+  }
+}
+
+data "http" "kubernetes_version" {
+  url = "https://api.github.com/repos/kubernetes/kubernetes/releases/latest"
+
+  request_headers = {
+    Accept               = "application/vnd.github+json"
+    X-GitHub-Api-Version = "2022-11-28"
+  }
+
+  lifecycle {
+    postcondition {
+      condition     = tonumber(module.eks.cluster_version) < tonumber(regex("[0-9]+.[0-9]+", jsondecode(self.response_body).tag_name))
+      error_message = "Kubernetes cluster version should not be latest"
     }
   }
 }
