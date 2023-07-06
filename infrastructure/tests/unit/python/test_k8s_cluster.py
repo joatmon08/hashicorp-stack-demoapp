@@ -28,4 +28,4 @@ def test_kubernetes_cluster_should_be_in_private_subnets(private_subnets, kubern
         warnings.warn('No Kubernetes VPC configuration generated yet')
     if len(private_subnets) == 0:
         warnings.warn('No VPC subnets created yet')
-    assert all(private_subnet in cluster_subnet_ids for private_subnet in private_subnets)
+    assert all(subnet in private_subnets for subnet in cluster_subnet_ids)
