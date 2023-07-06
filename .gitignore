@@ -21,3 +21,5 @@ consul/cts/sync-tasks
 consul/cts/terraform
 
 secrets/
+
+__pycache__
