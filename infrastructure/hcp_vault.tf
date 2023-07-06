@@ -29,3 +29,14 @@ resource "hcp_vault_cluster" "main" {
 resource "hcp_vault_cluster_admin_token" "cluster" {
   cluster_id = hcp_vault_cluster.main.cluster_id
 }
+
+check "hcp_vault_status" {
+  data "http" "vault_health" {
+    url = "${hcp_vault_cluster.main.vault_public_endpoint_url}/v1/sys/health"
+  }
+
+  assert {
+    condition     = data.http.vault_health.status_code == 200
+    error_message = "${data.http.vault_health.url} returned an unhealthy status code"
+  }
+}

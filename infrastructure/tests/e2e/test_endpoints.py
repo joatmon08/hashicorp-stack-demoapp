@@ -34,21 +34,21 @@ def rds(aws):
 
 
 def test_hcp_consul_available():
-    consul_addr = os.environ['CONSUL_HTTP_ADDR']
-    response = requests.get("{}/v1/status/leader".format(consul_addr))
+    addr = os.environ['CONSUL_HTTP_ADDR']
+    response = requests.get("{}/v1/status/leader".format(addr))
     assert response.status_code == 200
 
 
 def test_hcp_vault_available():
-    consul_addr = os.environ['VAULT_ADDR']
-    response = requests.get("{}/v1/sys/health".format(consul_addr))
+    addr = os.environ['VAULT_ADDR']
+    response = requests.get("{}/v1/sys/health".format(addr))
     assert response.status_code == 200
 
 
 def test_hcp_boundary_available():
-    consul_addr = os.environ['BOUNDARY_ADDR']
+    addr = os.environ['BOUNDARY_ADDR']
     response = requests.get(
-        "{}/v1/auth-methods?scope_id=global".format(consul_addr))
+        "{}/v1/auth-methods?scope_id=global".format(addr))
     assert response.status_code == 200
 
 

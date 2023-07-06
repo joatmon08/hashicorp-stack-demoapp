@@ -45,3 +45,13 @@ data "http" "kubernetes_version" {
     }
   }
 }
+
+check "kubernetes_cluster_status" {
+  data "aws_eks_cluster" "cluster" {
+    name = module.eks.cluster_name
+  }
+  assert {
+    condition     = data.aws_eks_cluster.cluster.status == "ACTIVE"
+    error_message = "EKS cluster is not active"
+  }
+}
