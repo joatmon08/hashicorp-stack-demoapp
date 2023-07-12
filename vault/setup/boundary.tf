@@ -8,7 +8,7 @@ resource "vault_mount" "boundary_worker" {
 data "vault_policy_document" "boundary_worker" {
   rule {
     path         = "${vault_mount.boundary_worker.path}/*"
-    capabilities = ["update"]
+    capabilities = ["create","update"]
     description  = "Allow Boundary workers to register their worker auth tokens into Vault"
   }
 }
