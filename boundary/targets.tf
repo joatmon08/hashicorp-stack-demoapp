@@ -3,6 +3,7 @@ resource "boundary_target" "eks_nodes_ssh" {
   name                     = "eks_nodes_ssh"
   description              = "EKS Nodes SSH target"
   scope_id                 = boundary_scope.core_infra.id
+  egress_worker_filter     = "\"${local.name}\" in \"/tags/type\""
   session_connection_limit = 3
   default_port             = 22
   host_source_ids = [
