@@ -23,13 +23,22 @@ module "boundary_worker" {
   vault_path          = "boundary/worker"
 }
 
-resource "aws_security_group_rule" "allow_9202_worker" {
+resource "aws_security_group_rule" "allow_ssh_worker" {
   type              = "ingress"
   from_port         = 22
   to_port           = 22
   protocol          = "tcp"
   cidr_blocks       = var.client_cidr_block
   security_group_id = module.boundary_worker.security_group.id
+}
+
+resource "aws_security_group_rule" "allow_boundary_worker_to_eks" {
+  type                     = "ingress"
+  from_port                = 22
+  to_port                  = 22
+  protocol                 = "tcp"
+  source_security_group_id = module.boundary_worker.security_group.id
+  security_group_id        = local.eks_cluster_security_group_id
 }
 
 data "vault_kv_secrets_list_v2" "boundary_worker_tokens" {
@@ -51,7 +60,7 @@ locals {
 resource "boundary_worker" "worker_led" {
   depends_on                  = [module.boundary_worker]
   for_each                    = local.boundary_worker_tokens
-  scope_id                    = boundary_scope.core_infra.id
+  scope_id                    = "global"
   name                        = each.key
   description                 = "self-managed worker ${each.key} in ${local.vpc_id}"
   worker_generated_auth_token = each.value

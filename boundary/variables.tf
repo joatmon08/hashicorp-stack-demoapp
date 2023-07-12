@@ -63,6 +63,7 @@ locals {
   url                              = data.terraform_remote_state.infrastructure.outputs.hcp_boundary_endpoint
   username                         = data.terraform_remote_state.infrastructure.outputs.hcp_boundary_username
   password                         = data.terraform_remote_state.infrastructure.outputs.hcp_boundary_password
+  eks_cluster_security_group_id    = data.terraform_remote_state.infrastructure.outputs.eks_cluster_security_group_id
   eks_target_ips                   = toset(data.aws_instances.eks.private_ips)
   products_database_target_address = data.terraform_remote_state.infrastructure.outputs.product_database_address
   vault_addr                       = data.terraform_remote_state.infrastructure.outputs.hcp_vault_public_address
