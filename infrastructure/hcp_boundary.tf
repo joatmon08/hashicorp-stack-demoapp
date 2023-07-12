@@ -34,3 +34,16 @@ resource "hcp_boundary_cluster" "main" {
   username   = "${var.name}-${random_string.boundary.result}"
   password   = random_password.boundary.result
 }
+
+resource "tls_private_key" "boundary" {
+  algorithm = "RSA"
+}
+
+resource "aws_key_pair" "boundary" {
+  key_name   = var.name
+  public_key = trimspace(tls_private_key.boundary.public_key_openssh)
+}
+
+resource "aws_security_group" "boundary_worker" {
+  vpc_id = module.vpc.vpc_id
+}
