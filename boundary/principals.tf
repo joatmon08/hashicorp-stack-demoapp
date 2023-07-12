@@ -32,7 +32,6 @@ resource "boundary_account_password" "operations_user_acct" {
   for_each       = var.operations_team
   name           = each.key
   description    = "User account for ${each.key}"
-  type           = "password"
   login_name     = lower(each.key)
   password       = random_password.operations_team.result
   auth_method_id = boundary_auth_method.password.id
@@ -48,19 +47,23 @@ resource "boundary_account_password" "products_user_acct" {
   for_each       = var.products_team
   name           = each.key
   description    = "User account for ${each.key}"
-  type           = "password"
   login_name     = lower(each.key)
   password       = random_password.products_team.result
   auth_method_id = boundary_auth_method.password.id
+}
+
+resource "random_password" "leadership_team" {
+  length           = 16
+  special          = true
+  override_special = "_%@"
 }
 
 resource "boundary_account_password" "leadership_user_acct" {
   for_each       = var.leadership_team
   name           = each.key
   description    = "User account for ${each.key}"
-  type           = "password"
   login_name     = lower(each.key)
-  password       = "foofoofoo"
+  password       = random_password.leadership_team.result
   auth_method_id = boundary_auth_method.password.id
 }
 

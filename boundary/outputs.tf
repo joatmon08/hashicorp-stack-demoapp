@@ -12,6 +12,11 @@ output "boundary_products_password" {
   sensitive = true
 }
 
+output "boundary_leadership_password" {
+  value     = random_password.leadership_team.result
+  sensitive = true
+}
+
 output "boundary_target_eks" {
   value = boundary_target.eks_nodes_ssh.id
 }

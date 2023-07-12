@@ -31,3 +31,28 @@ resource "aws_security_group_rule" "allow_9202_worker" {
   cidr_blocks       = var.client_cidr_block
   security_group_id = module.boundary_worker.security_group.id
 }
+
+data "vault_kv_secrets_list_v2" "boundary_worker_tokens" {
+  depends_on = [module.boundary_worker]
+  mount      = local.boundary_worker_mount
+}
+
+data "vault_kv_secret_v2" "boundary_worker_token" {
+  depends_on = [module.boundary_worker]
+  for_each   = toset(nonsensitive(data.vault_kv_secrets_list_v2.boundary_worker_tokens.names))
+  mount      = local.boundary_worker_mount
+  name       = each.key
+}
+
+locals {
+  boundary_worker_tokens = { for hostname, secret in data.vault_kv_secret_v2.boundary_worker_token : hostname => secret.data.token }
+}
+
+resource "boundary_worker" "worker_led" {
+  depends_on                  = [module.boundary_worker]
+  for_each                    = local.boundary_worker_tokens
+  scope_id                    = boundary_scope.core_infra.id
+  name                        = each.key
+  description                 = "self-managed worker ${each.key} in ${local.vpc_id}"
+  worker_generated_auth_token = each.value
+}
