@@ -21,6 +21,8 @@ module "eks" {
 
   eks_managed_node_groups = {
     hashicups = {
+      use_custom_launch_template = false
+
       remote_access = {
         ec2_ssh_key               = aws_key_pair.boundary.key_name
         source_security_group_ids = [aws_security_group.boundary_worker.id]
