@@ -34,11 +34,5 @@ output "boundary_endpoint" {
 }
 
 output "boundary_worker" {
-  value = module.boundary_worker.worker.public_ip
-}
-
-output "boundary_worker_ssh" {
-  value       = base64encode(tls_private_key.boundary.private_key_openssh)
-  description = "Boundary worker SSH key"
-  sensitive   = true
+  value = module.boundary_worker.0.worker.public_ip
 }
