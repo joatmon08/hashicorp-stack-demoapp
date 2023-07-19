@@ -1,6 +1,7 @@
 resource "tfe_organization" "demo" {
-  name  = var.tfc_organization
-  email = var.email
+  allow_force_delete_workspaces = true
+  name                          = var.tfc_organization
+  email                         = var.email
 }
 
 resource "tfe_oauth_client" "github" {

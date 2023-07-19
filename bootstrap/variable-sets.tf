@@ -2,6 +2,7 @@ resource "tfe_variable_set" "hcp" {
   name         = "HashiCorp Cloud Platform"
   description  = "Service principal credentials for HashiCorp Cloud Platform"
   organization = tfe_organization.demo.name
+  global       = false
 }
 
 resource "tfe_variable" "hcp_client_id" {
@@ -22,12 +23,14 @@ resource "tfe_variable" "hcp_client_secret" {
 }
 
 resource "tfe_variable_set" "aws" {
-  name         = "AWS Credentials"
-  description  = "AWS credentials"
+  name         = "AWS"
+  description  = "AWS credentials from HashiCorp Doormat"
   organization = tfe_organization.demo.name
+  global       = false
 }
 
 resource "tfe_variable" "aws_access_key_id" {
+  count           = var.aws_access_key_id == null ? 0 : 1
   key             = "AWS_ACCESS_KEY_ID"
   value           = var.aws_access_key_id
   category        = "env"
@@ -36,6 +39,7 @@ resource "tfe_variable" "aws_access_key_id" {
 }
 
 resource "tfe_variable" "aws_secret_access_key" {
+  count           = var.aws_secret_access_key == null ? 0 : 1
   key             = "AWS_SECRET_ACCESS_KEY"
   value           = var.aws_secret_access_key
   category        = "env"
@@ -67,6 +71,7 @@ resource "tfe_variable_set" "common" {
   name         = "Common"
   description  = "Common variables for use"
   organization = tfe_organization.demo.name
+  global       = false
 }
 
 resource "tfe_variable" "tfc_organization" {
@@ -83,5 +88,27 @@ resource "tfe_variable" "client_cidr_block" {
   category        = "terraform"
   description     = "Client CIDR blocks to allow traffic"
   variable_set_id = tfe_variable_set.common.id
+}
+
+resource "tfe_variable_set" "datadog" {
+  count        = var.datadog_api_key != null ? 1 : 0
+  name         = "Datadog"
+  description  = "Datadog variables"
+  organization = tfe_organization.demo.name
+  global       = false
+}
+
+resource "tfe_variable" "datadog_api_key" {
+  count           = var.datadog_api_key != null ? 1 : 0
+  key             = "datadog_api_key"
+  value           = var.datadog_api_key
+  category        = "terraform"
+  description     = "Datadog API Key"
+  variable_set_id = tfe_variable_set.datadog.0.id
   sensitive       = true
+}
+
+import {
+  to = tfe_variable_set.datadog.0
+  id = "varset-jvvNPoPy7KM9HVqB"
 }

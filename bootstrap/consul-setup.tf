@@ -2,6 +2,7 @@ resource "tfe_workspace" "consul_setup" {
   name                      = "consul-setup"
   organization              = tfe_organization.demo.name
   description               = "Step 6 - Set up Consul on Kubernetes"
+  terraform_version         = var.terraform_version
   working_directory         = "consul/setup"
   trigger_prefixes          = ["consul/setup"]
   queue_all_runs            = false

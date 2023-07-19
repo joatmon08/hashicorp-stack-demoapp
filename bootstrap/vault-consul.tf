@@ -2,6 +2,7 @@ resource "tfe_workspace" "vault_consul" {
   name                      = "vault-consul"
   organization              = tfe_organization.demo.name
   description               = "Step 5 - Configure Vault for Consul (PKI Secrets Engine)"
+  terraform_version         = var.terraform_version
   working_directory         = "vault/consul"
   trigger_prefixes          = ["vault/consul"]
   queue_all_runs            = false
@@ -21,13 +22,4 @@ resource "tfe_workspace_variable_set" "vault_consul_hcp" {
 resource "tfe_workspace_variable_set" "vault_consul_common" {
   workspace_id    = tfe_workspace.vault_consul.id
   variable_set_id = tfe_variable_set.common.id
-}
-
-resource "tfe_variable" "consul_gossip_key" {
-  key          = "consul_gossip_key"
-  value        = var.consul_gossip_key
-  category     = "terraform"
-  workspace_id = tfe_workspace.vault_consul.id
-  description  = "Consul gossip encryption key. Generate with `consul keygen`"
-  sensitive    = true
 }

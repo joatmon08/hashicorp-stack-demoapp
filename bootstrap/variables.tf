@@ -1,3 +1,9 @@
+variable "terraform_version" {
+  type        = string
+  description = "Terraform version for all workspaces"
+  default     = "1.5.2"
+}
+
 variable "tfc_organization" {
   type        = string
   description = "Terraform Cloud organization name"
@@ -41,12 +47,14 @@ variable "hcp_client_secret" {
 variable "aws_access_key_id" {
   type        = string
   description = "AWS access key ID"
+  default     = null
 }
 
 variable "aws_secret_access_key" {
   type        = string
   description = "AWS secret access key"
   sensitive   = true
+  default     = null
 }
 
 variable "aws_session_token" {
@@ -68,8 +76,8 @@ variable "allow_cidr_blocks" {
   default     = ["0.0.0.0/0"]
 }
 
-variable "consul_gossip_key" {
+variable "datadog_api_key" {
   type        = string
-  description = "Consul gossip encryption key. Generate with `consul keygen`"
-  sensitive   = true
+  description = "Datadog API key, if applicable"
+  default     = null
 }

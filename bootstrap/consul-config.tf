@@ -2,6 +2,7 @@ resource "tfe_workspace" "consul_config" {
   name                      = "consul-config"
   organization              = tfe_organization.demo.name
   description               = "Step 8 - Configure Consul external services & API gateway"
+  terraform_version         = var.terraform_version
   working_directory         = "consul/config"
   trigger_prefixes          = ["consul/config"]
   queue_all_runs            = false

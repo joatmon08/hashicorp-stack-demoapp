@@ -12,4 +12,4 @@ hcp_client_id     = ""
 hcp_client_secret = ""
 
 allow_cidr_blocks = [""] ## use `curl ifconfig.me` to find your machine's public IP
-consul_gossip_key = "" ## generate locally using `consul keygen`
+datadog_api_key = ""
