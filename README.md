@@ -67,11 +67,11 @@ Each folder contains a few different configurations.
 
 Be sure to download the CLIs for the following.
 
-- Terraform 1.4
+- Terraform 1.5
 - Consul 1.12 (on Kubernetes)
 - Vault 1.10
-- Boundary 0.8
-- Kubernetes 1.22
+- Boundary 0.13
+- Kubernetes 1.26
 
 ### Platforms
 
@@ -80,7 +80,6 @@ Be sure to download the CLIs for the following.
    - [Download the Terraform CLI](https://developer.hashicorp.com/terraform/downloads).
    - [Log into Terraform Cloud from the CLI](https://developer.hashicorp.com/terraform/tutorials/cloud-get-started/cloud-login).
 - AWS Account
-   - [Create an AWS EC2 keypair.](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/create-key-pairs.html)
 - HashiCorp Cloud Platform account
    - You need access to HCP Consul and Vault.
    - Create a [service principal](https://portal.cloud.hashicorp.com/access/service-principals)
@@ -176,6 +175,8 @@ Start a new plan and apply it.
 Terraform will set up [Kubernetes authentication method](https://www.vaultproject.io/docs/auth/kubernetes)
 and deploy the [Vault Helm chart](https://github.com/hashicorp/vault-helm) to the cluster.
 
+It also sets up a key-value secrets engine to store the Boundary worker token.
+
 ### Configure Boundary
 
 Go to the `boundary` workspace in Terraform Cloud.
@@ -184,6 +185,10 @@ Optionally, update the `boundary/terraform.auto.tfvars` file with
 a list of users and groups you'd like to add.
 
 Commit it up to your fork.
+
+> __NOTE__: Terraform will error out the first time you run it, as it
+> waits for the Boundary worker to start up and store its token into
+> Vault. Re-run after waiting a few moments.
 
 Start a new plan and apply it. This creates an organization with two scopes:
 - `core_infra`, which allows you to SSH into EKS nodes

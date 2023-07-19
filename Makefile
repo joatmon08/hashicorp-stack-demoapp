@@ -14,6 +14,7 @@ kubeconfig:
 		--name $(shell cd infrastructure && terraform output -raw eks_cluster_name)
 
 get-ssh:
+	rm -rf secrets
 	mkdir -p secrets
 	cd infrastructure && terraform output -raw boundary_worker_ssh | base64 -d > ../secrets/id_rsa.pem
 	chmod 400 secrets/id_rsa.pem
@@ -79,11 +80,7 @@ boundary-appdev-auth:
 		-password file://secrets/appdev \
 		-auth-method-id=$(shell cd boundary && terraform output -raw boundary_auth_method_id)
 
-ssh-operations:
-	boundary connect ssh -username=ec2-user -target-id \
-		$(shell cd boundary && terraform output -raw boundary_target_eks) -- -i secrets/id_rsa.pem
-
-ssh-products:
+ssh-k8s-nodes:
 	boundary connect ssh -username=ec2-user -target-id \
 		$(shell cd boundary && terraform output -raw boundary_target_eks) -- -i secrets/id_rsa.pem
 
