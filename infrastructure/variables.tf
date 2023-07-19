@@ -100,7 +100,6 @@ variable "additional_tags" {
 variable "client_cidr_block" {
   type        = list(string)
   description = "Client CIDR block"
-  sensitive   = true
 }
 
 variable "datadog_api_key" {

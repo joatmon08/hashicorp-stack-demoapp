@@ -86,6 +86,7 @@ resource "tfe_variable" "client_cidr_block" {
   key             = "client_cidr_block"
   value           = jsonencode(var.allow_cidr_blocks)
   category        = "terraform"
+  hcl             = true
   description     = "Client CIDR blocks to allow traffic"
   variable_set_id = tfe_variable_set.common.id
 }
