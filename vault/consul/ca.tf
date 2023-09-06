@@ -26,7 +26,7 @@ resource "consul_certificate_authority" "connect" {
 
 check "connect_ca" {
   data "http" "certs" {
-    url = "${local.hcp_consul_private_address}/v1/connect/ca/configuration"
+    url = "${local.hcp_consul_public_address}/v1/connect/ca/configuration"
     request_headers = {
       X-Consul-Token = local.hcp_consul_token
     }

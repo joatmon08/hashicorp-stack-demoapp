@@ -19,6 +19,6 @@ provider "vault" {
 }
 
 provider "consul" {
-  address = local.hcp_consul_private_address
+  address = local.hcp_consul_public_address
   token   = local.hcp_consul_token
 }

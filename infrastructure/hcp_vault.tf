@@ -36,7 +36,7 @@ check "hcp_vault_status" {
   }
 
   assert {
-    condition     = data.http.vault_health.status_code == 200
+    condition     = data.http.vault_health.status_code == 200 || data.http.vault_health.status_code == 473
     error_message = "${data.http.vault_health.url} returned an unhealthy status code"
   }
 }

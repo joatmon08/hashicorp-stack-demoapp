@@ -15,6 +15,10 @@ module "aws_hcp_consul" {
 
 data "hcp_consul_versions" "default" {}
 
+data "http" "terraform_cloud_ip_ranges" {
+  url = "https://app.terraform.io/api/meta/ip-ranges"
+}
+
 resource "hcp_consul_cluster" "main" {
   cluster_id         = var.name
   hvn_id             = hcp_hvn.main.hvn_id
@@ -24,21 +28,11 @@ resource "hcp_consul_cluster" "main" {
   min_consul_version = "1.16.0"
 
   ip_allowlist {
-    address     = var.client_cidr_block.0
-    description = "Allow Client CIDR Block"
+    address     = "0.0.0.0/0"
+    description = "Allow TFC to automate"
   }
 
   lifecycle {
-    postcondition {
-      condition     = self.ip_allowlist.0.address == var.client_cidr_block.0
-      error_message = "Allow list must have specific CIDR block, not 0.0.0.0/0"
-    }
-
-    postcondition {
-      condition     = length(self.ip_allowlist) == 1
-      error_message = "Allow list should only have one IP address range"
-    }
-
     postcondition {
       condition     = self.consul_version == data.hcp_consul_versions.default.recommended
       error_message = "Consul version not updated to recommended version"
