@@ -13,11 +13,11 @@ resource "vault_pki_secret_backend_intermediate_cert_request" "consul_pki" {
   common_name  = "Consul Server CA1 v1"
   key_type     = "rsa"
   key_bits     = "4096"
-  ou           = "HashiConf Europe"
-  organization = "HashiCorp"
-  country      = "NL"
-  locality     = "Amsterdam"
-  province     = "North Holland"
+  ou           = var.cert_ou
+  organization = var.cert_organization
+  country      = var.cert_country
+  locality     = var.cert_locality
+  province     = var.cert_province
 }
 
 resource "local_file" "csr" {
@@ -47,11 +47,11 @@ resource "vault_pki_secret_backend_intermediate_cert_request" "consul_server_pki
   common_name  = "Consul Server CA2 v1"
   key_type     = "rsa"
   key_bits     = "4096"
-  ou           = "HashiConf Europe"
-  organization = "HashiCorp"
-  country      = "NL"
-  locality     = "Amsterdam"
-  province     = "North Holland"
+  ou           = var.cert_ou
+  organization = var.cert_organization
+  country      = var.cert_country
+  locality     = var.cert_locality
+  province     = var.cert_province
 }
 
 resource "vault_pki_secret_backend_root_sign_intermediate" "consul_server_pki_int" {
@@ -64,11 +64,11 @@ resource "vault_pki_secret_backend_root_sign_intermediate" "consul_server_pki_in
   csr                  = vault_pki_secret_backend_intermediate_cert_request.consul_server_pki_int.csr
   common_name          = "Consul Server CA2 v1.1"
   exclude_cn_from_sans = true
-  ou                   = "HashiConf Europe"
-  organization         = "HashiCorp"
+  ou                   = var.cert_ou
+  organization         = var.cert_organization
   country              = "US"
-  locality             = "Amsterdam"
-  province             = "North Holland"
+  locality             = var.cert_locality
+  province             = var.cert_province
   max_path_length      = 1
   ttl                  = local.seconds_in_1_year
 }
