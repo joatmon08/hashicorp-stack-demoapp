@@ -1,7 +1,6 @@
 module "boundary_worker" {
-  # source  = "joatmon08/boundary/aws//modules/hcp"
-  # version = "0.4.0"
-  source = "github.com/joatmon08/terraform-aws-boundary//modules/hcp"
+  source  = "joatmon08/boundary/aws//modules/hcp"
+  version = "0.5.0"
 
   count = 1
 

@@ -21,14 +21,6 @@ output "boundary_target_eks" {
   value = boundary_target.eks_nodes_ssh.id
 }
 
-output "boundary_target_postgres" {
-  value = boundary_target.products_database_postgres.id
-}
-
-output "boundary_target_frontend" {
-  value = var.products_frontend_address != "" ? boundary_target.products_frontend.0.id : ""
-}
-
 output "boundary_endpoint" {
   value = local.url
 }
