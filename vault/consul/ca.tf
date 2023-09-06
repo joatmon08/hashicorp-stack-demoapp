@@ -21,6 +21,7 @@ resource "consul_certificate_authority" "connect" {
     Token               = vault_token.connect_ca_hcp.client_token
     RootPKIPath         = "connect_root"
     IntermediatePKIPath = "connect_inter"
+    Namespace           = local.hcp_vault_namespace
   })
 }
 

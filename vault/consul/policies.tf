@@ -89,6 +89,10 @@ resource "vault_policy" "connect_ca_hcp" {
   name = "connect-ca-hcp"
 
   policy = <<EOT
+path "auth/token/lookup-self" {
+    capabilities = ["read"]
+}
+
 path "/sys/mounts" {
   capabilities = [ "read" ]
 }
