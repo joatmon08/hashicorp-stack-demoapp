@@ -64,6 +64,36 @@ variable "vault_consul_gateway_pki_int_backend" {
   default     = "consul/gateway/pki_int"
 }
 
+variable "cert_ou" {
+  default     = "HashiConf"
+  type        = string
+  description = "Certificate organization unit"
+}
+
+variable "cert_organization" {
+  default     = "HashiCorp"
+  type        = string
+  description = "Certificate organization"
+}
+
+variable "cert_country" {
+  default     = "US"
+  type        = string
+  description = "Certificate country"
+}
+
+variable "cert_locality" {
+  default     = "San Francisco"
+  type        = string
+  description = "Certificate locality (city)"
+}
+
+variable "cert_province" {
+  default     = "California"
+  type        = string
+  description = "Certificate province (state)"
+}
+
 variable "tfc_organization" {
   type        = string
   description = "TFC Organization for remote state of infrastructure"
@@ -92,14 +122,17 @@ data "terraform_remote_state" "setup" {
 }
 
 locals {
-  hcp_vault_cluster_id       = var.hcp_vault_cluster_id == "" ? data.terraform_remote_state.infrastructure.outputs.hcp_vault_cluster : var.hcp_vault_cluster_id
-  hcp_vault_public_address   = data.terraform_remote_state.infrastructure.outputs.hcp_vault_public_address
-  hcp_vault_private_address  = data.terraform_remote_state.infrastructure.outputs.hcp_vault_private_address
-  hcp_vault_namespace        = data.terraform_remote_state.infrastructure.outputs.hcp_vault_namespace
-  hcp_vault_cluster_token    = var.hcp_vault_cluster_token == "" ? data.terraform_remote_state.infrastructure.outputs.hcp_vault_token : var.hcp_vault_cluster_token
+  hcp_vault_cluster_id      = var.hcp_vault_cluster_id == "" ? data.terraform_remote_state.infrastructure.outputs.hcp_vault_cluster : var.hcp_vault_cluster_id
+  hcp_vault_public_address  = data.terraform_remote_state.infrastructure.outputs.hcp_vault_public_address
+  hcp_vault_private_address = data.terraform_remote_state.infrastructure.outputs.hcp_vault_private_address
+  hcp_vault_namespace       = data.terraform_remote_state.infrastructure.outputs.hcp_vault_namespace
+  hcp_vault_cluster_token   = var.hcp_vault_cluster_token == "" ? data.terraform_remote_state.infrastructure.outputs.hcp_vault_token : var.hcp_vault_cluster_token
+
+  hcp_consul_public_address  = data.terraform_remote_state.infrastructure.outputs.hcp_consul_public_address
+  hcp_consul_private_address = data.terraform_remote_state.infrastructure.outputs.hcp_consul_private_address
+  hcp_consul_token           = data.terraform_remote_state.infrastructure.outputs.hcp_consul_token
+
   vault_kubernetes_auth_path = data.terraform_remote_state.setup.outputs.vault_kubernetes_auth_path
-  vault_database_static_path = data.terraform_remote_state.setup.outputs.database_static_path
-  vault_database_secret_name = data.terraform_remote_state.setup.outputs.database_secret_name
 }
 
 variable "hcp_vault_cluster_id" {

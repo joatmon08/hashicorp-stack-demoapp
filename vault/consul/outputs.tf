@@ -26,11 +26,3 @@ output "consul_api_gateway_allowed_domain" {
 output "consul_datacenter" {
   value = var.consul_datacenter
 }
-
-output "vault_database_static_path" {
-  value = local.vault_database_static_path
-}
-
-output "consul_terraform_sync_secret_name" {
-  value = local.consul_terraform_sync_secret_name
-}

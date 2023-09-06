@@ -14,11 +14,11 @@ resource "vault_pki_secret_backend_root_cert" "consul" {
   type         = "internal"
   common_name  = "Consul CA Root"
   ttl          = "31536000"
-  ou           = "HashiConf Europe"
-  organization = "HashiCorp"
-  country      = "NL"
-  locality     = "Amsterdam"
-  province     = "North Holland"
+  ou           = var.cert_ou
+  organization = var.cert_organization
+  country      = var.cert_country
+  locality     = var.cert_locality
+  province     = var.cert_province
 }
 
 locals {
