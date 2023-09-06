@@ -86,6 +86,20 @@ variable "hcp_vault_tier" {
 
 }
 
+variable "hcp_boundary_tier" {
+  type        = string
+  description = "HCP Boundary Tier"
+  default     = "Standard"
+
+  validation {
+    condition = contains([
+      "Standard", "Plus"
+    ], var.hcp_boundary_tier)
+    error_message = "Enter a valid HCP Boundary tier. https://registry.terraform.io/providers/hashicorp/hcp/latest/docs/resources/boundary_cluster#tier"
+  }
+
+}
+
 variable "tags" {
   type        = map(any)
   description = "Tags to add resources"

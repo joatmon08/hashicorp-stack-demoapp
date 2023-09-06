@@ -3,14 +3,6 @@ resource "random_string" "boundary" {
   upper   = false
   special = false
   numeric = false
-
-  lifecycle {
-    precondition {
-      condition     = random_password.database.length > 3
-      error_message = "HCP Boundary requires username to be at least 3 characters in length"
-    }
-  }
-
 }
 
 resource "random_password" "boundary" {
@@ -19,20 +11,25 @@ resource "random_password" "boundary" {
   min_lower   = 2
   min_numeric = 2
   min_special = 1
-
-  lifecycle {
-    precondition {
-      condition     = random_password.database.length > 8
-      error_message = "HCP Boundary requires password to be at least 8 characters in length"
-    }
-  }
-
 }
 
 resource "hcp_boundary_cluster" "main" {
   cluster_id = var.name
   username   = "${var.name}-${random_string.boundary.result}"
   password   = random_password.boundary.result
+  tier       = var.hcp_boundary_tier
+
+  lifecycle {
+    precondition {
+      condition     = random_string.boundary.length > 3
+      error_message = "HCP Boundary requires username to be at least 3 characters in length"
+    }
+
+    precondition {
+      condition     = random_password.boundary.length > 8
+      error_message = "HCP Boundary requires password to be at least 8 characters in length"
+    }
+  }
 }
 
 resource "tls_private_key" "boundary" {

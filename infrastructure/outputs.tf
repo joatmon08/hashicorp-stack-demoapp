@@ -85,19 +85,6 @@ output "hcp_vault_token" {
   sensitive = true
 }
 
-output "product_database_address" {
-  value = aws_db_instance.products.address
-}
-
-output "product_database_username" {
-  value = aws_db_instance.products.username
-}
-
-output "product_database_password" {
-  value     = aws_db_instance.products.password
-  sensitive = true
-}
-
 output "boundary_worker_key_pair_name" {
   value = aws_key_pair.boundary.key_name
 }
