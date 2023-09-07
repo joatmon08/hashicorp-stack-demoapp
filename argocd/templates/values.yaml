@@ -6,6 +6,8 @@ controller:
 
 server:
   replicas: 2
+  service:
+    type: LoadBalancer
 
 repoServer:
   replicas: 2
