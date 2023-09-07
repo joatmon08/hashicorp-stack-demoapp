@@ -19,7 +19,7 @@ terraform {
 
     aws = {
       source  = "hashicorp/aws"
-      version = ">=4.14,< 5.0"
+      version = "~> 5.0"
     }
 
     consul = {

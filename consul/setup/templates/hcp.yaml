@@ -11,10 +11,6 @@ terminatingGateways:
   defaults:
     replicas: 1
 
-apiGateway:
-  enabled: true
-  image: "hashicorp/consul-api-gateway:0.4.0"
-
 client:
   extraLabels:
     tags.datadoghq.com/service: "consul-client"
@@ -22,3 +18,5 @@ client:
 connectInject:
   replicas: 1
   enabled: true
+  apiGateway:
+    manageExternalCRDs: true
