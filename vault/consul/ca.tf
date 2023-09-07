@@ -1,11 +1,11 @@
 resource "vault_token_auth_backend_role" "connect_ca_hcp" {
-  role_name              = "connect-ca-hcp"
-  allowed_policies       = [vault_policy.connect_ca_hcp.name]
-  disallowed_policies    = ["default"]
-  orphan                 = true
-  token_period           = "86400"
-  renewable              = true
-  token_explicit_max_ttl = "115200"
+  role_name           = "connect-ca-hcp"
+  allowed_policies    = [vault_policy.connect_ca_hcp.name]
+  disallowed_policies = ["default"]
+  orphan              = true
+  token_period        = "172800"
+  renewable           = true
+  token_num_uses      = 0
 }
 
 resource "vault_token" "connect_ca_hcp" {
