@@ -38,6 +38,8 @@ Each folder contains a few different configurations.
    - `boundary`: Configures Boundary with two projects, one for operations
       and the other for development teams.
 
+   - `argocd`: Deploys an ArgoCD cluster to configure applications and Consul
+
    - `certs/`: Sets up offline root CA and signs intermediate CA in Vault for Consul-related
       certificates.
 
@@ -198,6 +200,15 @@ Only `product` users will be able to access `product_infra`.
 `operations` users will be able to access both `core_infra`
 and `product_infra`.
 
+### Configure Argo CD
+
+Go to the `argocd` workspace in Terraform Cloud.
+
+Commit it up to your fork.
+
+This deploys an Argo CD HA cluster. You can get the initial `admin` password
+using the Argo CD CLI or from a Kubernetes secret.
+
 ### Configure Offline Root CA for Consul
 
 As a best practice, store root CAs away from Vault. To demonstrate this, we generate
@@ -237,11 +248,6 @@ Terraform will set up the PKI secrets engine for TLS in the Consul cluster
 (not the service mesh).
 
 ### Configure Consul
-
-Using kustomize, deploy the Gateway CRDs.
-```shell
-make configure-kubernetes
-```
 
 Go to the `consul/setup` workspace in Terraform Cloud.
 
