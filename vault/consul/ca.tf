@@ -21,6 +21,11 @@ resource "consul_certificate_authority" "connect" {
     Token               = vault_token.connect_ca_hcp.client_token
     RootPKIPath         = "connect_root"
     IntermediatePKIPath = "connect_inter"
+    LeafCertTTL         = "72h"
+    RotationPeriod      = "2160h"
+    IntermediateCertTTL = "8760h"
+    PrivateKeyType      = "rsa"
+    PrivateKeyBits      = 2048
     Namespace           = local.hcp_vault_namespace
   })
 }
