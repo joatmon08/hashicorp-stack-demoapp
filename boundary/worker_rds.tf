@@ -31,7 +31,7 @@ data "vault_kv_secret_v2" "boundary_worker_token_rds" {
 
 resource "boundary_worker" "rds" {
   depends_on                  = [module.boundary_worker_rds, data.vault_kv_secret_v2.boundary_worker_token_rds]
-  scope_id                    = boundary_scope.products_infra.id
+  scope_id                    = "global"
   name                        = data.vault_kv_secret_v2.boundary_worker_token_rds.name
   description                 = "self-managed worker ${data.vault_kv_secret_v2.boundary_worker_token_rds.name} for RDS in ${local.vpc_id}"
   worker_generated_auth_token = data.vault_kv_secret_v2.boundary_worker_token_rds.data.token

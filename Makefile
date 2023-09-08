@@ -81,8 +81,7 @@ boundary-appdev-auth:
 		-auth-method-id=$(shell cd boundary && terraform output -raw boundary_auth_method_id)
 
 ssh-k8s-nodes:
-	boundary connect ssh -username=ec2-user -target-id \
-		$(shell cd boundary && terraform output -raw boundary_target_eks) -- -i secrets/id_rsa.pem
+	boundary connect ssh -username=ec2-user -target-name eks_nodes_ssh -target-scope-name core_infra -- -i secrets/id_rsa.pem
 
 postgres-operations: boundary-appdev-auth
 	boundary connect postgres \

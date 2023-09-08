@@ -15,15 +15,15 @@ module "vpc" {
   source  = "terraform-aws-modules/vpc/aws"
   version = "5.1.1"
 
-  name             = var.name
-  cidr             = var.vpc_cidr_block
-  azs              = data.aws_availability_zones.available.names
-  private_subnets  = slice(local.subnets, 0, 3)
-  public_subnets   = slice(local.subnets, 3, 6)
+  name            = var.name
+  cidr            = var.vpc_cidr_block
+  azs             = data.aws_availability_zones.available.names
+  private_subnets = slice(local.subnets, 0, 3)
+  public_subnets  = slice(local.subnets, 3, 6)
 
-  create_database_subnet_group = true
+  create_database_subnet_group       = true
   create_database_subnet_route_table = true
-  database_subnets = slice(local.subnets, 6, 9)
+  database_subnets                   = slice(local.subnets, 6, 9)
 
   manage_default_route_table = true
   default_route_table_tags   = { DefaultRouteTable = true }

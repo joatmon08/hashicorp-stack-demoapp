@@ -46,7 +46,7 @@ data "vault_kv_secret_v2" "boundary_worker_token" {
 
 resource "boundary_worker" "eks" {
   depends_on                  = [module.boundary_worker_eks, data.vault_kv_secret_v2.boundary_worker_token]
-  scope_id                    = boundary_scope.core_infra.id
+  scope_id                    = "global"
   name                        = data.vault_kv_secret_v2.boundary_worker_token.name
   description                 = "self-managed worker ${data.vault_kv_secret_v2.boundary_worker_token.name} for EKS in ${local.vpc_id}"
   worker_generated_auth_token = data.vault_kv_secret_v2.boundary_worker_token.data.token

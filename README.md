@@ -254,27 +254,6 @@ Go to the `consul/setup` workspace in Terraform Cloud.
 Start a new plan and apply it. This deploys Consul clients and a terminating gateway
 via the Consul Helm chart to the EKS cluster to join the HCP Consul servers.
 
-The Helm chart will get stuck because of
-[this issue](https://github.com/hashicorp/consul-k8s/issues/1246).
-Patch the API gateway to resolve.
-
-```shell
-make configure-api-gateway
-```
-
-### Reconfigure Certificates with Consul Cluster ID
-
-API Gateway requires a SPIFFE-compliant URI in the service mesh certificate.
-To bypass [this issue](https://github.com/hashicorp/consul-api-gateway/issues/208),
-you will need to reconfigure the root CA with a SPIFFE URI that contains
-the correct Consul cluster ID.
-
-```shell
-make configure-certs-spiffe
-```
-
-This forces a root certificate rotation for Consul service mesh.
-
 ### Configure Consul External Services & API Gateway
 
 Update the [terminating gateway](https://www.consul.io/docs/k8s/connect/terminating-gateways#update-terminating-gateway-acl-token-if-acls-are-enabled)
@@ -437,10 +416,13 @@ make clean-certs
 ```
 
 Go into Terraform Cloud and destroy resources
-for the `vault-setup` workspace.
+for the `argocd` workspace.
 
 Go into Terraform Cloud and destroy resources
 for the `boundary` workspace.
+
+Go into Terraform Cloud and destroy resources
+for the `vault-setup` workspace.
 
 Go into Terraform Cloud and destroy resources
 for the `infrastructure` workspace.
