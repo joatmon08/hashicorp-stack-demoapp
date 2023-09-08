@@ -21,7 +21,6 @@ locals {
 }
 
 resource "kubernetes_secret" "hcp_consul_secret" {
-  count = var.use_hcp_consul ? 1 : 0
   metadata {
     name        = local.consul_secrets.metadata.name
     annotations = {}
@@ -37,7 +36,6 @@ resource "kubernetes_secret" "hcp_consul_secret" {
 }
 
 resource "kubernetes_secret" "hcp_consul_token" {
-  count = var.use_hcp_consul ? 1 : 0
   metadata {
     name        = local.consul_root_token.metadata.name
     annotations = {}
@@ -52,9 +50,10 @@ resource "kubernetes_secret" "hcp_consul_token" {
 }
 
 resource "helm_release" "consul_hcp" {
-  count      = var.use_hcp_consul ? 1 : 0
-  depends_on = [kubernetes_secret.hcp_consul_secret, kubernetes_secret.hcp_consul_token]
-  name       = "consul"
+  depends_on       = [kubernetes_secret.hcp_consul_secret, kubernetes_secret.hcp_consul_token]
+  name             = "consul"
+  namespace        = "consul"
+  create_namespace = true
 
   repository = "https://helm.releases.hashicorp.com"
   chart      = "consul"

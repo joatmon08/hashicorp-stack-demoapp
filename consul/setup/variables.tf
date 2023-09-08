@@ -54,9 +54,3 @@ variable "region" {
   description = "AWS Region"
   default     = ""
 }
-
-variable "use_hcp_consul" {
-  type        = bool
-  description = "Use HCP Consul Cluster"
-  default     = true
-}
