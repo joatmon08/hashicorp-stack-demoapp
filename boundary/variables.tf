@@ -73,4 +73,5 @@ locals {
   boundary_worker_mount             = data.terraform_remote_state.vault_setup.outputs.boundary_worker_path
   boundary_worker_security_group_id = data.terraform_remote_state.infrastructure.outputs.boundary_worker_security_group_id
   boundary_key_pair_name            = data.terraform_remote_state.infrastructure.outputs.boundary_worker_key_pair_name
+  rds_security_group_id             = data.terraform_remote_state.infrastructure.outputs.database_security_group_id
 }

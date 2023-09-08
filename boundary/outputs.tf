@@ -25,6 +25,16 @@ output "boundary_endpoint" {
   value = local.url
 }
 
-output "boundary_worker" {
-  value = module.boundary_worker.0.worker.public_ip
+output "boundary_worker_eks" {
+  value = module.boundary_worker_eks.worker.public_ip
+}
+
+## For applications to use
+
+output "products_infra_scope_id" {
+  value = boundary_scope.products_infra.id
+}
+
+output "boundary_worker_rds" {
+  value = module.boundary_worker_rds.worker.public_ip
 }
