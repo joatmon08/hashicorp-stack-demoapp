@@ -41,7 +41,6 @@ locals {
   consul_addr                = data.terraform_remote_state.consul.outputs.consul_address
   consul_token               = data.terraform_remote_state.consul.outputs.consul_token
   consul_scheme              = "https"
-  consul_skip_tls_verify     = true
   vault_public_addr          = data.terraform_remote_state.infrastructure.outputs.hcp_vault_public_address
   vault_addr                 = var.vault_address == "" ? data.terraform_remote_state.infrastructure.outputs.hcp_vault_private_address : var.vault_address
   vault_token                = var.vault_token == "" ? data.terraform_remote_state.infrastructure.outputs.hcp_vault_token : var.vault_token
@@ -95,5 +94,5 @@ variable "region" {
 variable "namespace" {
   type        = string
   description = "Kubernetes namespace for Consul"
-  default     = "default"
+  default     = "consul"
 }

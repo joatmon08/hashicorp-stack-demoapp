@@ -44,3 +44,8 @@ provider "kubernetes" {
     manifest_resource = true
   }
 }
+
+provider "consul" {
+  address = local.consul_addr
+  token   = local.consul_token
+}
