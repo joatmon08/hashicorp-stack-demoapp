@@ -1,5 +1,7 @@
 resource "helm_release" "datadog" {
-  name = "datadog"
+  name             = "datadog"
+  namespace        = "datadog"
+  create_namespace = true
 
   repository = "https://helm.datadoghq.com"
   chart      = "datadog"
