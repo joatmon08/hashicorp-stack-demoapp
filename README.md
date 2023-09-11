@@ -38,7 +38,9 @@ Each folder contains a few different configurations.
    - `boundary`: Configures Boundary with two projects, one for operations
       and the other for development teams.
 
-   - `argocd`: Deploys an ArgoCD cluster to configure applications and Consul
+   - `datadog`: Deploys Datadog agents
+
+   - `argocd`: Deploys an ArgoCD cluster to configure applications
 
    - `certs/`: Sets up offline root CA and signs intermediate CA in Vault for Consul-related
       certificates.
@@ -198,7 +200,13 @@ Start a new plan and apply it. This creates an organization with two scopes:
 
 Only `product` users will be able to access `product_infra`.
 `operations` users will be able to access both `core_infra`
-and `product_infra`.
+
+
+### Configure Datadog
+
+Go to the `datadog` workspace in Terraform Cloud.
+
+Commit it up to your fork.
 
 ### Configure Argo CD
 
@@ -254,14 +262,7 @@ Go to the `consul/setup` workspace in Terraform Cloud.
 Start a new plan and apply it. This deploys Consul clients and a terminating gateway
 via the Consul Helm chart to the EKS cluster to join the HCP Consul servers.
 
-### Configure Consul External Services & API Gateway
-
-Update the [terminating gateway](https://www.consul.io/docs/k8s/connect/terminating-gateways#update-terminating-gateway-acl-token-if-acls-are-enabled)
-with a write policy to the database.
-
-```shell
-make configure-terminating-gateway
-```
+### Configure Consul API Gateway
 
 Go to the `consul/config` workspace in Terraform Cloud.
 
@@ -390,12 +391,6 @@ make clean-cts
 
 Go into Terraform Cloud and destroy resources
 for the `consul-config` workspace.
-
-Remove additional Consul resources.
-
-```shell
-make clean-consul
-```
 
 Go into Terraform Cloud and destroy resources
 for the `consul-setup` workspace.

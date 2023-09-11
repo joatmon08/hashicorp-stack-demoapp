@@ -25,9 +25,6 @@ configure-certs:
 configure-hcp-certs:
 	bash certs/reconfigure.sh
 
-configure-kubernetes:
-	kubectl apply --kustomize "github.com/hashicorp/consul-api-gateway/config/crd?ref=v0.4.0"
-
 configure-terminating-gateway:
 	bash consul/config/configure.sh
 
@@ -98,16 +95,6 @@ clean-application:
 
 clean-vault:
 	vault lease revoke -force -prefix database/product/creds
-
-clean-cts:
-	bash consul/cts/clean.sh
-
-clean-consul:
-	kubectl patch gatewayclasses.gateway.networking.k8s.io consul-api-gateway --type merge --patch '{"metadata":{"finalizers":[]}}'
-	kubectl patch gatewayclassconfigs.api-gateway.consul.hashicorp.com consul-api-gateway --type merge --patch '{"metadata":{"finalizers":[]}}'
-
-clean-kubernetes:
-	kubectl delete --kustomize "github.com/hashicorp/consul-api-gateway/config/crd?ref=v0.2.1"
 
 clean-certs:
 	cd certs/terraform && terraform destroy -auto-approve -var="signed_cert=true"
