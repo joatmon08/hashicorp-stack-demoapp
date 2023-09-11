@@ -26,3 +26,15 @@ resource "tfe_workspace_variable_set" "infrastructure_datadog" {
   workspace_id    = tfe_workspace.infrastructure.id
   variable_set_id = tfe_variable_set.datadog.0.id
 }
+
+resource "tfe_workspace_variable_set" "datadog_common" {
+  count           = var.datadog_api_key != null ? 1 : 0
+  workspace_id    = tfe_workspace.datadog.0.id
+  variable_set_id = tfe_variable_set.common.id
+}
+
+resource "tfe_workspace_variable_set" "datadog_aws" {
+  count           = var.datadog_api_key != null ? 1 : 0
+  workspace_id    = tfe_workspace.datadog.0.id
+  variable_set_id = tfe_variable_set.aws.id
+}
