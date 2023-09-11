@@ -17,8 +17,11 @@ resource "helm_release" "csi" {
 }
 
 resource "helm_release" "vault" {
-  depends_on = [helm_release.csi]
-  name       = "vault"
+  depends_on       = [helm_release.csi]
+  name             = "vault"
+  namespace        = "vault"
+  create_namespace = true
+
   repository = "https://helm.releases.hashicorp.com"
   chart      = "vault"
   version    = var.vault_helm_version
