@@ -23,6 +23,7 @@ locals {
 resource "kubernetes_secret" "hcp_consul_secret" {
   metadata {
     name        = local.consul_secrets.metadata.name
+    namespace   = var.namespace
     annotations = {}
     labels      = {}
   }
@@ -38,6 +39,7 @@ resource "kubernetes_secret" "hcp_consul_secret" {
 resource "kubernetes_secret" "hcp_consul_token" {
   metadata {
     name        = local.consul_root_token.metadata.name
+    namespace   = var.namespace
     annotations = {}
     labels      = {}
   }
@@ -52,7 +54,7 @@ resource "kubernetes_secret" "hcp_consul_token" {
 resource "helm_release" "consul_hcp" {
   depends_on       = [kubernetes_secret.hcp_consul_secret, kubernetes_secret.hcp_consul_token]
   name             = "consul"
-  namespace        = "consul"
+  namespace        = var.namespace
   create_namespace = true
 
   repository = "https://helm.releases.hashicorp.com"
@@ -66,6 +68,6 @@ resource "helm_release" "consul_hcp" {
 
   set {
     name  = "global.image"
-    value = "hashicorp/consul:${replace(data.hcp_consul_cluster.cluster.consul_version, "v", "")}"
+    value = "hashicorp/consul-enterprise:${replace(data.hcp_consul_cluster.cluster.consul_version, "v", "")}-ent"
   }
 }

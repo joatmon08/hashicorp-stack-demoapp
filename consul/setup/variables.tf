@@ -54,3 +54,9 @@ variable "region" {
   description = "AWS Region"
   default     = ""
 }
+
+variable "namespace" {
+  type        = string
+  description = "Kubernetes namespace to deploy Consul"
+  default     = "consul"
+}

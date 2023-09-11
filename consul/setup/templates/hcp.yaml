@@ -1,4 +1,6 @@
 global:
+  enabled: false
+  name: consul
   metrics:
     enabled: true
     enableAgentMetrics: true
@@ -18,5 +20,8 @@ client:
 connectInject:
   replicas: 1
   enabled: true
+  metrics:
+    defaultEnabled: true
   apiGateway:
-    manageExternalCRDs: true
+    managedGatewayClass:
+      serviceType: LoadBalancer
