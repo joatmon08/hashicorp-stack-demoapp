@@ -42,12 +42,10 @@ locals {
   consul_token               = data.terraform_remote_state.consul.outputs.consul_token
   consul_scheme              = "https"
   consul_skip_tls_verify     = true
-  products_database          = var.products_database == "" ? data.terraform_remote_state.infrastructure.outputs.product_database_address : var.products_database
   vault_public_addr          = data.terraform_remote_state.infrastructure.outputs.hcp_vault_public_address
   vault_addr                 = var.vault_address == "" ? data.terraform_remote_state.infrastructure.outputs.hcp_vault_private_address : var.vault_address
   vault_token                = var.vault_token == "" ? data.terraform_remote_state.infrastructure.outputs.hcp_vault_token : var.vault_token
   vault_namespace            = var.vault_namespace == "" ? data.terraform_remote_state.infrastructure.outputs.hcp_vault_namespace : var.vault_namespace
-  vault_database_static_path = data.terraform_remote_state.vault.outputs.vault_database_static_path
   certificate_allowed_domain = var.certificate_allowed_domain == "" ? data.terraform_remote_state.vault.outputs.consul_api_gateway_allowed_domain : var.certificate_allowed_domain
 }
 

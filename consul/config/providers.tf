@@ -4,22 +4,22 @@ terraform {
   required_providers {
     kubernetes = {
       source  = "hashicorp/kubernetes"
-      version = "~> 2.13"
+      version = "~> 2.12"
+    }
+
+    hcp = {
+      source  = "hashicorp/hcp"
+      version = "~> 0.45"
+    }
+
+    aws = {
+      source  = "hashicorp/aws"
+      version = "~> 5.0"
     }
 
     consul = {
       source  = "hashicorp/consul"
       version = "~> 2.16"
-    }
-
-    aws = {
-      source  = "hashicorp/aws"
-      version = ">=4.14,< 5.0"
-    }
-
-    vault = {
-      source  = "hashicorp/vault"
-      version = "~> 3.8"
     }
   }
 }
@@ -43,17 +43,4 @@ provider "kubernetes" {
   experiments {
     manifest_resource = true
   }
-}
-
-provider "consul" {
-  address        = local.consul_addr
-  scheme         = local.consul_scheme
-  token          = local.consul_token
-  insecure_https = local.consul_skip_tls_verify
-}
-
-provider "vault" {
-  address   = local.vault_public_addr
-  token     = local.vault_token
-  namespace = local.vault_namespace
 }
