@@ -6,6 +6,7 @@ resource "consul_config_entry" "proxy_defaults" {
     Expose           = {}
     MeshGateway      = {}
     TransparentProxy = {}
+    AccessLogs       = {}
 
     Config = {
       envoy_dogstatsd_url = "udp://$${HOST_IP}:8125"

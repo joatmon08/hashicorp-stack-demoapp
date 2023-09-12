@@ -43,7 +43,7 @@ resource "kubernetes_manifest" "consul_api_gateway_secret_provider" {
       EOT
         "roleName"       = kubernetes_service_account.consul_api_gateway.metadata.0.name
         "vaultAddress"   = local.vault_addr
-        "vaultNamespace" = "admin"
+        "vaultNamespace" = local.vault_namespace
       }
       "provider" = "vault"
       "secretObjects" = [
