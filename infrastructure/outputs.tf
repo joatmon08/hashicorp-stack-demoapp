@@ -94,13 +94,3 @@ output "boundary_worker_ssh" {
   description = "Boundary worker SSH key"
   sensitive   = true
 }
-
-output "boundary_worker_security_group_id" {
-  value       = aws_security_group.boundary_worker.id
-  description = "Boundary worker security group ID"
-}
-
-output "database_security_group_id" {
-  value       = aws_security_group.database.id
-  description = "Database security group ID"
-}

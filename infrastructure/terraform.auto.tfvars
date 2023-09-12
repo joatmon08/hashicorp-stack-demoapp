@@ -2,12 +2,13 @@ region         = "us-east-1"
 hcp_region     = "us-east-1"
 datadog_region = "us1"
 
-name                       = "lynx"
+name                       = "hashicups"
 hcp_consul_public_endpoint = true
 hcp_vault_public_endpoint  = true
 
 tags = {
-  Environment   = "hashicorp-stack-demoapp"
+  Environment   = "production"
   Automation    = "terraform"
-  Business_Unit = "lynx"
+  Business_Unit = "hashicups"
+  Repo          = "hashicorp-stack-demoapp"
 }

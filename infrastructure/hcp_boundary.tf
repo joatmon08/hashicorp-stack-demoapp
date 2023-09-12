@@ -39,8 +39,14 @@ resource "tls_private_key" "boundary" {
 resource "aws_key_pair" "boundary" {
   key_name   = var.name
   public_key = trimspace(tls_private_key.boundary.public_key_openssh)
+  tags = {
+    Purpose = "boundary"
+  }
 }
 
 resource "aws_security_group" "boundary_worker" {
   vpc_id = module.vpc.vpc_id
+  tags = {
+    Purpose = "boundary"
+  }
 }

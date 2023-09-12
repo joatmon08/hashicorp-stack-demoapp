@@ -24,6 +24,9 @@ module "vpc" {
   create_database_subnet_group       = true
   create_database_subnet_route_table = true
   database_subnets                   = slice(local.subnets, 6, 9)
+  database_subnet_group_tags = {
+    Purpose = "database"
+  }
 
   manage_default_route_table = true
   default_route_table_tags   = { DefaultRouteTable = true }
