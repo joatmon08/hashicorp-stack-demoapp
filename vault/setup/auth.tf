@@ -2,16 +2,19 @@ data "kubernetes_service_account" "vault_auth" {
   depends_on = [helm_release.vault]
 
   metadata {
-    name = "vault"
+    name      = "vault"
+    namespace = helm_release.vault.namespace
   }
 }
 
 resource "kubernetes_secret" "vault_auth" {
   depends_on = [helm_release.vault]
   metadata {
-    name = "vault"
+    name      = "vault"
+    namespace = helm_release.vault.namespace
     annotations = {
-      "kubernetes.io/service-account.name" = data.kubernetes_service_account.vault_auth.metadata.0.name
+      "kubernetes.io/service-account.name"      = data.kubernetes_service_account.vault_auth.metadata.0.name
+      "kubernetes.io/service-account.namespace" = data.kubernetes_service_account.vault_auth.metadata.0.namespace
     }
   }
 

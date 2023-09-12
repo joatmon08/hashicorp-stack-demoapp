@@ -72,6 +72,7 @@ resource "aws_security_group" "database" {
   }
 
   tags = {
-    Name = "${var.name}-database"
+    Name    = "${var.name}-database"
+    Purpose = "database"
   }
 }
