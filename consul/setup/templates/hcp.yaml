@@ -17,17 +17,12 @@ client:
   extraLabels:
     tags.datadoghq.com/service: "consul-client"
 
-
-apiGateway:
-  enabled: true
-  image: "hashicorp/consul-api-gateway:0.5.5"
-
-
 connectInject:
   replicas: 1
   enabled: true
   metrics:
     defaultEnabled: true
   apiGateway:
+    manageExternalCRDs: true
     managedGatewayClass:
       serviceType: LoadBalancer
