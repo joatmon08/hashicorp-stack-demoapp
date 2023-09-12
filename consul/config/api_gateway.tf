@@ -136,7 +136,7 @@ resource "kubernetes_manifest" "api_gateway" {
     kubernetes_manifest.csi_secrets_store_inline
   ]
   manifest = {
-    "apiVersion" = "gateway.networking.k8s.io/v1alpha2"
+    "apiVersion" = "gateway.networking.k8s.io/v1beta1"
     "kind"       = "Gateway"
     "metadata" = {
       "name"      = "api-gateway"
@@ -148,7 +148,7 @@ resource "kubernetes_manifest" "api_gateway" {
         {
           "allowedRoutes" = {
             "namespaces" = {
-              "from" = "Same"
+              "from" = "All"
             }
           }
           "name"     = "https"
@@ -164,5 +164,94 @@ resource "kubernetes_manifest" "api_gateway" {
         },
       ]
     }
+  }
+}
+
+resource "kubernetes_manifest" "consul_api_gateway_tokenreview_binding" {
+  manifest = {
+    "apiVersion" = "rbac.authorization.k8s.io/v1"
+    "kind"       = "ClusterRoleBinding"
+    "metadata" = {
+      "name" = "consul-api-gateway-tokenreview-binding"
+    }
+    "roleRef" = {
+      "apiGroup" = "rbac.authorization.k8s.io"
+      "kind"     = "ClusterRole"
+      "name"     = "system:auth-delegator"
+    }
+    "subjects" = [
+      {
+        "kind"      = "ServiceAccount"
+        "name"      = kubernetes_service_account.consul_api_gateway.metadata.0.name
+        "namespace" = kubernetes_service_account.consul_api_gateway.metadata.0.namespace
+      },
+    ]
+  }
+}
+
+resource "kubernetes_manifest" "consul_api_gateway_auth" {
+  manifest = {
+    "apiVersion" = "rbac.authorization.k8s.io/v1"
+    "kind"       = "ClusterRole"
+    "metadata" = {
+      "name" = "consul-api-gateway-auth"
+    }
+    "rules" = [
+      {
+        "apiGroups" = [
+          "",
+        ]
+        "resources" = [
+          "serviceaccounts",
+        ]
+        "verbs" = [
+          "get",
+        ]
+      },
+    ]
+  }
+}
+
+resource "kubernetes_manifest" "consul_api_gateway_auth_binding" {
+  manifest = {
+    "apiVersion" = "rbac.authorization.k8s.io/v1"
+    "kind"       = "ClusterRoleBinding"
+    "metadata" = {
+      "name" = "consul-api-gateway-auth-binding"
+    }
+    "roleRef" = {
+      "apiGroup" = "rbac.authorization.k8s.io"
+      "kind"     = "ClusterRole"
+      "name"     = kubernetes_manifest.consul_api_gateway_auth.manifest.metadata.name
+    }
+    "subjects" = [
+      {
+        "kind"      = "ServiceAccount"
+        "name"      = kubernetes_service_account.consul_api_gateway.metadata.0.name
+        "namespace" = kubernetes_service_account.consul_api_gateway.metadata.0.namespace
+      },
+    ]
+  }
+}
+
+resource "kubernetes_manifest" "consul_auth_binding" {
+  manifest = {
+    "apiVersion" = "rbac.authorization.k8s.io/v1"
+    "kind"       = "ClusterRoleBinding"
+    "metadata" = {
+      "name" = "consul-auth-binding"
+    }
+    "roleRef" = {
+      "apiGroup" = "rbac.authorization.k8s.io"
+      "kind"     = "ClusterRole"
+      "name"     = kubernetes_manifest.consul_api_gateway_auth.manifest.metadata.name
+    }
+    "subjects" = [
+      {
+        "kind"      = "ServiceAccount"
+        "name"      = kubernetes_service_account.consul_api_gateway.metadata.0.name
+        "namespace" = kubernetes_service_account.consul_api_gateway.metadata.0.namespace
+      },
+    ]
   }
 }
