@@ -1,6 +1,13 @@
+data "aws_security_group" "database" {
+  tags = {
+    Business_Unit = local.name
+    Purpose       = "database"
+  }
+}
+
 module "boundary_worker_rds" {
   source  = "joatmon08/boundary/aws//modules/hcp"
-  version = "0.5.0"
+  version = "0.5.1"
 
   name                = "${local.name}-boundary-worker-rds"
   boundary_cluster_id = split(".", replace(local.url, "https://", "", ))[0]
@@ -10,7 +17,7 @@ module "boundary_worker_rds" {
   public_subnet_id    = local.public_subnets.0
   vault_addr          = local.vault_addr
   vault_namespace     = local.vault_namespace
-  vault_token         = local.vault_token
+  vault_token         = local.vault_worker_token
   vault_path          = "boundary/worker"
 }
 
@@ -20,7 +27,7 @@ resource "aws_security_group_rule" "allow_boundary_worker_to_database" {
   to_port                  = 5432
   protocol                 = "tcp"
   source_security_group_id = module.boundary_worker_rds.security_group_id
-  security_group_id        = local.rds_security_group_id
+  security_group_id        = data.aws_security_group.database.id
 }
 
 data "vault_kv_secret_v2" "boundary_worker_token_rds" {
