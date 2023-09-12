@@ -19,7 +19,7 @@ variable "consul_datacenter" {
 variable "consul_namespace" {
   type        = string
   description = "Kubernetes namespace for Consul cluster"
-  default     = "default"
+  default     = "consul"
 }
 
 variable "consul_api_gateway_allowed_domain" {
