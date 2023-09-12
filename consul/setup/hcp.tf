@@ -20,10 +20,16 @@ locals {
   consul_root_token = yamldecode(hcp_consul_cluster_root_token.token.kubernetes_secret)
 }
 
+resource "kubernetes_namespace" "consul" {
+  metadata {
+    name = var.namespace
+  }
+}
+
 resource "kubernetes_secret" "hcp_consul_secret" {
   metadata {
     name        = local.consul_secrets.metadata.name
-    namespace   = var.namespace
+    namespace   = kubernetes_namespace.consul.metadata.0.name
     annotations = {}
     labels      = {}
   }
@@ -39,7 +45,7 @@ resource "kubernetes_secret" "hcp_consul_secret" {
 resource "kubernetes_secret" "hcp_consul_token" {
   metadata {
     name        = local.consul_root_token.metadata.name
-    namespace   = var.namespace
+    namespace   = kubernetes_namespace.consul.metadata.0.name
     annotations = {}
     labels      = {}
   }
@@ -54,8 +60,8 @@ resource "kubernetes_secret" "hcp_consul_token" {
 resource "helm_release" "consul_hcp" {
   depends_on       = [kubernetes_secret.hcp_consul_secret, kubernetes_secret.hcp_consul_token]
   name             = "consul"
-  namespace        = var.namespace
-  create_namespace = true
+  namespace        = kubernetes_namespace.consul.metadata.0.name
+  create_namespace = false
 
   repository = "https://helm.releases.hashicorp.com"
   chart      = "consul"
