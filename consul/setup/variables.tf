@@ -40,7 +40,7 @@ locals {
 variable "consul_helm_version" {
   type        = string
   description = "Consul Helm chart version"
-  default     = "1.1.5"
+  default     = "1.2.0"
 }
 
 variable "aws_eks_cluster_id" {
