@@ -1,0 +1,15 @@
+apiVersion: secrets.hashicorp.com/v1beta1
+kind: VaultAuth
+metadata:
+  name: consul-api-gateway
+  annotations:
+    argocd.argoproj.io/sync-wave: "2"
+spec:
+  method: kubernetes
+  mount: kubernetes
+  namespace: admin
+  kubernetes:
+    role: consul-api-gateway
+    serviceAccount: consul-api-gateway
+    audiences:
+      - vault

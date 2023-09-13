@@ -1,12 +1,13 @@
 resource "tfe_workspace" "vault_consul" {
-  name                      = "vault-consul"
-  organization              = tfe_organization.demo.name
-  description               = "Step 5 - Configure Vault for Consul (PKI Secrets Engine)"
-  terraform_version         = var.terraform_version
-  working_directory         = "vault/consul"
-  trigger_prefixes          = ["vault/consul"]
-  queue_all_runs            = false
-  remote_state_consumer_ids = [tfe_workspace.consul_setup.id, tfe_workspace.consul_config.id]
+  name              = "vault-consul"
+  organization      = tfe_organization.demo.name
+  description       = "Step 5 - Configure Vault for Consul (PKI Secrets Engine)"
+  terraform_version = var.terraform_version
+  working_directory = "vault/consul"
+  trigger_prefixes  = ["vault/consul"]
+  queue_all_runs    = false
+  # remote_state_consumer_ids = [tfe_workspace.consul_setup.id, tfe_workspace.consul_config.id]
+  remote_state_consumer_ids = [tfe_workspace.consul_setup.id]
   vcs_repo {
     identifier     = var.github_repository
     branch         = var.github_branch

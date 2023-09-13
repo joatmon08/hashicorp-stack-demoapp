@@ -1,0 +1,14 @@
+apiVersion: secrets.hashicorp.com/v1beta1
+kind: VaultPKISecret
+metadata:
+  name: consul-api-gateway
+  annotations:
+    argocd.argoproj.io/sync-wave: "3"
+spec:
+  role: consul-api-gateway
+  mount: consul/gateway/pki_int
+  destination:
+    create: true
+    name: consul-api-gateway-cert
+    type: "kubernetes.io/tls"
+  vaultAuthRef: consul-api-gateway
