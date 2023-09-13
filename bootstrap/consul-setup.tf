@@ -35,6 +35,7 @@ resource "tfe_variable" "consul_setup_observability" {
   value = jsonencode({
     client_id     = var.hcp_consul_observability_credentials.client_id
     client_secret = var.hcp_consul_observability_credentials.client_secret
+    resource_id   = var.hcp_consul_observability_credentials.resource_id
   })
   category  = "terraform"
   hcl       = true
