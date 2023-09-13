@@ -91,7 +91,7 @@ frontend-products:
 		$(shell cd boundary && terraform output -raw boundary_target_frontend)
 
 clean-application:
-	kubectl delete -f application/
+	kubectl delete -f argocd/applications/
 
 clean-consul:
 	kubectl delete -f argocd/applications/consul/

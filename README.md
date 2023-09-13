@@ -349,7 +349,13 @@ in the Boundary list because you accessed the EKS node over SSH.
 
 ## Clean Up
 
-Remove API Gateway manifests.
+Remove applications.
+
+```shell
+make clean-application
+```
+
+Remove API Gateway configuration.
 
 ```shell
 make clean-consul
