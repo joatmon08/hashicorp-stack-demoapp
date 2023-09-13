@@ -1,0 +1,10 @@
+apiVersion: consul.hashicorp.com/v1alpha1
+kind: ServiceIntentions
+metadata:
+  name: consul-telemetry-collector
+spec:
+  destination:
+    name: consul-telemetry-collector
+  sources:
+  - action: allow
+    name: '*'

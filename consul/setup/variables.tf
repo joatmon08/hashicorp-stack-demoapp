@@ -65,6 +65,7 @@ variable "hcp_consul_observability_credentials" {
   type = object({
     client_id     = string
     client_secret = string
+    resource_id   = string
   })
   sensitive   = true
   description = "Credentials to enable mesh telemetry for HCP Consul Observability"

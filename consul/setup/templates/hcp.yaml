@@ -5,6 +5,17 @@ global:
     enabled: true
     enableAgentMetrics: true
     enableTelemetryCollector: true
+  cloud:
+    resourceId:
+      secretKey: resource-id
+      secretName: consul-hcp-observability
+    clientId:
+      secretKey: client-id
+      secretName: consul-hcp-observability
+    clientSecret:
+      secretKey: client-secret
+      secretName: consul-hcp-observability
+
 
 controller:
   enabled: true

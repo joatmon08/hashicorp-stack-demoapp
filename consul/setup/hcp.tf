@@ -39,6 +39,7 @@ resource "kubernetes_secret" "hcp_consul_observability_credentials" {
   data = {
     client-id     = var.hcp_consul_observability_credentials.client_id
     client-secret = var.hcp_consul_observability_credentials.client_secret
+    resource-id   = var.hcp_consul_observability_credentials.resource_id
   }
 }
 
