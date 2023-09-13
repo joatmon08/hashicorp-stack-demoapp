@@ -1,0 +1,53 @@
+# Copyright (c) HashiCorp, Inc.
+# SPDX-License-Identifier: MPL-2.0
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: promotions
+spec:
+  selector:
+    app: promotions
+  ports:
+  - name: http
+    protocol: TCP
+    port: 9090
+    targetPort: 9090
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: promotions
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: promotions
+  labels:
+    app: promotions
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: promotions
+  template:
+    metadata:
+      labels:
+        app: promotions
+      annotations:
+        "consul.hashicorp.com/connect-inject": "true"
+    spec:
+      serviceAccountName: promotions
+      containers:
+      - name: promotions
+        image: nicholasjackson/fake-service:v0.25.1
+        ports:
+        - containerPort: 9090
+        env:
+        - name: "LISTEN_ADDR"
+          value: "0.0.0.0:9090"
+        - name: "NAME"
+          value: "promotions"
+        - name: "MESSAGE"
+          value: "Response from promotions - application"

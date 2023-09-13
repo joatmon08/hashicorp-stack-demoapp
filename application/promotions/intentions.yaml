@@ -1,0 +1,22 @@
+---
+apiVersion: consul.hashicorp.com/v1alpha1
+kind: ServiceIntentions
+metadata:
+  name: api-gateway-promotions
+spec:
+  destination:
+    name: dashboard
+  sources:
+    - name: api-gateway
+      action: allow
+---
+apiVersion: consul.hashicorp.com/v1alpha1
+kind: ServiceIntentions
+metadata:
+  name: promotions
+spec:
+  destination:
+    name: promotions
+  sources:
+    - name: dashboard
+      action: allow

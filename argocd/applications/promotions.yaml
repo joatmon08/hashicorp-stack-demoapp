@@ -1,0 +1,20 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: promotions
+  namespace: argocd
+spec:
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+    - CreateNamespace=true
+  project: default
+  source:
+    repoURL: 'https://github.com/joatmon08/hashicorp-stack-demoapp.git'
+    targetRevision: main
+    path: application/promotions
+  destination:
+    server: "https://kubernetes.default.svc"
+    namespace: promotions
