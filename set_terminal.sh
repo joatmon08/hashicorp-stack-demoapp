@@ -6,5 +6,3 @@ export CONSUL_HTTP_ADDR=$(cd infrastructure && terraform output -raw hcp_consul_
 export CONSUL_HTTP_TOKEN=$(cd infrastructure && terraform output -raw hcp_consul_token)
 
 export ARGOCD_AUTH_TOKEN=$(kubectl get secrets -n argocd argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d)
-
-export PGPASSWORD=$(cd infrastructure && terraform output -raw product_database_password)
