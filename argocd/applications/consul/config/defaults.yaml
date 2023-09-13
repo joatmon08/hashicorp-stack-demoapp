@@ -1,0 +1,18 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: consul-defaults
+  namespace: argocd
+spec:
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+  project: consul
+  sources:
+    - repoURL: 'https://github.com/joatmon08/hashicorp-stack-demoapp.git'
+      path: consul/defaults
+      targetRevision: main
+  destination:
+    server: "https://kubernetes.default.svc"
+    namespace: consul
