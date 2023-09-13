@@ -4,6 +4,7 @@ global:
   metrics:
     enabled: true
     enableAgentMetrics: true
+    enableTelemetryCollector: true
 
 controller:
   enabled: true
@@ -26,3 +27,13 @@ connectInject:
     manageExternalCRDs: true
     managedGatewayClass:
       serviceType: LoadBalancer
+
+telemetryCollector:
+  enabled: true
+  cloud:
+    clientId:
+      secretKey: client-id
+      secretName: consul-hcp-observability
+    clientSecret:
+      secretKey: client-secret
+      secretName: consul-hcp-observability

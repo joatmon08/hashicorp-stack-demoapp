@@ -60,3 +60,12 @@ variable "namespace" {
   description = "Kubernetes namespace to deploy Consul"
   default     = "consul"
 }
+
+variable "hcp_consul_observability_credentials" {
+  type = object({
+    client_id     = string
+    client_secret = string
+  })
+  sensitive   = true
+  description = "Credentials to enable mesh telemetry for HCP Consul Observability"
+}

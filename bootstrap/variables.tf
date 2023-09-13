@@ -81,3 +81,12 @@ variable "datadog_api_key" {
   description = "Datadog API key, if applicable"
   default     = null
 }
+
+variable "hcp_consul_observability_credentials" {
+  type = object({
+    client_id     = string
+    client_secret = string
+  })
+  sensitive   = true
+  description = "Credentials to enable mesh telemetry for HCP Consul Observability"
+}

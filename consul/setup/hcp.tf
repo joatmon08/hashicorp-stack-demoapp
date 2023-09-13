@@ -26,6 +26,25 @@ resource "kubernetes_namespace" "consul" {
   }
 }
 
+## Store HCP Consul credentials for telemetry
+
+resource "kubernetes_secret" "hcp_consul_observability_credentials" {
+  metadata {
+    name        = "consul-hcp-observability"
+    namespace   = kubernetes_namespace.consul.metadata.0.name
+    annotations = {}
+    labels      = {}
+  }
+
+  data = {
+    client-id     = var.hcp_consul_observability_credentials.client_id
+    client-secret = var.hcp_consul_observability_credentials.client_secret
+  }
+}
+
+
+## Store HCP Consul secrets
+
 resource "kubernetes_secret" "hcp_consul_secret" {
   metadata {
     name        = local.consul_secrets.metadata.name
@@ -41,6 +60,8 @@ resource "kubernetes_secret" "hcp_consul_secret" {
 
   type = local.consul_secrets.type
 }
+
+## Store HCP Consul bootstrap token
 
 resource "kubernetes_secret" "hcp_consul_token" {
   metadata {
