@@ -25,7 +25,7 @@ configure-certs:
 configure-hcp-certs:
 	bash certs/reconfigure.sh
 
-configure-terminating-gateway:
+configure-consul:
 	bash consul/config/configure.sh
 
 configure-db: boundary-appdev-auth
