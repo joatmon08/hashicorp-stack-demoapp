@@ -68,3 +68,9 @@ variable "csi_helm_version" {
   description = "Secrets Store CSI Driver Helm chart version"
   default     = "1.3.4"
 }
+
+variable "vault_operator_helm_version" {
+  type        = string
+  description = "Secrets Store CSI Driver Helm chart version"
+  default     = "0.2.0"
+}

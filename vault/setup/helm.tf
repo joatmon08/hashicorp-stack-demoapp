@@ -41,3 +41,24 @@ resource "helm_release" "vault" {
     value = "true"
   }
 }
+
+resource "helm_release" "vault_operator" {
+  depends_on       = [helm_release.vault]
+  name             = "vault-secrets-operator"
+  namespace        = "vault-secrets-operator-system"
+  create_namespace = true
+
+  repository = "https://helm.releases.hashicorp.com"
+  chart      = "vault-secrets-operator"
+  version    = var.vault_operator_helm_version
+
+  set {
+    name  = "defaultVaultConnection.enabled"
+    value = "true"
+  }
+
+  set {
+    name  = "defaultVaultConnection.address"
+    value = local.hcp_vault_private_address
+  }
+}
