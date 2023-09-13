@@ -93,6 +93,9 @@ frontend-products:
 clean-application:
 	kubectl delete -f application/
 
+clean-consul:
+	kubectl delete -f argocd/applications/consul/
+
 clean-vault:
 	vault lease revoke -force -prefix database/product/creds
 
@@ -114,18 +117,10 @@ db-commands:
 terraform-upgrade:
 	cd infrastructure && terraform init -upgrade
 	cd boundary && terraform init -upgrade
+	cd argocd && terraform init -upgrade
 	cd vault/setup && terraform init -upgrade
 	cd vault/consul && terraform init -upgrade
 	cd consul/setup && terraform init -upgrade
-	cd consul/config && terraform init -upgrade
-
-terraform-init:
-	cd infrastructure && terraform init -reconfigure
-	cd boundary && terraform init -reconfigure
-	cd vault/setup && terraform init -reconfigure
-	cd vault/consul && terraform init -reconfigure
-	cd consul/setup && terraform init -reconfigure
-	cd consul/config && terraform init -reconfigure
 
 terraform-test-fixture:
 	curl --header "Content-Type: application/vnd.api+json" --header "Authorization: Bearer ${TF_TOKEN}" --location https://app.terraform.io/api/v2/plans/${TF_PLAN_ID}/json-output > infrastructure/policy/fixtures/terraform.json

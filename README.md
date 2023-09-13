@@ -38,9 +38,7 @@ Each folder contains a few different configurations.
    - `boundary`: Configures Boundary with two projects, one for operations
       and the other for development teams.
 
-   - `datadog`: Deploys Datadog agents
-
-   - `argocd`: Deploys an ArgoCD cluster to configure applications
+   - `argocd/setup/`: Deploys an ArgoCD cluster to configure applications
 
    - `certs/`: Sets up offline root CA and signs intermediate CA in Vault for Consul-related
       certificates.
@@ -50,18 +48,15 @@ Each folder contains a few different configurations.
    - `consul/setup/`: Deploys a Consul cluster via Helm chart. For demonstration
       of Vault as a secrets backend, deploys Consul servers + clients.
 
-   - `consul/config/`: Sets up external service to database.
-
    - `vault/app/`: Set up secrets engines for applications.
       Archived in favor of `consul/cts/`.
 
 - Other
 
-   - `consul/cts/`: Deploys CTS to Kubernetes for setting up Vault database secrets
-      based on database service's address
+   - `consul/config/`: Updates Consul ACL policies for terminating gateways and sets up Argo CD
+     project for Consul configuration
 
-   - `application/`: Deploys the HashiCorp Demo Application (AKA HashiCups) to
-      Kubernetes
+   - `argocd/applications/`: Describes Argo CD applications to deploy
 
    - `database/`: Configures HashiCorp Demo Application database
 
@@ -72,7 +67,7 @@ Each folder contains a few different configurations.
 Be sure to download the CLIs for the following.
 
 - Terraform 1.5
-- Consul 1.12 (on Kubernetes)
+- Consul 1.13 (on Kubernetes)
 - Vault 1.10
 - Boundary 0.13
 - Kubernetes 1.26
@@ -144,14 +139,6 @@ terraform apply
 If you log into Terraform Cloud and navigate to the `hashicorp-stack-demoapp`
 organization, all the workspaces will be set up.
 
-Next, set up all backends locally to point to Terraform Cloud. This demo
-needs access to output variables from specific workspaces in order to
-configure some things locally.
-
-```shell
-make terraform-init
-```
-
 > Note: If you are using a different organization name other than `hashicorp-stack-demoapp`,
 > update all `backend.tf` files to use the correct TFC organization.
 
@@ -201,16 +188,9 @@ Start a new plan and apply it. This creates an organization with two scopes:
 Only `product` users will be able to access `product_infra`.
 `operations` users will be able to access both `core_infra`
 
-
-### Configure Datadog
-
-Go to the `datadog` workspace in Terraform Cloud.
-
-Commit it up to your fork.
-
 ### Configure Argo CD
 
-Go to the `argocd` workspace in Terraform Cloud.
+Go to the `argocd-setup` workspace in Terraform Cloud.
 
 Commit it up to your fork.
 
@@ -264,12 +244,7 @@ via the Consul Helm chart to the EKS cluster to join the HCP Consul servers.
 
 ### Configure Consul API Gateway
 
-Go to the `consul/config` workspace in Terraform Cloud.
-
-Start a new plan and apply it. This does a few things, including:
-   - registers the database as an external service to Consul
-   - deploys the Consul API Gateway
-   - sets up the application intentions.
+Run `make configure-consul` to deploy resources to set up the Consul API Gateway.
 
 ### Add Coffee Data to Database
 
@@ -353,53 +328,35 @@ make get-ssh
 This will save the private SSH key into `id_rsa.pem` at the top level
 of this repository.
 
-To use Boundary, use your terminal in the top level of this repository.
+Set the `BOUNDARY_ADDR` environment variable to the Boundary endpoint.
+```shell
+source set_terminal.sh
+```
 
-1. Set the `BOUNDARY_ADDR` environment variable to the Boundary endpoint.
-   ```shell
-   source set_terminal.sh
-   ```
+Log into Boundary as the `operations` persona.
+```shell
+make boundary-operations-auth
+```
 
-1. Use the example command in top-level `Makefile` to
-   SSH to the EKS nodes as the operations team.
-   ```shell
-   make ssh-operations
-   ```
+Use the example command in top-level `Makefile` to
+SSH to the EKS nodes as the operations team.
+```shell
+make ssh-k8s-nodes
+```
 
-1. Go to the Boundary UI and examine the "Sessions". You should get an active session
-   in the Boundary list because you accessed the EKS node over SSH.
+Go to the Boundary UI and examine the "Sessions". You should get an active session
+in the Boundary list because you accessed the EKS node over SSH.
 
 ## Clean Up
-
-Delete applications.
-
-```shell
-make clean-application
-```
-
-Revoke Vault credentials for applications.
-
-```shell
-make clean-vault
-```
-
-Disable CTS task, remove resources, and delete CTS.
-
-```shell
-make clean-cts
-```
-
-Go into Terraform Cloud and destroy resources
-for the `consul-config` workspace.
-
-Go into Terraform Cloud and destroy resources
-for the `consul-setup` workspace.
 
 Remove API Gateway manifests.
 
 ```shell
-make clean-kubernetes
+make clean-consul
 ```
+
+Go into Terraform Cloud and destroy resources
+for the `consul-setup` workspace.
 
 Go into Terraform Cloud and destroy resources
 for the `vault-consul` workspace.
@@ -411,7 +368,7 @@ make clean-certs
 ```
 
 Go into Terraform Cloud and destroy resources
-for the `argocd` workspace.
+for the `argocd-setup` workspace.
 
 Go into Terraform Cloud and destroy resources
 for the `boundary` workspace.
