@@ -384,6 +384,9 @@ make clean-certs
 ```
 
 Go into Terraform Cloud and destroy resources
+for the `argocd-config` workspace.
+
+Go into Terraform Cloud and destroy resources
 for the `argocd-setup` workspace.
 
 Go into Terraform Cloud and destroy resources
