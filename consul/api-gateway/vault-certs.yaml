@@ -11,4 +11,5 @@ spec:
     create: true
     name: consul-api-gateway-cert
     type: "kubernetes.io/tls"
+  commonName: gateway.hashiconf.example.com
   vaultAuthRef: consul-api-gateway
