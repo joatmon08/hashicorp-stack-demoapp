@@ -1,0 +1,45 @@
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: consul
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  description: HashiCorp Consul Configuration
+
+  sourceRepos:
+  - 'https://github.com/joatmon08/hashicorp-stack-demoapp.git'
+
+  # Only permit applications to deploy to the consul namespace in the same cluster
+  destinations:
+  - namespace: consul
+    server: https://kubernetes.default.svc
+    name: in-cluster
+  - namespace: argocd
+    server: https://kubernetes.default.svc
+    name: in-cluster
+
+  clusterResourceWhitelist:
+  - group: ''
+    kind: Namespace
+  - group: 'rbac.authorization.k8s.io'
+    kind: ClusterRole
+  - group: 'rbac.authorization.k8s.io'
+    kind: ClusterRoleBinding
+  - group: 'apiextensions.k8s.io'
+    kind: CustomResourceDefinition
+  - group: 'admissionregistration.k8s.io'
+    kind: MutatingWebhookConfiguration
+
+  orphanedResources:
+    warn: false
+
+  roles:
+  # A role which provides read-only access to all applications in the project
+  - name: read-only
+    description: Read-only privileges to consul
+    policies:
+    - p, proj:consul:read-only, applications, get, consul/*, allow
+    groups:
+    - consul

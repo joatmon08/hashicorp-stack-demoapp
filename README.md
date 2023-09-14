@@ -40,6 +40,8 @@ Each folder contains a few different configurations.
 
    - `argocd/setup/`: Deploys an ArgoCD cluster to configure applications
 
+   - `argocd/config/`: Deploys an ArgoCD proejcts
+
    - `certs/`: Sets up offline root CA and signs intermediate CA in Vault for Consul-related
       certificates.
 
@@ -196,6 +198,14 @@ Commit it up to your fork.
 
 This deploys an Argo CD HA cluster. You can get the initial `admin` password
 using the Argo CD CLI or from a Kubernetes secret.
+
+### Configure Argo CD Projects
+
+Go to the `argocd-config` workspace in Terraform Cloud.
+
+Commit it up to your fork.
+
+This deploys an Argo CD projects that separate applications.
 
 ### Configure Offline Root CA for Consul
 
