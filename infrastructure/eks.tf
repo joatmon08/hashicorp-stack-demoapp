@@ -38,7 +38,7 @@ module "eks" {
 }
 
 data "http" "kubernetes_version" {
-  url = "https://api.github.com/repos/kubernetes/kubernetes/releases/latest"
+  url = "https://api.github.com/repos/kubernetes/kubernetes/releases?per_page=1"
 
   request_headers = {
     Accept               = "application/vnd.github+json"
@@ -47,7 +47,7 @@ data "http" "kubernetes_version" {
 
   lifecycle {
     postcondition {
-      condition     = tonumber(module.eks.cluster_version) < tonumber(regex("[0-9]+.[0-9]+", jsondecode(self.response_body).tag_name))
+      condition     = tonumber(module.eks.cluster_version) < tonumber(regex("[0-9]+.[0-9]+", jsondecode(self.response_body).0.tag_name))
       error_message = "Kubernetes cluster version should not be latest"
     }
   }
