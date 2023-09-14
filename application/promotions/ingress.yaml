@@ -1,3 +1,4 @@
+---
 apiVersion: gateway.networking.k8s.io/v1alpha2
 kind: ReferenceGrant
 metadata:
@@ -15,9 +16,11 @@ apiVersion: gateway.networking.k8s.io/v1alpha2
 kind: HTTPRoute
 metadata:
   name: promotions
+  namespace: consul
 spec:
   parentRefs:
   - name: api-gateway
+    namespace: consul
   rules:
   - matches:
     - path:
