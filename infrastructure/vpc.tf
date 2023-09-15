@@ -44,6 +44,10 @@ module "vpc" {
     "kubernetes.io/cluster/${var.name}" = "shared"
     "kubernetes.io/role/internal-elb"   = "1"
   }
+
+  default_vpc_tags = {
+    HCP_Peer = jsonencode([var.hcp_cidr_block])
+  }
 }
 
 resource "aws_security_group" "database" {
