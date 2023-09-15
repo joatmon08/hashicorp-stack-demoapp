@@ -3,6 +3,8 @@ kind: Application
 metadata:
   name: promotions
   namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
 spec:
   syncPolicy:
     automated:

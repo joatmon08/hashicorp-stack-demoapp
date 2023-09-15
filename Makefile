@@ -28,6 +28,12 @@ configure-hcp-certs:
 configure-consul:
 	bash consul/config/configure.sh
 
+configure-tfc:
+	kubectl apply -f argocd/applications/terraform-operator/
+
+configure-application:
+	kubectl apply -f argocd/applications/promotions.yaml
+
 configure-db: boundary-appdev-auth
 	bash database/configure.sh
 
