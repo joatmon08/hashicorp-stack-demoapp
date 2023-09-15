@@ -25,3 +25,5 @@ secrets/
 __pycache__
 
 mocks/
+
+database/terraform

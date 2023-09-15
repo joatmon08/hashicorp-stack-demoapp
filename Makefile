@@ -71,14 +71,14 @@ clean-applications: clean-expense-report clean-hashicups
 
 boundary-operations-auth:
 	mkdir -p secrets
-	@echo $(shell cd boundary && terraform output -raw boundary_operations_password) > secrets/ops
+	@echo "$(shell cd boundary && terraform output -raw boundary_operations_password)" > secrets/ops
 	boundary authenticate password -login-name=ops \
 		-password file://secrets/ops \
 		-auth-method-id=$(shell cd boundary && terraform output -raw boundary_auth_method_id)
 
 boundary-appdev-auth:
 	mkdir -p secrets
-	@echo $(shell cd boundary && terraform output -raw boundary_products_password) > secrets/appdev
+	@echo "$(shell cd boundary && terraform output -raw boundary_products_password)" > secrets/appdev
 	boundary authenticate password -login-name=appdev \
 		-password file://secrets/appdev \
 		-auth-method-id=$(shell cd boundary && terraform output -raw boundary_auth_method_id)
@@ -98,6 +98,9 @@ frontend-products:
 
 clean-application:
 	kubectl delete -f argocd/applications/
+
+clean-tfc:
+	kubectl delete -f argocd/applications/terraform-operator/
 
 clean-consul:
 	kubectl delete -f argocd/applications/consul/
@@ -127,6 +130,9 @@ terraform-upgrade:
 	cd vault/setup && terraform init -upgrade
 	cd vault/consul && terraform init -upgrade
 	cd consul/setup && terraform init -upgrade
+
+terraform-test:
+	bash database/run_tests.sh
 
 terraform-test-fixture:
 	curl --header "Content-Type: application/vnd.api+json" --header "Authorization: Bearer ${TF_TOKEN}" --location https://app.terraform.io/api/v2/plans/${TF_PLAN_ID}/json-output > infrastructure/policy/fixtures/terraform.json

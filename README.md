@@ -16,8 +16,6 @@ for an application to access a database
 * [Credits](#credits)
 * [Additional References](#additional-references)
 
-![Architecture diagram with HashiCorp Cloud Platform Consul and Vault connecting to an AWS EKS cluster and Boundary](./assets/diagram.png)
-
 ## Navigation
 
 Each folder contains a few different configurations.
@@ -256,6 +254,10 @@ via the Consul Helm chart to the EKS cluster to join the HCP Consul servers.
 
 Run `make configure-consul` to deploy resources to set up the Consul API Gateway.
 
+### Configure Terraform Cloud Operator
+
+Run `make configure-tfc` to deploy resources to set up the Consul API Gateway.
+
 ### Add Coffee Data to Database
 
 To add data, you need to log into the PostgreSQL database. However, it's on a private
@@ -363,6 +365,12 @@ Remove applications.
 
 ```shell
 make clean-application
+```
+
+Remove Terraform Cloud Operator.
+
+```shell
+make clean-tfc
 ```
 
 Remove API Gateway configuration.
