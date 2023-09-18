@@ -108,3 +108,118 @@ resource "tfe_variable" "datadog_api_key" {
   variable_set_id = tfe_variable_set.datadog.0.id
   sensitive       = true
 }
+
+resource "tfe_variable_set" "applications" {
+  name         = "Applications"
+  description  = "Variable set for application teams to use"
+  organization = tfe_organization.demo.name
+  global       = false
+}
+
+resource "tfe_project_variable_set" "applications" {
+  for_each        = toset(var.business_units)
+  variable_set_id = tfe_variable_set.applications.id
+  project_id      = tfe_project.business_units[each.value].id
+}
+
+data "terraform_remote_state" "infrastructure" {
+  backend = "remote"
+
+  config = {
+    organization = var.tfc_organization
+    workspaces = {
+      name = "infrastructure"
+    }
+  }
+}
+
+
+resource "tfe_variable" "vault_address" {
+  count           = data.terraform_remote_state.infrastructure == null ? 0 : 1
+  key             = "VAULT_ADDR"
+  value           = data.terraform_remote_state.infrastructure.outputs.hcp_vault_public_address
+  category        = "env"
+  description     = "HCP Vault address for configuration"
+  variable_set_id = tfe_variable_set.applications.id
+}
+
+resource "tfe_variable" "vault_namespace" {
+  count           = data.terraform_remote_state.infrastructure == null ? 0 : 1
+  key             = "VAULT_NAMESPACE"
+  value           = data.terraform_remote_state.infrastructure.outputs.hcp_vault_namespace
+  category        = "env"
+  description     = "HCP Vault namespace for configuration"
+  variable_set_id = tfe_variable_set.applications.id
+}
+
+resource "tfe_variable" "vault_token" {
+  count           = data.terraform_remote_state.infrastructure == null ? 0 : 1
+  key             = "VAULT_TOKEN"
+  value           = data.terraform_remote_state.infrastructure.outputs.hcp_vault_token
+  category        = "env"
+  description     = "HCP Vault token for configuration"
+  variable_set_id = tfe_variable_set.applications.id
+  sensitive       = true
+}
+
+resource "tfe_variable" "boundary_address" {
+  count           = data.terraform_remote_state.infrastructure == null ? 0 : 1
+  key             = "boundary_address"
+  value           = data.terraform_remote_state.infrastructure.outputs.hcp_boundary_endpoint
+  category        = "terraform"
+  hcl             = false
+  description     = "HCP Boundary address for configuration"
+  variable_set_id = tfe_variable_set.applications.id
+}
+
+resource "tfe_variable" "boundary_username" {
+  count           = data.terraform_remote_state.infrastructure == null ? 0 : 1
+  key             = "boundary_username"
+  value           = data.terraform_remote_state.infrastructure.outputs.hcp_boundary_username
+  category        = "terraform"
+  hcl             = false
+  description     = "HCP Boundary username for configuration"
+  variable_set_id = tfe_variable_set.applications.id
+}
+
+resource "tfe_variable" "boundary_password" {
+  count           = data.terraform_remote_state.infrastructure == null ? 0 : 1
+  key             = "boundary_password"
+  value           = data.terraform_remote_state.infrastructure.outputs.hcp_boundary_password
+  category        = "terraform"
+  hcl             = false
+  description     = "HCP Boundary password for configuration"
+  variable_set_id = tfe_variable_set.applications.id
+  sensitive       = true
+}
+
+resource "tfe_variable" "consul_address" {
+  count           = data.terraform_remote_state.infrastructure == null ? 0 : 1
+  key             = "consul_address"
+  value           = data.terraform_remote_state.infrastructure.outputs.hcp_consul_public_address
+  category        = "terraform"
+  hcl             = false
+  description     = "HCP Consul address for configuration"
+  variable_set_id = tfe_variable_set.applications.id
+}
+
+resource "tfe_variable" "consul_datacenter" {
+  count           = data.terraform_remote_state.infrastructure == null ? 0 : 1
+  key             = "consul_datacenter"
+  value           = data.terraform_remote_state.infrastructure.outputs.hcp_consul_datacenter
+  category        = "terraform"
+  hcl             = false
+  description     = "HCP Consul datacenter for configuration"
+  variable_set_id = tfe_variable_set.applications.id
+}
+
+resource "tfe_variable" "consul_token" {
+  count           = data.terraform_remote_state.infrastructure == null ? 0 : 1
+  key             = "CONSUL_HTTP_TOKEN"
+  value           = data.terraform_remote_state.infrastructure.outputs.hcp_consul_token
+  category        = "env"
+  hcl             = false
+  description     = "HCP Consul token for configuration"
+  variable_set_id = tfe_variable_set.applications.id
+  sensitive       = true
+}
