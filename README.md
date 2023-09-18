@@ -280,20 +280,6 @@ out the tables.
 make postgres-products
 ```
 
-### Configure Vault for Applications to Access Database
-
-You can use
-[Consul-Terraform-Sync](https://learn.hashicorp.com/tutorials/consul/consul-terraform-sync-intro?in=consul/network-infrastructure-automation)
-to read the database
-address from Consul and automatically configure a database
-secrets engine in Vault using a Terraform module.
-
-To do this, deploy CTS to Kubernetes.
-
-```shell
-make configure-cts
-```
-
 ### Deploy Example Application
 
 To deploy the example application, run `make configure-application`.
