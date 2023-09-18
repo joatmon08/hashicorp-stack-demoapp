@@ -26,6 +26,16 @@ locals {
   hcp_vault_cluster_token   = var.hcp_vault_cluster_token == "" ? data.terraform_remote_state.infrastructure.outputs.hcp_vault_token : var.hcp_vault_cluster_token
 }
 
+variable "tfc_organization_token" {
+  type        = string
+  description = "TFC Organization token for Vault secrets engine"
+}
+
+variable "tfc_team_ids" {
+  type        = map(string)
+  description = "TFC Team IDs to enable for Vault secrets engine"
+}
+
 variable "hcp_vault_cluster_id" {
   type        = string
   description = "HCP Vault Cluster ID for configuration"
