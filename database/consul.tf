@@ -1,58 +1,40 @@
-# resource "consul_service" "database" {
-#   name = "database"
-#   node = consul_node.database.name
-#   port = 5432
-#   tags = ["external"]
-#   meta = {}
+resource "consul_service" "database" {
+  name = "${var.business_unit}-database"
+  node = consul_node.database.name
+  port = 5432
+  tags = ["external"]
+  meta = {}
 
-#   check {
-#     check_id = "service:postgres"
-#     name     = "Postgres health check"
-#     status   = "passing"
-#     tcp      = "${local.products_database}:5432"
-#     interval = "30s"
-#     timeout  = "3s"
-#   }
-# }
+  check {
+    check_id = "service:postgres"
+    name     = "Postgres health check"
+    status   = "passing"
+    tcp      = "${aws_db_instance.database.address}:5432"
+    interval = "30s"
+    timeout  = "3s"
+  }
+}
 
-# resource "consul_node" "database" {
-#   name    = "database"
-#   address = local.products_database
+resource "consul_node" "database" {
+  name    = "${var.business_unit}-database"
+  address = aws_db_instance.database.address
 
-#   meta = {
-#     "external-node"  = "true"
-#     "external-probe" = "true"
-#   }
-# }
+  meta = {
+    "external-node"  = "true"
+    "external-probe" = "true"
+  }
+}
 
-# resource "kubernetes_manifest" "service_defaults_database" {
-#   manifest = {
-#     "apiVersion" = "consul.hashicorp.com/v1alpha1"
-#     "kind"       = "ServiceDefaults"
-#     "metadata" = {
-#       "name"      = "database"
-#       "namespace" = var.namespace
-#     }
-#     "spec" = {
-#       "protocol" = "tcp"
-#     }
-#   }
-# }
+resource "consul_config_entry" "service_defaults" {
+  name = "${var.business_unit}-database"
+  kind = "service-defaults"
 
-# resource "kubernetes_manifest" "terminating_gateway_database" {
-#   manifest = {
-#     "apiVersion" = "consul.hashicorp.com/v1alpha1"
-#     "kind"       = "TerminatingGateway"
-#     "metadata" = {
-#       "name"      = "terminating-gateway"
-#       "namespace" = var.namespace
-#     }
-#     "spec" = {
-#       "services" = [
-#         {
-#           "name" = "database"
-#         },
-#       ]
-#     }
-#   }
-# }
+  config_json = jsonencode({
+    Protocol = "tcp"
+  })
+}
+
+data "consul_service_health" "database" {
+  name    = consul_service.database.name
+  passing = true
+}

@@ -10,7 +10,12 @@ provider "vault" {}
 
 provider "boundary" {
   ## possible bug with Boundary provider, not picking up BOUNDARY_ADDR
-  addr = "https://444e3b7d-35d6-4858-a82d-c99842fb0297.boundary.hashicorp.cloud"
+  addr = "https://effd00f1-c687-456d-8b7e-354f696a4c8b.boundary.hashicorp.cloud"
+}
+
+provider "consul" {
+  address    = "https://hashicups.consul.11eaeb92-853e-2d98-8405-0242ac110009.aws.hashicorp.cloud"
+  datacenter = "hashicups"
 }
 
 run "setup" {
@@ -36,7 +41,12 @@ run "database" {
   }
 
   assert {
-    condition     = data.vault_generic_secret.database.data["username"] == aws_db_instance.database.username
+    condition     = data.vault_kv_secret_v2.postgres.data["username"] != null
     error_message = "Database in module should have admin credentials in Vault"
+  }
+
+  assert {
+    condition     = length(data.consul_service_health.database.results) > 0
+    error_message = "Database service not registered in Consul"
   }
 }

@@ -14,5 +14,10 @@ terraform {
       source  = "hashicorp/vault"
       version = ">= 3.20"
     }
+
+    consul = {
+      source  = "hashicorp/consul"
+      version = ">= 2.18"
+    }
   }
 }

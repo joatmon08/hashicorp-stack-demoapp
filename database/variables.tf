@@ -12,7 +12,7 @@ variable "db_instance_class" {
 
 variable "business_unit" {
   type        = string
-  description = "Business unit. Also used as database subnet group."
+  description = "Business unit. Also used as database subnet group"
 }
 
 variable "environment" {
@@ -27,7 +27,7 @@ variable "db_name" {
 
 variable "boundary_scope_id" {
   type        = string
-  description = "Boundary Scope ID for setting up target to database"
+  description = "Boundary scope ID for setting up target to database"
 }
 
 locals {

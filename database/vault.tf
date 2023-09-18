@@ -1,6 +1,7 @@
 resource "vault_mount" "static" {
   path        = "${var.business_unit}/static"
-  type        = "kv-v2"
+  type        = "kv"
+  options     = { version = "2" }
   description = "For static secrets related to ${var.business_unit}"
 }
 
@@ -8,8 +9,10 @@ locals {
   database_secret_name = var.db_name
 }
 
-resource "vault_generic_secret" "postgres" {
-  path = "${vault_mount.static.path}/${local.database_secret_name}"
+resource "vault_kv_secret_v2" "postgres" {
+  mount               = vault_mount.static.path
+  name                = local.database_secret_name
+  delete_all_versions = true
 
   data_json = <<EOT
 {
@@ -32,6 +35,7 @@ resource "vault_policy" "postgres" {
   policy = data.vault_policy_document.postgres.hcl
 }
 
-data "vault_generic_secret" "database" {
-  path = "${vault_mount.static.path}/${local.database_secret_name}"
+data "vault_kv_secret_v2" "postgres" {
+  mount = vault_kv_secret_v2.postgres.mount
+  name  = vault_kv_secret_v2.postgres.name
 }
