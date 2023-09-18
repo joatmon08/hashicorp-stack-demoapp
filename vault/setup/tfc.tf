@@ -26,7 +26,7 @@ EOT
 resource "vault_kubernetes_auth_backend_role" "tfc_token" {
   for_each                         = toset(keys(var.tfc_team_ids))
   backend                          = vault_auth_backend.kubernetes.path
-  role_name                        = "terraform-cloud-operator"
+  role_name                        = each.value
   bound_service_account_names      = ["terraform-cloud"]
   bound_service_account_namespaces = [each.value]
   token_ttl                        = 86400
