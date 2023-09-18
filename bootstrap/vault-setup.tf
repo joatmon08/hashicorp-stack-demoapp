@@ -1,6 +1,7 @@
 resource "tfe_workspace" "vault_setup" {
   name                      = "vault-setup"
   organization              = tfe_organization.demo.name
+  project_id                = tfe_project.platform.id
   description               = "Step 3 - Set up Vault on Kubernetes"
   terraform_version         = var.terraform_version
   working_directory         = "vault/setup"
@@ -14,10 +15,10 @@ resource "tfe_workspace" "vault_setup" {
   }
 }
 
-resource "tfe_workspace_variable_set" "vault_setup_aws" {
-  workspace_id    = tfe_workspace.vault_setup.id
-  variable_set_id = tfe_variable_set.aws.id
-}
+# resource "tfe_workspace_variable_set" "vault_setup_aws" {
+#   workspace_id    = tfe_workspace.vault_setup.id
+#   variable_set_id = tfe_variable_set.aws.id
+# }
 
 resource "tfe_workspace_variable_set" "vault_setup_hcp" {
   workspace_id    = tfe_workspace.vault_setup.id
@@ -27,4 +28,23 @@ resource "tfe_workspace_variable_set" "vault_setup_hcp" {
 resource "tfe_workspace_variable_set" "vault_setup_common" {
   workspace_id    = tfe_workspace.vault_setup.id
   variable_set_id = tfe_variable_set.common.id
+}
+
+resource "tfe_variable" "tfc_organization_token" {
+  workspace_id = tfe_workspace.vault_setup.id
+  key          = "tfc_organization_token"
+  value        = var.tfc_organization_token
+  category     = "terraform"
+  hcl          = false
+  sensitive    = true
+}
+
+resource "tfe_variable" "vault_tfc_secrets_engine_team_ids" {
+  key          = "tfc_team_ids"
+  value        = jsonencode({ for team in tfe_team.business_units : team.name => team.id })
+  category     = "terraform"
+  hcl          = true
+  description  = "Terraform Cloud team IDs to add to Vault secrets engine"
+  workspace_id = tfe_workspace.vault_setup.id
+  sensitive    = false
 }

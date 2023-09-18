@@ -26,7 +26,7 @@ resource "tfe_variable_set" "aws" {
   name         = "AWS"
   description  = "AWS credentials from HashiCorp Doormat"
   organization = tfe_organization.demo.name
-  global       = false
+  global       = true
 }
 
 resource "tfe_variable" "aws_access_key_id" {
@@ -107,9 +107,4 @@ resource "tfe_variable" "datadog_api_key" {
   description     = "Datadog API Key"
   variable_set_id = tfe_variable_set.datadog.0.id
   sensitive       = true
-}
-
-import {
-  to = tfe_variable_set.datadog.0
-  id = "varset-jvvNPoPy7KM9HVqB"
 }

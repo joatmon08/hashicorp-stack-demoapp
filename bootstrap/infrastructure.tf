@@ -2,6 +2,7 @@ resource "tfe_workspace" "infrastructure" {
   name                = "infrastructure"
   assessments_enabled = true
   organization        = tfe_organization.demo.name
+  project_id          = tfe_project.platform.id
   description         = "Step 1 - Create infrastructure resources"
   terraform_version   = var.terraform_version
   working_directory   = "infrastructure"
@@ -20,7 +21,7 @@ resource "tfe_workspace_variable_set" "infrastructure_hcp" {
   variable_set_id = tfe_variable_set.hcp.id
 }
 
-resource "tfe_workspace_variable_set" "infrastructure_aws" {
-  workspace_id    = tfe_workspace.infrastructure.id
-  variable_set_id = tfe_variable_set.aws.id
-}
+# resource "tfe_workspace_variable_set" "infrastructure_aws" {
+#   workspace_id    = tfe_workspace.infrastructure.id
+#   variable_set_id = tfe_variable_set.aws.id
+# }

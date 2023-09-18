@@ -1,6 +1,7 @@
 resource "tfe_workspace" "vault_consul" {
   name              = "vault-consul"
   organization      = tfe_organization.demo.name
+  project_id        = tfe_project.platform.id
   description       = "Step 5 - Configure Vault for Consul (PKI Secrets Engine)"
   terraform_version = var.terraform_version
   working_directory = "vault/consul"

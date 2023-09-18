@@ -91,3 +91,19 @@ variable "hcp_consul_observability_credentials" {
   sensitive   = true
   description = "Credentials to enable mesh telemetry for HCP Consul Observability"
 }
+
+variable "tfc_organization_token" {
+  type        = string
+  sensitive   = true
+  description = "TFC organization token for Vault secrets engine"
+}
+
+variable "business_units" {
+  type        = list(string)
+  description = "Business units lined up with projects and teams"
+  default = [
+    "promotions",
+    "hashicups",
+    "expense-report"
+  ]
+}

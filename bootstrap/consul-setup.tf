@@ -1,6 +1,7 @@
 resource "tfe_workspace" "consul_setup" {
   name              = "consul-setup"
   organization      = tfe_organization.demo.name
+  project_id        = tfe_project.platform.id
   description       = "Step 6 - Set up Consul on Kubernetes"
   terraform_version = var.terraform_version
   working_directory = "consul/setup"
@@ -19,10 +20,10 @@ resource "tfe_workspace_variable_set" "consul_setup_hcp" {
   variable_set_id = tfe_variable_set.hcp.id
 }
 
-resource "tfe_workspace_variable_set" "consul_setup_aws" {
-  workspace_id    = tfe_workspace.consul_setup.id
-  variable_set_id = tfe_variable_set.aws.id
-}
+# resource "tfe_workspace_variable_set" "consul_setup_aws" {
+#   workspace_id    = tfe_workspace.consul_setup.id
+#   variable_set_id = tfe_variable_set.aws.id
+# }
 
 resource "tfe_workspace_variable_set" "consul_setup_common" {
   workspace_id    = tfe_workspace.consul_setup.id

@@ -1,6 +1,7 @@
 resource "tfe_workspace" "boundary" {
   name                          = "boundary"
   organization                  = tfe_organization.demo.name
+  project_id                    = tfe_project.platform.id
   description                   = "Step 2 - Configure Boundary"
   terraform_version             = var.terraform_version
   working_directory             = "boundary"
@@ -17,10 +18,10 @@ resource "tfe_workspace" "boundary" {
   }
 }
 
-resource "tfe_workspace_variable_set" "boundary_aws" {
-  workspace_id    = tfe_workspace.boundary.id
-  variable_set_id = tfe_variable_set.aws.id
-}
+# resource "tfe_workspace_variable_set" "boundary_aws" {
+#   workspace_id    = tfe_workspace.boundary.id
+#   variable_set_id = tfe_variable_set.aws.id
+# }
 
 resource "tfe_workspace_variable_set" "boundary_common" {
   workspace_id    = tfe_workspace.boundary.id
