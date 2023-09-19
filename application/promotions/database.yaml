@@ -1,0 +1,56 @@
+---
+apiVersion: app.terraform.io/v1alpha2
+kind: Workspace
+metadata:
+  name: database
+spec:
+  organization: hashicorp-stack-demoapp
+  token:
+    secretKeyRef:
+      name: terraform-cloud
+      key: token
+  name: database
+  description: Workspace for database automated via TFC Operator
+  applyMethod: auto
+  terraformVersion: 1.5.6
+  terraformVariables:
+    - name: business_unit
+      value: hashicups
+    - name: environment
+      value: production
+    - name: db_name
+      value: test
+    - name: boundary_scope_id
+      value: p_bbROi3o9uU
+  environmentVariables:
+    - name: CONFIRM_DESTROY
+      sensitive: false
+      value: "1"
+  executionMode: remote
+---
+apiVersion: app.terraform.io/v1alpha2
+kind: Module
+metadata:
+  name: database
+spec:
+  organization: hashicorp-stack-demoapp
+  token:
+    secretKeyRef:
+      name: terraform-cloud
+      key: token
+  destroyOnDeletion: true
+  module:
+    source:  "app.terraform.io/hashicorp-stack-demoapp/postgres/aws"
+    version: "0.0.1"
+  outputs:
+    - name: product_database_address
+    - name: database_static_path
+    - name: database_secret_name
+    - name: boundary_target_postgres
+  variables:
+    - name: business_unit
+    - name: environment
+    - name: db_name
+    - name: boundary_scope_id
+  workspace:
+    name: database
