@@ -27,3 +27,5 @@ __pycache__
 mocks/
 
 database/terraform
+
+terraform.tfstate*
