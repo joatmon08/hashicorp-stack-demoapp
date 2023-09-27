@@ -1,11 +1,11 @@
 data "vault_policy_document" "application" {
   rule {
-    path         = "*/static"
+    path         = "/sys/mounts/*/static*"
     capabilities = ["create", "update"]
     description  = "Allow applications to enable KVv2"
   }
   rule {
-    path         = "database/*"
+    path         = "/sys/mounts/database*"
     capabilities = ["create", "update"]
     description  = "Allow applications to enable database secrets engines"
   }

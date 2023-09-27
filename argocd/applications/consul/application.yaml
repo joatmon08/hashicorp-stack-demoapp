@@ -3,8 +3,6 @@ kind: Application
 metadata:
   name: consul-config
   namespace: argocd
-  finalizers:
-    - resources-finalizer.argocd.argoproj.io
 spec:
   syncPolicy:
     automated:

@@ -103,7 +103,12 @@ clean-tfc:
 	kubectl delete -f argocd/applications/terraform-operator/
 
 clean-consul:
-	kubectl delete -f argocd/applications/consul/
+	kubectl patch app consul-api-gateway -n argocd -p '{"metadata": {"finalizers": ["resources-finalizer.argocd.argoproj.io"]}}' --type merge
+	kubectl delete app consul-api-gateway -n argocd
+	kubectl patch app consul-defaults -n argocd -p '{"metadata": {"finalizers": ["resources-finalizer.argocd.argoproj.io"]}}' --type merge
+	kubectl delete app consul-defaults -n argocd
+	kubectl patch app consul-config -n argocd -p '{"metadata": {"finalizers": ["resources-finalizer.argocd.argoproj.io"]}}' --type merge
+	kubectl delete app consul-config -n argocd
 
 clean-vault:
 	vault lease revoke -force -prefix database/product/creds
