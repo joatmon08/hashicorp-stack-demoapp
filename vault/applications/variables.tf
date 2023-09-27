@@ -34,8 +34,9 @@ locals {
   consul_token      = data.terraform_remote_state.infrastructure.outputs.hcp_consul_token
   consul_datacenter = data.terraform_remote_state.infrastructure.outputs.hcp_consul_datacenter
 
-  vault_address              = data.terraform_remote_state.infrastructure.outputs.hcp_vault_public_address
-  vault_namespace            = data.terraform_remote_state.infrastructure.outputs.hcp_vault_namespace
-  vault_token                = data.terraform_remote_state.vault_setup.outputs.application_token
+  vault_address   = data.terraform_remote_state.infrastructure.outputs.hcp_vault_public_address
+  vault_token     = data.terraform_remote_state.infrastructure.outputs.hcp_vault_token
+  vault_namespace = data.terraform_remote_state.infrastructure.outputs.hcp_vault_namespace
+
   vault_kubernetes_auth_path = data.terraform_remote_state.vault_setup.outputs.vault_kubernetes_auth_path
 }

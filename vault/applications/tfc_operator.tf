@@ -1,10 +1,42 @@
+data "vault_policy_document" "application" {
+  rule {
+    path         = "*/static"
+    capabilities = ["create", "update"]
+    description  = "Allow applications to enable KVv2"
+  }
+  rule {
+    path         = "database/*"
+    capabilities = ["create", "update"]
+    description  = "Allow applications to enable database secrets engines"
+  }
+}
+
+resource "vault_policy" "application" {
+  name   = "application"
+  policy = data.vault_policy_document.application.hcl
+}
+
+resource "vault_token_auth_backend_role" "application" {
+  role_name              = "application"
+  allowed_policies       = [vault_policy.application.name]
+  disallowed_policies    = ["default"]
+  orphan                 = true
+  token_period           = "86400"
+  renewable              = true
+  token_explicit_max_ttl = "115200"
+}
+
+resource "vault_token" "application" {
+  role_name = vault_token_auth_backend_role.application.role_name
+  policies  = [vault_policy.application.name]
+}
+
 resource "vault_mount" "terraform_cloud_operator" {
   path        = "tfc/operator"
   type        = "kv"
   options     = { version = "2" }
   description = "Terraform Cloud operator variables"
 }
-
 
 data "vault_policy_document" "terraform_cloud_operator" {
   rule {
@@ -44,7 +76,7 @@ resource "vault_kv_secret_v2" "terraform_cloud_operator_workspace_secrets" {
   "consul_token" : "${local.consul_token}",
   "consul_datacenter": "${local.consul_datacenter}",
   "vault_address": "${local.vault_address}",
-  "vault_token": "${local.vault_token}",
+  "vault_token": "${vault_token.application.client_token}",
   "vault_namespace": "${local.vault_namespace}"
 }
 EOT
