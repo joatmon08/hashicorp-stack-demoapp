@@ -17,16 +17,17 @@ resource "consul_certificate_authority" "connect" {
   connect_provider = "vault"
 
   config_json = jsonencode({
-    Address             = local.hcp_vault_private_address
-    Token               = vault_token.connect_ca_hcp.client_token
-    RootPKIPath         = var.vault_consul_connect_pki_root_backend
-    IntermediatePKIPath = var.vault_consul_connect_pki_int_backend
-    LeafCertTTL         = "72h"
-    RotationPeriod      = "2160h"
-    IntermediateCertTTL = "8760h"
-    PrivateKeyType      = "rsa"
-    PrivateKeyBits      = 2048
-    Namespace           = local.hcp_vault_namespace
+    Address                  = local.hcp_vault_private_address
+    Token                    = vault_token.connect_ca_hcp.client_token
+    RootPKIPath              = var.vault_consul_connect_pki_root_backend
+    RootPKINamespace         = local.hcp_vault_namespace
+    IntermediatePKIPath      = var.vault_consul_connect_pki_int_backend
+    IntermediatePKINamespace = local.hcp_vault_namespace
+    LeafCertTTL              = "72h"
+    RotationPeriod           = "2160h"
+    IntermediateCertTTL      = "8760h"
+    PrivateKeyType           = "rsa"
+    PrivateKeyBits           = 2048
   })
 }
 
