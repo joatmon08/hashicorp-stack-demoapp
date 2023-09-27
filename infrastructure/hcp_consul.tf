@@ -8,16 +8,12 @@ module "aws_hcp_consul" {
 
   hvn                = hcp_hvn.main
   vpc_id             = module.vpc.vpc_id
-  subnet_ids         = module.vpc.public_subnets
-  route_table_ids    = module.vpc.public_route_table_ids
+  subnet_ids         = concat(module.vpc.private_subnets, module.vpc.database_subnets)
+  route_table_ids    = concat(module.vpc.private_route_table_ids, module.vpc.database_route_table_ids)
   security_group_ids = [module.eks.cluster_primary_security_group_id]
 }
 
 data "hcp_consul_versions" "default" {}
-
-data "http" "terraform_cloud_ip_ranges" {
-  url = "https://app.terraform.io/api/meta/ip-ranges"
-}
 
 resource "hcp_consul_cluster" "main" {
   cluster_id         = var.name
