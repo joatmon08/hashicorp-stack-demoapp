@@ -101,23 +101,23 @@ path "/sys/mounts" {
   capabilities = [ "read" ]
 }
 
-path "/sys/mounts/connect_root" {
+path "/sys/mounts/${var.vault_consul_connect_pki_root_backend}" {
   capabilities = [ "create", "read", "update", "delete", "list" ]
 }
 
-path "/sys/mounts/connect_inter" {
+path "/sys/mounts/${var.vault_consul_connect_pki_int_backend}" {
   capabilities = [ "create", "read", "update", "delete", "list" ]
 }
 
-path "/sys/mounts/connect_inter/tune" {
+path "/sys/mounts/${var.vault_consul_connect_pki_int_backend}/tune" {
   capabilities = [ "create", "read", "update", "delete", "list" ]
 }
 
-path "/connect_root/*" {
+path "/${var.vault_consul_connect_pki_root_backend}/*" {
   capabilities = [ "create", "read", "update", "delete", "list" ]
 }
 
-path "/connect_inter/*" {
+path "/${var.vault_consul_connect_pki_int_backend}/*" {
   capabilities = [ "create", "read", "update", "delete", "list" ]
 }
 EOT
