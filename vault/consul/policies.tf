@@ -89,6 +89,10 @@ resource "vault_policy" "connect_ca_hcp" {
   name = "connect-ca-hcp"
 
   policy = <<EOT
+path "${var.vault_consul_connect_pki_root_backend}/root/sign-self-issued" {
+  capabilities = [ "sudo", "update" ]
+}
+
 path "auth/token/renew-self" {
   capabilities = [ "update" ]
 }
