@@ -19,8 +19,8 @@ resource "consul_certificate_authority" "connect" {
   config_json = jsonencode({
     Address             = local.hcp_vault_private_address
     Token               = vault_token.connect_ca_hcp.client_token
-    RootPKIPath         = "connect_root"
-    IntermediatePKIPath = "connect_inter"
+    RootPKIPath         = "consul/connect/pki"
+    IntermediatePKIPath = "consul/connect/pki_int"
     LeafCertTTL         = "72h"
     RotationPeriod      = "2160h"
     IntermediateCertTTL = "8760h"
