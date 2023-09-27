@@ -7,7 +7,7 @@ resource "tfe_workspace" "vault_setup" {
   working_directory         = "vault/setup"
   trigger_prefixes          = ["vault/setup"]
   queue_all_runs            = false
-  remote_state_consumer_ids = [tfe_workspace.boundary.id, tfe_workspace.vault_consul.id]
+  remote_state_consumer_ids = [tfe_workspace.boundary.id, tfe_workspace.vault_consul.id, tfe_workspace.vault_applications.id]
   vcs_repo {
     identifier     = var.github_repository
     branch         = var.github_branch
