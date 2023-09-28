@@ -2,8 +2,8 @@ fmt:
 	cd vault/setup && terraform fmt
 	cd vault/app && terraform fmt
 	cd consul && terraform fmt
-	cd boundary && terraform fmt
-	cd boundary-deployment && terraform fmt
+	cd boundary/setup && terraform fmt
+	cd boundary/setup-deployment && terraform fmt
 	cd infrastructure && terraform fmt
 	cd kubernetes && terraform fmt
 	terraform fmt
@@ -71,17 +71,17 @@ clean-applications: clean-expense-report clean-hashicups
 
 boundary-operations-auth:
 	mkdir -p secrets
-	@echo "$(shell cd boundary && terraform output -raw boundary_operations_password)" > secrets/ops
+	@echo "$(shell cd boundary/setup && terraform output -raw boundary_operations_password)" > secrets/ops
 	boundary authenticate password -login-name=ops \
 		-password file://secrets/ops \
-		-auth-method-id=$(shell cd boundary && terraform output -raw boundary_auth_method_id)
+		-auth-method-id=$(shell cd boundary/setup && terraform output -raw boundary_auth_method_id)
 
 boundary-appdev-auth:
 	mkdir -p secrets
-	@echo "$(shell cd boundary && terraform output -raw boundary_products_password)" > secrets/appdev
+	@echo "$(shell cd boundary/setup && terraform output -raw boundary_products_password)" > secrets/appdev
 	boundary authenticate password -login-name=appdev \
 		-password file://secrets/appdev \
-		-auth-method-id=$(shell cd boundary && terraform output -raw boundary_auth_method_id)
+		-auth-method-id=$(shell cd boundary/setup && terraform output -raw boundary_auth_method_id)
 
 ssh-k8s-nodes:
 	boundary connect ssh -username=ec2-user -target-name eks_nodes_ssh -target-scope-name core_infra -- -i secrets/id_rsa.pem
@@ -90,11 +90,11 @@ postgres-operations: boundary-appdev-auth
 	boundary connect postgres \
 		-username=$(shell cd infrastructure && terraform output -raw product_database_username) \
 		-dbname=products -target-id \
-		$(shell cd boundary && terraform output -raw boundary_target_postgres)
+		$(shell cd boundary/setup && terraform output -raw boundary_target_postgres)
 
 frontend-products:
 	boundary connect -target-id \
-		$(shell cd boundary && terraform output -raw boundary_target_frontend)
+		$(shell cd boundary/setup && terraform output -raw boundary_target_frontend)
 
 clean-application:
 	kubectl delete -f argocd/applications/
@@ -130,7 +130,7 @@ db-commands:
 
 terraform-upgrade:
 	cd infrastructure && terraform init -upgrade
-	cd boundary && terraform init -upgrade
+	cd boundary/setup && terraform init -upgrade
 	cd argocd && terraform init -upgrade
 	cd vault/setup && terraform init -upgrade
 	cd vault/consul && terraform init -upgrade
