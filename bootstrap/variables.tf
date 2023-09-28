@@ -117,3 +117,9 @@ variable "terraform_aws_postgres_module_identifier" {
   description = "GitHub identifier for terraform-aws-postgres module"
   default     = "joatmon08/terraform-aws-postgres"
 }
+
+variable "region" {
+  type        = string
+  description = "Region for AWS infrastructure and HCP"
+  default     = "us-east-1"
+}

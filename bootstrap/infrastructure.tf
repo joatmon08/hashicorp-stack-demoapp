@@ -21,7 +21,10 @@ resource "tfe_workspace_variable_set" "infrastructure_hcp" {
   variable_set_id = tfe_variable_set.hcp.id
 }
 
-# resource "tfe_workspace_variable_set" "infrastructure_aws" {
-#   workspace_id    = tfe_workspace.infrastructure.id
-#   variable_set_id = tfe_variable_set.aws.id
-# }
+resource "tfe_variable" "region" {
+  key          = "region"
+  value        = var.region
+  category     = "terraform"
+  workspace_id = tfe_workspace.infrastructure.id
+  description  = "AWS region"
+}

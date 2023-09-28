@@ -38,6 +38,15 @@ resource "tfe_variable_set" "aws" {
   global       = true
 }
 
+resource "tfe_variable" "aws_region" {
+  key             = "AWS_REGION"
+  value           = var.region
+  category        = "env"
+  description     = "AWS region"
+  variable_set_id = tfe_variable_set.aws.id
+}
+
+
 resource "tfe_variable" "aws_access_key_id" {
   count           = var.aws_access_key_id == null ? 0 : 1
   key             = "AWS_ACCESS_KEY_ID"

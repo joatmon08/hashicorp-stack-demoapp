@@ -18,12 +18,6 @@ variable "hcp_region" {
   type        = string
   default     = ""
   description = "HCP Region"
-
-  validation {
-    condition     = can(regex("^us-", var.hcp_region))
-    error_message = "HCP Region must be in United States"
-  }
-
 }
 
 variable "vpc_cidr_block" {
