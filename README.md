@@ -33,8 +33,10 @@ Each folder contains a few different configurations.
 
    - `vault/setup/`: Deploy a Vault cluster via Helm chart and set up Kubernetes auth method
 
-   - `boundary`: Configures Boundary with two projects, one for operations
+   - `boundary/setup`: Configures Boundary with two projects, one for operations
       and the other for development teams.
+
+   - `boundary/config`: Update Boundary self-managed workers after they initiate registration.
 
    - `argocd/setup/`: Deploys an ArgoCD cluster to configure applications
 
@@ -168,11 +170,11 @@ and deploy the [Vault Helm chart](https://github.com/hashicorp/vault-helm) to th
 
 It also sets up a key-value secrets engine to store the Boundary worker token.
 
-### Configure Boundary
+### Set up Boundary
 
-Go to the `boundary` workspace in Terraform Cloud.
+Go to the `boundary/setup` workspace in Terraform Cloud.
 
-Optionally, update the `boundary/terraform.auto.tfvars` file with
+Optionally, update the `boundary/setup/terraform.auto.tfvars` file with
 a list of users and groups you'd like to add.
 
 Commit it up to your fork.
@@ -187,6 +189,15 @@ Start a new plan and apply it. This creates an organization with two scopes:
 
 Only `product` users will be able to access `product_infra`.
 `operations` users will be able to access both `core_infra`
+
+### Configure Boundary Workers
+
+Go to the `boundary/config` workspace in Terraform Cloud.
+
+Commit it up to your fork.
+
+This workspace registers the Boundary workers into Boundary by retrieving
+their worker registration token from Vault.
 
 ### Configure Argo CD
 
@@ -384,7 +395,10 @@ Go into Terraform Cloud and destroy resources
 for the `argocd-setup` workspace.
 
 Go into Terraform Cloud and destroy resources
-for the `boundary` workspace.
+for the `boundary-config` workspace.
+
+Go into Terraform Cloud and destroy resources
+for the `boundary-setup` workspace.
 
 Go into Terraform Cloud and destroy resources
 for the `vault-setup` workspace.
