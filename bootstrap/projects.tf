@@ -9,6 +9,6 @@ resource "tfe_team" "business_units" {
   organization = tfe_organization.demo.name
   visibility   = "organization"
   organization_access {
-    manage_vcs_settings = true
+    manage_workspaces = true
   }
 }

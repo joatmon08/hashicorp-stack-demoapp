@@ -2,7 +2,7 @@
 apiVersion: app.terraform.io/v1alpha2
 kind: Workspace
 metadata:
-  name: database
+  name: promotions-database
   annotations:
     argocd.argoproj.io/sync-wave: "4"
 spec:
@@ -11,7 +11,7 @@ spec:
     secretKeyRef:
       name: terraform-cloud-team-token
       key: token
-  name: database
+  name: promotions-database
   description: Workspace for database automated via TFC Operator
   applyMethod: auto
   terraformVersion: 1.5.6
@@ -41,6 +41,7 @@ spec:
         secretKeyRef:
           name: terraform-aws-postgres-variables
           key: boundary_password
+      sensitive: true
     - name: consul_address
       valueFrom:
         secretKeyRef:
@@ -56,6 +57,7 @@ spec:
         secretKeyRef:
           name: terraform-aws-postgres-variables
           key: consul_token
+      sensitive: true
     - name: vault_address
       valueFrom:
         secretKeyRef:
@@ -71,11 +73,15 @@ spec:
         secretKeyRef:
           name: terraform-aws-postgres-variables
           key: vault_token
+      sensitive: true
   environmentVariables:
     - name: CONFIRM_DESTROY
       sensitive: false
       value: "1"
   executionMode: remote
+  tags:
+    - promotions
+    - application
 # ---
 # apiVersion: app.terraform.io/v1alpha2
 # kind: Module
