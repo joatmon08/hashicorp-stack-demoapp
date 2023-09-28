@@ -40,3 +40,13 @@ locals {
 
   vault_kubernetes_auth_path = data.terraform_remote_state.vault_setup.outputs.vault_kubernetes_auth_path
 }
+
+variable "tfc_organization_token" {
+  type        = string
+  description = "TFC Organization token for Vault secrets engine"
+}
+
+variable "tfc_team_ids" {
+  type        = map(string)
+  description = "TFC Team IDs to enable for Vault secrets engine"
+}
