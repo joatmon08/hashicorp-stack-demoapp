@@ -35,9 +35,9 @@ spec:
 apiVersion: secrets.hashicorp.com/v1beta1
 kind: VaultDynamicSecret
 metadata:
-  name: terraform-cloud
+  name: terraform-cloud-team-token
   annotations:
-    argocd.argoproj.io/sync-wave: "2"
+    argocd.argoproj.io/sync-wave: "3"
 spec:
   mount: terraform
   path: creds/promotions
@@ -46,20 +46,19 @@ spec:
     name: terraform-cloud-team-token
     type: Opaque
   vaultAuthRef: terraform-cloud
-# ---
-# apiVersion: secrets.hashicorp.com/v1beta1
-# kind: VaultStaticSecret
-# metadata:
-#   name: database-module-variables
-#   annotations:
-#     argocd.argoproj.io/sync-wave: "2"
-# spec:
-#   role: terraform-cloud-operator
-#   mount: terraform-cloud-operator/promotions
-#   type: kv-v2
-#   path: terraform-aws-postgres
-#   destination:
-#     create: true
-#     name: terraform-aws-postgres-variables
-#     type: Opaque
-#   vaultAuthRef: terraform-cloud
+---
+apiVersion: secrets.hashicorp.com/v1beta1
+kind: VaultStaticSecret
+metadata:
+  name: terraform-aws-postgres-variables
+  annotations:
+    argocd.argoproj.io/sync-wave: "3"
+spec:
+  mount: terraform-cloud-operator/promotions
+  type: kv-v2
+  path: terraform-aws-postgres
+  destination:
+    create: true
+    name: terraform-aws-postgres-variables
+    type: Opaque
+  vaultAuthRef: terraform-cloud
