@@ -27,7 +27,7 @@ spec:
   mount: kubernetes
   namespace: admin
   kubernetes:
-    role: promotions
+    role: terraform-cloud-operator
     serviceAccount: terraform-cloud
     audiences:
       - vault
@@ -46,3 +46,19 @@ spec:
     name: terraform-cloud
     type: Opaque
   vaultAuthRef: terraform-cloud
+---
+apiVersion: secrets.hashicorp.com/v1beta1
+kind: VaultStaticSecret
+metadata:
+  name: database-module-variables
+  annotations:
+    argocd.argoproj.io/sync-wave: "2"
+spec:
+  role: terraform-cloud-operator
+  mount: tfc/operator
+  path: terraform-aws-postgres
+  destination:
+    create: true
+    name: database-module-variables
+    type: "Opaque"
+  vaultAuthRef: promotions
