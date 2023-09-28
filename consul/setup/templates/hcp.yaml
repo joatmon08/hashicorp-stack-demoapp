@@ -4,18 +4,6 @@ global:
   metrics:
     enabled: true
     enableAgentMetrics: true
-    enableTelemetryCollector: true
-  cloud:
-    resourceId:
-      secretKey: resource-id
-      secretName: consul-hcp-observability
-    clientId:
-      secretKey: client-id
-      secretName: consul-hcp-observability
-    clientSecret:
-      secretKey: client-secret
-      secretName: consul-hcp-observability
-
 
 controller:
   enabled: true
@@ -24,10 +12,6 @@ terminatingGateways:
   enabled: true
   defaults:
     replicas: 1
-
-client:
-  extraLabels:
-    tags.datadoghq.com/service: "consul-client"
 
 connectInject:
   replicas: 1
@@ -38,13 +22,3 @@ connectInject:
     manageExternalCRDs: true
     managedGatewayClass:
       serviceType: LoadBalancer
-
-telemetryCollector:
-  enabled: true
-  cloud:
-    clientId:
-      secretKey: client-id
-      secretName: consul-hcp-observability
-    clientSecret:
-      secretKey: client-secret
-      secretName: consul-hcp-observability

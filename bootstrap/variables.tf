@@ -90,6 +90,11 @@ variable "hcp_consul_observability_credentials" {
   })
   sensitive   = true
   description = "Credentials to enable mesh telemetry for HCP Consul Observability"
+  default = {
+    client_id     = ""
+    client_secret = ""
+    resource_id   = ""
+  }
 }
 
 variable "tfc_organization_token" {

@@ -79,6 +79,13 @@ resource "kubernetes_secret" "hcp_consul_token" {
   type = local.consul_root_token.type
 }
 
+locals {
+  helm_values = [
+    data.hcp_consul_agent_helm_config.cluster.config,
+    file("templates/hcp.yaml")
+  ]
+}
+
 resource "helm_release" "consul_hcp" {
   depends_on       = [kubernetes_secret.hcp_consul_secret, kubernetes_secret.hcp_consul_token]
   name             = "consul"
@@ -89,10 +96,7 @@ resource "helm_release" "consul_hcp" {
   chart      = "consul"
   version    = var.consul_helm_version
 
-  values = [
-    data.hcp_consul_agent_helm_config.cluster.config,
-    file("templates/hcp.yaml")
-  ]
+  values = var.hcp_consul_observability_credentials.client_id != "" ? concat(file("templates/telemetry.yaml"), local.helm_values) : local.helm_values
 
   set {
     name  = "global.image"

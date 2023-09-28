@@ -135,7 +135,7 @@ data "terraform_remote_state" "infrastructure" {
 
 
 resource "tfe_variable" "vault_address" {
-  count           = data.terraform_remote_state.infrastructure == null ? 0 : 1
+  count           = lookup(data.terraform_remote_state.infrastructure.outputs, "hcp_vault_public_address", null) == null ? 0 : 1
   key             = "VAULT_ADDR"
   value           = data.terraform_remote_state.infrastructure.outputs.hcp_vault_public_address
   category        = "env"
@@ -144,7 +144,7 @@ resource "tfe_variable" "vault_address" {
 }
 
 resource "tfe_variable" "vault_namespace" {
-  count           = data.terraform_remote_state.infrastructure == null ? 0 : 1
+  count           = lookup(data.terraform_remote_state.infrastructure.outputs, "hcp_vault_namespace", null) == null ? 0 : 1
   key             = "VAULT_NAMESPACE"
   value           = data.terraform_remote_state.infrastructure.outputs.hcp_vault_namespace
   category        = "env"
@@ -153,7 +153,7 @@ resource "tfe_variable" "vault_namespace" {
 }
 
 resource "tfe_variable" "vault_token" {
-  count           = data.terraform_remote_state.infrastructure == null ? 0 : 1
+  count           = lookup(data.terraform_remote_state.infrastructure.outputs, "hcp_vault_token", null) == null ? 0 : 1
   key             = "VAULT_TOKEN"
   value           = data.terraform_remote_state.infrastructure.outputs.hcp_vault_token
   category        = "env"
@@ -163,7 +163,7 @@ resource "tfe_variable" "vault_token" {
 }
 
 resource "tfe_variable" "boundary_address" {
-  count           = data.terraform_remote_state.infrastructure == null ? 0 : 1
+  count           = lookup(data.terraform_remote_state.infrastructure.outputs, "hcp_boundary_endpoint", null) == null ? 0 : 1
   key             = "boundary_address"
   value           = data.terraform_remote_state.infrastructure.outputs.hcp_boundary_endpoint
   category        = "terraform"
@@ -173,7 +173,7 @@ resource "tfe_variable" "boundary_address" {
 }
 
 resource "tfe_variable" "boundary_username" {
-  count           = data.terraform_remote_state.infrastructure == null ? 0 : 1
+  count           = lookup(data.terraform_remote_state.infrastructure.outputs, "hcp_boundary_username", null) == null ? 0 : 1
   key             = "boundary_username"
   value           = data.terraform_remote_state.infrastructure.outputs.hcp_boundary_username
   category        = "terraform"
@@ -183,7 +183,7 @@ resource "tfe_variable" "boundary_username" {
 }
 
 resource "tfe_variable" "boundary_password" {
-  count           = data.terraform_remote_state.infrastructure == null ? 0 : 1
+  count           = lookup(data.terraform_remote_state.infrastructure.outputs, "hcp_boundary_password", null) == null ? 0 : 1
   key             = "boundary_password"
   value           = data.terraform_remote_state.infrastructure.outputs.hcp_boundary_password
   category        = "terraform"
@@ -194,7 +194,7 @@ resource "tfe_variable" "boundary_password" {
 }
 
 resource "tfe_variable" "consul_address" {
-  count           = data.terraform_remote_state.infrastructure == null ? 0 : 1
+  count           = lookup(data.terraform_remote_state.infrastructure.outputs, "hcp_consul_public_address", null) == null ? 0 : 1
   key             = "consul_address"
   value           = data.terraform_remote_state.infrastructure.outputs.hcp_consul_public_address
   category        = "terraform"
@@ -204,7 +204,7 @@ resource "tfe_variable" "consul_address" {
 }
 
 resource "tfe_variable" "consul_datacenter" {
-  count           = data.terraform_remote_state.infrastructure == null ? 0 : 1
+  count           = lookup(data.terraform_remote_state.infrastructure.outputs, "hcp_consul_datacenter", null) == null ? 0 : 1
   key             = "consul_datacenter"
   value           = data.terraform_remote_state.infrastructure.outputs.hcp_consul_datacenter
   category        = "terraform"
@@ -214,7 +214,7 @@ resource "tfe_variable" "consul_datacenter" {
 }
 
 resource "tfe_variable" "consul_token" {
-  count           = data.terraform_remote_state.infrastructure == null ? 0 : 1
+  count           = lookup(data.terraform_remote_state.infrastructure.outputs, "hcp_consul_token", null) == null ? 0 : 1
   key             = "CONSUL_HTTP_TOKEN"
   value           = data.terraform_remote_state.infrastructure.outputs.hcp_consul_token
   category        = "env"
