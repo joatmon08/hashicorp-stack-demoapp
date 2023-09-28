@@ -100,7 +100,8 @@ clean-application:
 	kubectl delete -f argocd/applications/
 
 clean-tfc:
-	kubectl delete -f argocd/applications/terraform-operator/
+	kubectl delete app terraform-cloud-operator -n argocd -p '{"metadata": {"finalizers": ["resources-finalizer.argocd.argoproj.io"]}}' --type merge
+	kubectl delete app terraform-cloud-operator -n argocd
 
 clean-consul:
 	kubectl patch app consul-api-gateway -n argocd -p '{"metadata": {"finalizers": ["resources-finalizer.argocd.argoproj.io"]}}' --type merge

@@ -47,6 +47,8 @@ Each folder contains a few different configurations.
 
    - `vault/consul/`: Set up Consul-related secrets engines.
 
+   - `vault/applications/`: Set up secrets engines and policies for applications.
+
    - `consul/setup/`: Deploys a Consul cluster via Helm chart. For demonstration
       of Vault as a secrets backend, deploys Consul servers + clients.
 
@@ -253,6 +255,15 @@ Start a new plan and apply it.
 
 Terraform will set up the PKI secrets engine for TLS in the Consul cluster
 (not the service mesh).
+
+### Configure Vault for Applications
+
+Go to the `vault/applications` workspace in Terraform Cloud.
+
+Start a new plan and apply it.
+
+Terraform will set up auth methods and secrets engines related
+to applications deploying infrastructure with the Terraform Cloud operator.
 
 ### Configure Consul
 
