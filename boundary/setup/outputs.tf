@@ -25,13 +25,22 @@ output "boundary_endpoint" {
   value = local.url
 }
 
+output "vault" {
+  value = {
+    address   = local.vault_addr
+    namespace = local.vault_namespace
+    token     = local.vault_admin_token
+  }
+  sensitive = true
+}
+
 output "boundary_worker_mount" {
   value = local.boundary_worker_mount
 }
 
 output "boundary_worker_eks" {
   value = {
-    public_ip = module.boundary_worker_eks.worker.public_ip
+    public_ip   = module.boundary_worker_eks.worker.public_ip
     private_dns = module.boundary_worker_eks.worker.private_dns
   }
 }
@@ -44,7 +53,7 @@ output "products_infra_scope_id" {
 
 output "boundary_worker_rds" {
   value = {
-    public_ip = module.boundary_worker_rds.worker.public_ip
+    public_ip   = module.boundary_worker_rds.worker.public_ip
     private_dns = module.boundary_worker_rds.worker.private_dns
   }
 }
