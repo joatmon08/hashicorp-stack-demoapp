@@ -25,6 +25,15 @@ output "boundary_endpoint" {
   value = local.url
 }
 
+output "boundary" {
+  value = {
+    url      = local.url
+    username = local.username
+    password = local.password
+  }
+  sensitive = true
+}
+
 output "vault" {
   value = {
     address   = local.vault_addr
