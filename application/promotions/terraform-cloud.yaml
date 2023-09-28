@@ -31,21 +31,21 @@ spec:
     serviceAccount: terraform-cloud
     audiences:
       - vault
-# ---
-# apiVersion: secrets.hashicorp.com/v1beta1
-# kind: VaultDynamicSecret
-# metadata:
-#   name: terraform-cloud
-#   annotations:
-#     argocd.argoproj.io/sync-wave: "2"
-# spec:
-#   mount: terraform
-#   path: creds/promotions
-#   destination:
-#     create: true
-#     name: terraform-cloud
-#     type: Opaque
-#   vaultAuthRef: terraform-cloud
+---
+apiVersion: secrets.hashicorp.com/v1beta1
+kind: VaultDynamicSecret
+metadata:
+  name: terraform-cloud
+  annotations:
+    argocd.argoproj.io/sync-wave: "2"
+spec:
+  mount: terraform
+  path: creds/promotions
+  destination:
+    create: true
+    name: terraform-cloud
+    type: Opaque
+  vaultAuthRef: terraform-cloud
 # ---
 # apiVersion: secrets.hashicorp.com/v1beta1
 # kind: VaultStaticSecret
