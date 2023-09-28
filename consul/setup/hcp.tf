@@ -73,7 +73,7 @@ resource "kubernetes_secret" "hcp_consul_token" {
   }
 
   data = {
-    token = base64decode(local.consul_root_token.data.token)
+    token = local.hcp_consul_token
   }
 
   type = local.consul_root_token.type
