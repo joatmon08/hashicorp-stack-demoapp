@@ -22,6 +22,15 @@ resource "tfe_variable" "hcp_client_secret" {
   sensitive       = true
 }
 
+resource "tfe_variable" "hcp_project_id" {
+  key             = "HCP_PROJECT_ID"
+  value           = var.hcp_project_id
+  category        = "env"
+  description     = "HCP Project ID"
+  variable_set_id = tfe_variable_set.hcp.id
+  sensitive       = false
+}
+
 resource "tfe_variable_set" "aws" {
   name         = "AWS"
   description  = "AWS credentials from HashiCorp Doormat"

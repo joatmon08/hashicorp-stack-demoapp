@@ -12,3 +12,7 @@ resource "tfe_oauth_client" "github" {
   oauth_token      = var.github_token
   service_provider = "github"
 }
+
+resource "tfe_organization_token" "demo" {
+  organization = tfe_organization.demo.name
+}

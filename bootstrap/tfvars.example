@@ -1,15 +1,25 @@
 tfc_organization = "" ## can leave blank, defaults to `hashicorp-stack-demoapp`
-email             = ""
+email            = ""
 
 aws_access_key_id     = "" ## HashiCorp folks can leave blank if using doormat to push credentials
 aws_secret_access_key = "" ## HashiCorp folks can leave blank if using doormat to push credentials
 
 github_repository = "<your-fork>/hashicorp-stack-demoapp" ## set to your fork
-github_branch    = "tfc-bootstrap" ## can leave blank, defaults to `main`
-github_token = "" ## generate GitHub personal access token
+github_branch     = "tfc-bootstrap"                       ## can leave blank, defaults to `main`
+github_token      = ""                                    ## generate GitHub personal access token
 
 hcp_client_id     = ""
 hcp_client_secret = ""
 
 allow_cidr_blocks = [""] ## use `curl ifconfig.me` to find your machine's public IP
+
+## OPTIONAL FIELDS
+
 datadog_api_key = ""
+
+## Enable Consul telemetry. Must be manually generated in HCP console.
+hcp_consul_observability_credentials = {
+  client_id     = ""
+  client_secret = ""
+  resource_id   = ""
+}

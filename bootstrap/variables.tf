@@ -44,6 +44,11 @@ variable "hcp_client_secret" {
   sensitive   = true
 }
 
+variable "hcp_project_id" {
+  type        = string
+  description = "HashiCorp Cloud Platform project ID."
+}
+
 variable "aws_access_key_id" {
   type        = string
   description = "AWS access key ID"
@@ -95,12 +100,6 @@ variable "hcp_consul_observability_credentials" {
     client_secret = ""
     resource_id   = ""
   }
-}
-
-variable "tfc_organization_token" {
-  type        = string
-  sensitive   = true
-  description = "TFC organization token for Vault secrets engine"
 }
 
 variable "business_units" {

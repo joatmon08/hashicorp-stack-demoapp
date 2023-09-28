@@ -7,7 +7,7 @@ resource "tfe_workspace" "vault_setup" {
   working_directory         = "vault/setup"
   trigger_prefixes          = ["vault/setup"]
   queue_all_runs            = false
-  remote_state_consumer_ids = [tfe_workspace.boundary.id, tfe_workspace.vault_consul.id, tfe_workspace.vault_applications.id]
+  remote_state_consumer_ids = [tfe_workspace.boundary_setup.id, tfe_workspace.vault_consul.id, tfe_workspace.vault_applications.id]
   vcs_repo {
     identifier     = var.github_repository
     branch         = var.github_branch
@@ -33,7 +33,7 @@ resource "tfe_workspace_variable_set" "vault_setup_common" {
 resource "tfe_variable" "tfc_organization_token" {
   workspace_id = tfe_workspace.vault_setup.id
   key          = "tfc_organization_token"
-  value        = var.tfc_organization_token
+  value        = tfe_organization_token.demo.token
   category     = "terraform"
   hcl          = false
   sensitive    = true
