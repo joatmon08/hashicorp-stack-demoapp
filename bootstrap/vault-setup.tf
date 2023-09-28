@@ -29,22 +29,3 @@ resource "tfe_workspace_variable_set" "vault_setup_common" {
   workspace_id    = tfe_workspace.vault_setup.id
   variable_set_id = tfe_variable_set.common.id
 }
-
-resource "tfe_variable" "tfc_organization_token" {
-  workspace_id = tfe_workspace.vault_setup.id
-  key          = "tfc_organization_token"
-  value        = tfe_organization_token.demo.token
-  category     = "terraform"
-  hcl          = false
-  sensitive    = true
-}
-
-resource "tfe_variable" "vault_tfc_secrets_engine_team_ids" {
-  key          = "tfc_team_ids"
-  value        = jsonencode({ for team in tfe_team.business_units : team.name => team.id })
-  category     = "terraform"
-  hcl          = true
-  description  = "Terraform Cloud team IDs to add to Vault secrets engine"
-  workspace_id = tfe_workspace.vault_setup.id
-  sensitive    = false
-}
