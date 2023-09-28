@@ -2,6 +2,10 @@ resource "vault_policy" "module" {
   for_each = toset(keys(var.tfc_team_ids))
   name     = "create-secrets-engine=${each.value}"
   policy   = <<EOT
+path "auth/token/create" {
+  capabilities = [ "update" ]
+}
+
 path "auth/token/renew-self" {
   capabilities = [ "update" ]
 }
@@ -10,12 +14,24 @@ path "auth/token/lookup-self" {
   capabilities = [ "read" ]
 }
 
-path "/sys/mounts/${each.value}/static/*" {
-  capabilities = [ "create", "update" ]
+path "/sys/mounts" {
+  capabilities = [ "read" ]
 }
 
-path "/sys/mounts/${each.value}/database/*" {
-  capabilities = [ "create", "update" ]
+path "/sys/mounts/${each.value}/*" {
+  capabilities = ["create", "read", "update", "delete", "list"]
+}
+
+path "/${each.value}/*" {
+  capabilities = ["create", "read", "update", "delete", "list"]
+}
+
+path "/sys/policies/acl/*" {
+  capabilities = ["create", "read", "update", "delete", "list"]
+}
+
+path "/auth/kubernetes/role/*" {
+  capabilities = ["create", "read", "update", "delete", "list"]
 }
 EOT
 }
