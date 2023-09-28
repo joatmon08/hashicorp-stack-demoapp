@@ -122,7 +122,7 @@ resource "tfe_variable_set" "applications" {
   name         = "Applications"
   description  = "Variable set for application teams to use"
   organization = tfe_organization.demo.name
-  global       = true
+  global       = false
 }
 
 data "terraform_remote_state" "infrastructure" {
@@ -135,7 +135,6 @@ data "terraform_remote_state" "infrastructure" {
     }
   }
 }
-
 
 resource "tfe_variable" "vault_address" {
   count           = lookup(data.terraform_remote_state.infrastructure.outputs, "hcp_vault_public_address", null) == null ? 0 : 1
