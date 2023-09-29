@@ -22,8 +22,9 @@ resource "vault_kv_secret_v2" "payments_processor" {
   delete_all_versions = true
   data_json = jsonencode(
     {
-      username = "payments-app"
-      password = random_password.payments_processor.result
+      username   = "payments-app"
+      password   = random_password.payments_processor.result
+      vault_addr = local.vault_private_address
     }
   )
 }

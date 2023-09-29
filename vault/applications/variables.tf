@@ -38,6 +38,8 @@ locals {
   vault_token     = data.terraform_remote_state.infrastructure.outputs.hcp_vault_token
   vault_namespace = data.terraform_remote_state.infrastructure.outputs.hcp_vault_namespace
 
+  vault_private_address = data.terraform_remote_state.infrastructure.outputs.hcp_vault_private_address
+
   vault_kubernetes_auth_path = data.terraform_remote_state.vault_setup.outputs.vault_kubernetes_auth_path
 }
 
