@@ -4,5 +4,4 @@ metadata:
   name: terminating-gateway
 spec:
   services:
-    - name: "promotions-database"
-    - name: "hashicups-database"
+    - name: "payments-app-database"
