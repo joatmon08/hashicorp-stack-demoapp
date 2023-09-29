@@ -40,7 +40,7 @@ spec:
   path: creds
   destination:
     create: true
-    name: payments-processor
+    name: payments-processor-creds
     type: Opaque
   vaultAuthRef: payments-processor
   refreshAfter: 24h
@@ -90,5 +90,5 @@ spec:
             - name: ADMIN_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: payments-processor
+                  name: payments-processor-creds
                   key: password
