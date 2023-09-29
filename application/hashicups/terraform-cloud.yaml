@@ -4,7 +4,7 @@ kind: ServiceAccount
 metadata:
   name: terraform-cloud
   annotations:
-    argocd.argoproj.io/sync-wave: "0"
+    argocd.argoproj.io/sync-wave: "-2"
 automountServiceAccountToken: true
 ---
 apiVersion: v1
@@ -21,7 +21,7 @@ kind: VaultAuth
 metadata:
   name: terraform-cloud
   annotations:
-    argocd.argoproj.io/sync-wave: "2"
+    argocd.argoproj.io/sync-wave: "-2"
 spec:
   method: kubernetes
   mount: kubernetes
@@ -37,7 +37,7 @@ kind: VaultDynamicSecret
 metadata:
   name: terraform-cloud-team-token
   annotations:
-    argocd.argoproj.io/sync-wave: "3"
+    argocd.argoproj.io/sync-wave: "-2"
 spec:
   mount: terraform
   path: creds/hashicups
@@ -52,7 +52,7 @@ kind: VaultStaticSecret
 metadata:
   name: terraform-aws-postgres-variables
   annotations:
-    argocd.argoproj.io/sync-wave: "3"
+    argocd.argoproj.io/sync-wave: "-2"
 spec:
   mount: terraform-cloud-operator/hashicups
   type: kv-v2

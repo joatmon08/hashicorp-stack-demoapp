@@ -4,7 +4,7 @@ kind: Workspace
 metadata:
   name: payments-app-database
   annotations:
-    argocd.argoproj.io/sync-wave: "4"
+    argocd.argoproj.io/sync-wave: "-1"
 spec:
   organization: hashicorp-stack-demoapp
   token:
@@ -88,7 +88,7 @@ kind: Module
 metadata:
   name: database
   annotations:
-    argocd.argoproj.io/sync-wave: "5"
+    argocd.argoproj.io/sync-wave: "-1"
 spec:
   organization: hashicorp-stack-demoapp
   token:
