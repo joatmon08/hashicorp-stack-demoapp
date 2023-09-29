@@ -86,11 +86,10 @@ boundary-appdev-auth:
 ssh-k8s-nodes:
 	boundary connect ssh -username=ec2-user -target-name eks_nodes_ssh -target-scope-name core_infra -- -i secrets/id_rsa.pem
 
-postgres-operations: boundary-appdev-auth
-	boundary connect postgres \
-		-username=$(shell cd infrastructure && terraform output -raw product_database_username) \
-		-dbname=products -target-id \
-		$(shell cd boundary/setup && terraform output -raw boundary_target_postgres)
+postgres-operations:
+	PGPASSWORD=$(shell cd infrastructure && terraform output -raw product_database_password) boundary connect postgres \
+		-username=$(shell vault kv get -field=username promotions/static/test) \
+		-dbname=test -target-name promotions-database-postgres -target-scope-name=products_infra
 
 frontend-products:
 	boundary connect -target-id \
