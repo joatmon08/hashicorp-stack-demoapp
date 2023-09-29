@@ -80,6 +80,8 @@ spec:
       labels:
         service: payments-processor
         app: payments-processor
+      annotations:
+        "consul.hashicorp.com/connect-inject": "true"
     spec:
       containers:
         - name: payments-processor
