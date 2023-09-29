@@ -1,4 +1,11 @@
 ---
+apiVersion: consul.hashicorp.com/v1alpha1
+kind: ServiceDefaults
+metadata:
+  name: payments-processor
+spec:
+  protocol: http
+---
 apiVersion: v1
 kind: ServiceAccount
 metadata:
@@ -11,42 +18,6 @@ metadata:
   name: payments-processor
   annotations:
     kubernetes.io/service-account.name: "payments-processor"
----
-apiVersion: secrets.hashicorp.com/v1beta1
-kind: VaultAuth
-metadata:
-  name: payments-processor
-  annotations:
-    argocd.argoproj.io/sync-wave: "2"
-spec:
-  method: kubernetes
-  mount: kubernetes
-  namespace: admin
-  kubernetes:
-    role: payments-processor
-    serviceAccount: payments-processor
-    audiences:
-      - vault
----
-apiVersion: secrets.hashicorp.com/v1beta1
-kind: VaultStaticSecret
-metadata:
-  name: payments-processor
-  annotations:
-    argocd.argoproj.io/sync-wave: "3"
-spec:
-  mount: payments-processor/static
-  type: kv-v2
-  path: creds
-  destination:
-    create: true
-    name: payments-processor-creds
-    type: Opaque
-  vaultAuthRef: payments-processor
-  refreshAfter: 24h
-  rolloutRestartTargets:
-    - kind: Deployment
-      name: payments-processor
 ---
 apiVersion: v1
 kind: Service
@@ -87,7 +58,6 @@ spec:
       containers:
         - name: payments-processor
           image: rosemarywang/payments-processor
-          imagePullPolicy: Always
           livenessProbe:
             httpGet:
               path: /health

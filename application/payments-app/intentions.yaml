@@ -1,0 +1,33 @@
+---
+apiVersion: consul.hashicorp.com/v1alpha1
+kind: ServiceIntentions
+metadata:
+  name: api-gateway-payments-app
+spec:
+  destination:
+    name: payments-app
+  sources:
+    - name: api-gateway
+      action: allow
+---
+apiVersion: consul.hashicorp.com/v1alpha1
+kind: ServiceIntentions
+metadata:
+  name: payments-processor
+spec:
+  destination:
+    name: payments-processor
+  sources:
+    - name: payments-app
+      action: allow
+---
+apiVersion: consul.hashicorp.com/v1alpha1
+kind: ServiceIntentions
+metadata:
+  name: payments-app-database
+spec:
+  destination:
+    name: payments-app-database
+  sources:
+    - name: payments-app
+      action: allow

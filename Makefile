@@ -89,8 +89,8 @@ ssh-k8s-nodes:
 
 postgres-operations:
 	boundary connect postgres \
-		-username=$(shell vault kv get -field=username promotions/static/test) \
-		-dbname=test -target-name promotions-database-postgres -target-scope-name=products_infra
+		-username=$(shell vault kv get -field=username payments-app/static/payments) \
+		-dbname=payments -target-name payments-app-database-postgres -target-scope-name=products_infra
 
 frontend-products:
 	boundary connect -target-id \

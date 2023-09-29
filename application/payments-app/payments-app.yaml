@@ -1,96 +1,106 @@
-# ---
-# apiVersion: v1
-# kind: Service
-# metadata:
-#   name: payments-app
-#   labels:
-#     app: payments-app
-# spec:
-#   type: NodePort
-#   ports:
-#     - port: 8081
-#       targetPort: 8081
-#       nodePort: 30081
-#   selector:
-#     app: payments-app
-# ---
-# apiVersion: v1
-# kind: ServiceAccount
-# metadata:
-#   name: payments-app
-# ---
-# apiVersion: v1
-# kind: Secret
-# type: kubernetes.io/service-account-token
-# metadata:
-#   name: payments-app
-#   annotations:
-#     kubernetes.io/service-account.name: "payments-app"
-# ---
-# apiVersion: apps/v1
-# kind: Deployment
-# metadata:
-#   name: payments-app
-# spec:
-#   replicas: 1
-#   selector:
-#     matchLabels:
-#       service: payments-app
-#       app: payments-app
-#   template:
-#     metadata:
-#       labels:
-#         service: payments-app
-#         app: payments-app
-#       annotations:
-#         consul.hashicorp.com/connect-inject: "true"
+---
+apiVersion: consul.hashicorp.com/v1alpha1
+kind: ServiceDefaults
+metadata:
+  name: payments-app
+spec:
+  protocol: http
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: payments-app
+  labels:
+    app: payments-app
+spec:
+  ports:
+    - name: http
+      protocol: TCP
+      port: 8081
+      targetPort: 8081
+  selector:
+    app: payments-app
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: payments-app
+---
+apiVersion: v1
+kind: Secret
+type: kubernetes.io/service-account-token
+metadata:
+  name: payments-app
+  annotations:
+    kubernetes.io/service-account.name: "payments-app"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: payments-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      service: payments-app
+      app: payments-app
+  template:
+    metadata:
+      labels:
+        service: payments-app
+        app: payments-app
+      annotations:
+        consul.hashicorp.com/connect-inject: "true"
+        consul.hashicorp.com/connect-service-upstreams: "payments-app-database:5432"
+        consul.hashicorp.com/transparent-proxy: "false"
 
-#         vault.hashicorp.com/agent-inject: "true"
-#         vault.hashicorp.com/role: "payments-app"
-#         vault.hashicorp.com/agent-inject-token: "true"
-#         vault.hashicorp.com/agent-cache-enable: "true" # Use cached secrets and lease from vault-agent initialization to agent
-#         vault.hashicorp.com/template-static-secret-render-interval: "5m" # Defaults to 5 minutes, update if you want static secrets checked more frequently
+        vault.hashicorp.com/agent-inject: "true"
+        vault.hashicorp.com/namespace: "admin"
+        vault.hashicorp.com/role: "payments"
+        vault.hashicorp.com/agent-inject-token: "true"
+        vault.hashicorp.com/agent-cache-enable: "true"
 
-#         vault.hashicorp.com/agent-inject-secret-processor.properties: "payments/secrets/data/processor"
-#         vault.hashicorp.com/agent-inject-template-processor.properties: |
-#           payment.processor.url=http://payments-processor:8080
-#           {{- with secret "payments/secrets/processor" }}
-#           payment.processor.username={{ .Data.data.username }}
-#           payment.processor.password={{ .Data.data.password }}
-#           {{- end }}
-#         vault.hashicorp.com/agent-inject-command-processor.properties: |
-#           wget -qO- --header='Content-Type:application/json' --post-data='{}' http://127.0.0.1:8081/actuator/refresh
+        vault.hashicorp.com/agent-inject-secret-database.properties: "payments-app/database/creds/payments"
+        vault.hashicorp.com/agent-inject-template-database.properties: |
+          spring.datasource.url=jdbc:postgresql://127.0.0.1:5432/payments
+          {{- with secret "payments-app/database/creds/payments" }}
+          spring.datasource.username={{ .Data.username }}
+          spring.datasource.password={{ .Data.password }}
+          {{- end }}
+        vault.hashicorp.com/agent-inject-command-database.properties: |
+          wget -qO- --header='Content-Type:application/json' --post-data='{}' http://127.0.0.1:8081/actuator/refresh
 
-#         vault.hashicorp.com/agent-inject-secret-database.properties: "payments/database/creds/payments-app"
-#         vault.hashicorp.com/agent-inject-template-database.properties: |
-#           spring.datasource.url=jdbc:postgresql://payments-database:5432/payments
-#           {{- with secret "payments/database/creds/payments-app" }}
-#           spring.datasource.username={{ .Data.username }}
-#           spring.datasource.password={{ .Data.password }}
-#           {{- end }}
-#         vault.hashicorp.com/agent-inject-command-database.properties: |
-#           wget -qO- --header='Content-Type:application/json' --post-data='{}' http://127.0.0.1:8081/actuator/refresh
-
-#     spec:
-#       serviceAccountName: payments-app
-#       containers:
-#         - name: payments-app
-#           image: payments-app:java
-#           imagePullPolicy: Never
-#           ports:
-#             - containerPort: 8081
-#           command: ["/bin/sh"]
-#           args: ["-c", "export VAULT_TOKEN=$(cat /vault/secrets/token) && java -XX:+UseContainerSupport -Djava.security.egd=file:/dev/./urandom -jar /app/spring-boot-application.jar"]
-#           env:
-#             - name: VAULT_ADDR
-#               value: http://vault:8200
-#             - name: spring_profiles_active
-#               value: agent
-#           livenessProbe:
-#             httpGet:
-#               path: /actuator/health
-#               port: 8081
-#             initialDelaySeconds: 15
-#             timeoutSeconds: 1
-#             periodSeconds: 10
-#             failureThreshold: 30
+    spec:
+      serviceAccountName: payments-app
+      containers:
+        - name: payments-app
+          image: rosemarywang/payments-app
+          ports:
+            - containerPort: 8081
+          command: ["/bin/sh"]
+          args:
+            [
+              "-c",
+              "export VAULT_TOKEN=$(cat /vault/secrets/token) && java -XX:+UseContainerSupport -Djava.security.egd=file:/dev/./urandom -jar /app/spring-boot-application.jar",
+            ]
+          env:
+            - name: VAULT_ADDR
+              valueFrom:
+                secretKeyRef:
+                  name: payments-processor-creds
+                  key: vault_addr
+            - name: spring_profiles_active
+              value: agent
+            - name: ADMIN_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: payments-processor-creds
+                  key: password
+          livenessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8081
+            initialDelaySeconds: 15
+            timeoutSeconds: 1
+            periodSeconds: 10
+            failureThreshold: 30
