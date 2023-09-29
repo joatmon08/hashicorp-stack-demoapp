@@ -33,6 +33,7 @@ configure-tfc:
 
 configure-application:
 	kubectl apply -f argocd/applications/promotions.yaml
+	kubectl apply -f argocd/applications/payments-app.yaml
 
 configure-db: boundary-appdev-auth
 	bash database/configure.sh

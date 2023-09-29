@@ -1,0 +1,94 @@
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: payments-processor
+---
+apiVersion: v1
+kind: Secret
+type: kubernetes.io/service-account-token
+metadata:
+  name: payments-processor
+  annotations:
+    kubernetes.io/service-account.name: "payments-processor"
+---
+apiVersion: secrets.hashicorp.com/v1beta1
+kind: VaultAuth
+metadata:
+  name: payments-processor
+  annotations:
+    argocd.argoproj.io/sync-wave: "2"
+spec:
+  method: kubernetes
+  mount: kubernetes
+  namespace: admin
+  kubernetes:
+    role: payments-processor
+    serviceAccount: payments-processor
+    audiences:
+      - vault
+---
+apiVersion: secrets.hashicorp.com/v1beta1
+kind: VaultStaticSecret
+metadata:
+  name: payments-processor
+  annotations:
+    argocd.argoproj.io/sync-wave: "3"
+spec:
+  mount: payments-processor/static
+  type: kv-v2
+  path: crds
+  destination:
+    create: true
+    name: payments-processor
+    type: Opaque
+  vaultAuthRef: payments-processor
+  refreshAfter: 24h
+  rolloutRestartTargets:
+    - kind: Deployment
+      name: payments-processor
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: payments-processor
+  labels:
+    app: payments-processor
+spec:
+  type: NodePort
+  ports:
+    - port: 8080
+      targetPort: 8080
+      nodePort: 30080
+  selector:
+    app: payments-processor
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: payments-processor
+  annotations:
+    argocd.argoproj.io/sync-wave: "4"
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      service: payments-processor
+      app: payments-processor
+  template:
+    metadata:
+      labels:
+        service: payments-processor
+        app: payments-processor
+    spec:
+      containers:
+        - name: payments-processor
+          image: rosemarywang/payments-processor
+          ports:
+            - containerPort: 8080
+          env:
+            - name: ADMIN_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: payments-processor
+                  key: password

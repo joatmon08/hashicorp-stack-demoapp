@@ -1,0 +1,123 @@
+---
+apiVersion: app.terraform.io/v1alpha2
+kind: Workspace
+metadata:
+  name: payments-app-database
+  annotations:
+    argocd.argoproj.io/sync-wave: "4"
+spec:
+  organization: hashicorp-stack-demoapp
+  token:
+    secretKeyRef:
+      name: terraform-cloud-team-token
+      key: token
+  name: payments-app-database
+  description: Workspace for database automated via TFC Operator
+  applyMethod: auto
+  terraformVersion: 1.5.6
+  terraformVariables:
+    - name: org_name
+      value: hashicups
+    - name: business_unit
+      value: payments-app
+    - name: environment
+      value: production
+    - name: db_name
+      value: payments
+    - name: boundary_scope_id
+      value: p_93cKyO0Yiw
+    - name: boundary_address
+      valueFrom:
+        secretKeyRef:
+          name: terraform-aws-postgres-variables
+          key: boundary_address
+    - name: boundary_username
+      valueFrom:
+        secretKeyRef:
+          name: terraform-aws-postgres-variables
+          key: boundary_username
+    - name: boundary_password
+      valueFrom:
+        secretKeyRef:
+          name: terraform-aws-postgres-variables
+          key: boundary_password
+      sensitive: true
+    - name: consul_address
+      valueFrom:
+        secretKeyRef:
+          name: terraform-aws-postgres-variables
+          key: consul_address
+    - name: consul_datacenter
+      valueFrom:
+        secretKeyRef:
+          name: terraform-aws-postgres-variables
+          key: consul_datacenter
+    - name: consul_token
+      valueFrom:
+        secretKeyRef:
+          name: terraform-aws-postgres-variables
+          key: consul_token
+      sensitive: true
+    - name: vault_address
+      valueFrom:
+        secretKeyRef:
+          name: terraform-aws-postgres-variables
+          key: vault_address
+    - name: vault_namespace
+      valueFrom:
+        secretKeyRef:
+          name: terraform-aws-postgres-variables
+          key: vault_namespace
+    - name: vault_token
+      valueFrom:
+        secretKeyRef:
+          name: terraform-aws-postgres-variables
+          key: vault_token
+      sensitive: true
+  environmentVariables:
+    - name: CONFIRM_DESTROY
+      sensitive: false
+      value: "1"
+  executionMode: remote
+  tags:
+    - payments-app
+    - application
+---
+apiVersion: app.terraform.io/v1alpha2
+kind: Module
+metadata:
+  name: database
+  annotations:
+    argocd.argoproj.io/sync-wave: "5"
+spec:
+  organization: hashicorp-stack-demoapp
+  token:
+    secretKeyRef:
+      name: terraform-cloud-team-token
+      key: token
+  destroyOnDeletion: true
+  module:
+    source:  "app.terraform.io/hashicorp-stack-demoapp/postgres/aws"
+    version: "0.0.2"
+  variables:
+    - name: org_name
+    - name: business_unit
+    - name: environment
+    - name: db_name
+    - name: boundary_scope_id
+    - name: boundary_address
+    - name: boundary_username
+    - name: boundary_password
+    - name: consul_address
+    - name: consul_token
+    - name: consul_datacenter
+    - name: vault_address
+    - name: vault_token
+    - name: vault_namespace
+  outputs:
+    - name: product_database_address
+    - name: database_static_path
+    - name: database_secret_name
+    - name: boundary_target_postgres
+  workspace:
+    name: payments-app-database
