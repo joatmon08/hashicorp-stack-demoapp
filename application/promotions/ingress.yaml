@@ -25,7 +25,7 @@ spec:
   - matches:
     - path:
         type: PathPrefix
-        value: /
+        value: /promotions
     backendRefs:
     - kind: Service
       name: dashboard
