@@ -33,6 +33,10 @@ path "/sys/policies/acl/*" {
 path "/auth/kubernetes/role/*" {
   capabilities = ["create", "read", "update", "delete", "list"]
 }
+
+path "/transit/keys/*" {
+  capabilities = ["create", "read", "update", "delete", "list"]
+}
 EOT
 }
 
