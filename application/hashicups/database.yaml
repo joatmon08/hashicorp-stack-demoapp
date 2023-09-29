@@ -26,6 +26,9 @@ spec:
       value: products
     - name: boundary_scope_id
       value: p_93cKyO0Yiw
+    - name: additional_service_account_names
+      value: "[\"product\"]"
+      hcl: true
     - name: boundary_address
       valueFrom:
         secretKeyRef:
@@ -104,6 +107,7 @@ spec:
     - name: business_unit
     - name: environment
     - name: db_name
+    - name: additional_service_account_names
     - name: boundary_scope_id
     - name: boundary_address
     - name: boundary_username
