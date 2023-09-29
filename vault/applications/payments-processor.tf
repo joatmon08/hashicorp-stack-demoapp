@@ -32,7 +32,7 @@ resource "vault_policy" "payments_processor" {
   name = "payments-processor"
 
   policy = <<EOT
-path "${vault_mount.payments_processor.path}/${vault_kv_secret_v2.payments_processor.name}" {
+path "${vault_mount.payments_processor.path}/data/${vault_kv_secret_v2.payments_processor.name}" {
   capabilities = [ "read" ]
 }
 EOT

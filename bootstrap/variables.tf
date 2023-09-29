@@ -108,7 +108,8 @@ variable "business_units" {
   default = [
     "promotions",
     "hashicups",
-    "expense-report"
+    "expense-report",
+    "payments-app"
   ]
 }
 
