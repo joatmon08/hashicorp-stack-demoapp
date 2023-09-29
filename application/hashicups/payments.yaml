@@ -31,7 +31,6 @@ metadata:
   name: payments
   labels:
     app: payments
-    tags.datadoghq.com/service: payments
 spec:
   replicas: 1
   selector:
@@ -41,18 +40,8 @@ spec:
     metadata:
       labels:
         app: payments
-        tags.datadoghq.com/service: payments
       annotations:
-        admission.datadoghq.com/enabled: "true"
-        ad.datadoghq.com/envoy-sidecar.tags: '{"service": "envoy-proxy"}'
-        ad.datadoghq.com/envoy-sidecar.checks: |
-          {
-            "envoy": {
-              "instances": [{"openmetrics_endpoint": "http://%%host%%:20200/metrics"}]
-            }
-          }
         consul.hashicorp.com/connect-inject: "true"
-        consul.hashicorp.com/transparent-proxy-exclude-outbound-ports: "8125,8126"
     spec:
       serviceAccountName: payments
       containers:
@@ -60,16 +49,3 @@ spec:
           image: hashicorpdemoapp/payments:v0.0.16
           ports:
             - containerPort: 8080
-          env:
-            - name: DD_SERVICE
-              valueFrom:
-                fieldRef:
-                  fieldPath: metadata.labels['tags.datadoghq.com/service']
-            - name: DD_AGENT_HOST
-              valueFrom:
-                fieldRef:
-                  fieldPath: status.hostIP
-            - name: HOST_IP
-              valueFrom:
-                fieldRef:
-                  fieldPath: status.hostIP

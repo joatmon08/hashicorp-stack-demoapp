@@ -34,6 +34,7 @@ configure-tfc:
 configure-application:
 	kubectl apply -f argocd/applications/promotions.yaml
 	kubectl apply -f argocd/applications/payments-app.yaml
+	kubectl apply -f argocd/applications/hashicups.yaml
 
 configure-db: boundary-appdev-auth
 	bash database/configure.sh
@@ -97,7 +98,9 @@ frontend-products:
 		$(shell cd boundary/setup && terraform output -raw boundary_target_frontend)
 
 clean-application:
-	kubectl delete -f argocd/applications/
+	kubectl delete app payments-app -n argocd
+	kubectl delete app promotions -n argocd
+	kubectl delete app hashicups -n argocd
 
 clean-tfc:
 	kubectl delete app terraform-cloud-operator -n argocd -p '{"metadata": {"finalizers": ["resources-finalizer.argocd.argoproj.io"]}}' --type merge

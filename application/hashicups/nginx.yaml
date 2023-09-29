@@ -97,17 +97,8 @@ spec:
         service: nginx
         app: nginx
       annotations:
-        admission.datadoghq.com/enabled: "true"
-        ad.datadoghq.com/envoy-sidecar.tags: '{"service": "envoy-proxy"}'
-        ad.datadoghq.com/envoy-sidecar.checks: |
-          {
-            "envoy": {
-              "instances": [{"openmetrics_endpoint": "http://%%host%%:20200/metrics"}]
-            }
-          }
         consul.hashicorp.com/connect-inject: "true"
         consul.hashicorp.com/connect-service-upstreams: "frontend:3000, public:8080"
-        consul.hashicorp.com/transparent-proxy-exclude-outbound-ports: "8125,8126"
     spec:
       serviceAccountName: nginx
       containers:
@@ -115,19 +106,6 @@ spec:
           image: nginx:stable-alpine
           ports:
             - containerPort: 80
-          env:
-            - name: DD_SERVICE
-              valueFrom:
-                fieldRef:
-                  fieldPath: metadata.labels['tags.datadoghq.com/service']
-            - name: DD_AGENT_HOST
-              valueFrom:
-                fieldRef:
-                  fieldPath: status.hostIP
-            - name: HOST_IP
-              valueFrom:
-                fieldRef:
-                  fieldPath: status.hostIP
           volumeMounts:
             - name: nginx-config
               mountPath: /etc/nginx
