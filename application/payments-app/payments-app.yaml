@@ -52,7 +52,7 @@ spec:
       annotations:
         consul.hashicorp.com/connect-inject: "true"
         consul.hashicorp.com/connect-service-upstreams: "payments-app-database:5432"
-        consul.hashicorp.com/transparent-proxy: "false"
+        consul.hashicorp.com/transparent-proxy-exclude-outbound-ports: "8200"
 
         vault.hashicorp.com/agent-inject: "true"
         vault.hashicorp.com/namespace: "admin"
@@ -91,7 +91,14 @@ spec:
                   key: vault_addr
             - name: spring_profiles_active
               value: agent
-            - name: ADMIN_PASSWORD
+            - name: PAYMENT_PROCESSOR_URL
+              value: http://payments-processor:8080
+            - name: PAYMENT_PROCESSOR_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: payments-processor-creds
+                  key: username
+            - name: PAYMENT_PROCESSOR_PASSWORD
               valueFrom:
                 secretKeyRef:
                   name: payments-processor-creds

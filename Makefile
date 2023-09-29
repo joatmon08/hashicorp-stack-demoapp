@@ -147,4 +147,4 @@ run-module:
 	kubectl patch module database -n promotions --type=merge --patch '{"spec": {"restartedAt": "'`date -u -Iseconds`'"}}'
 
 test-promotions:
-	curl -k -H "Host:gateway.hashiconf.example.com" https://$(shell kubectl get svc -n consul api-gateway -o jsonpath="{.status.loadBalancer.ingress[0].hostname}")
+	curl -k -H "Host:gateway.hashiconf.example.com" https://$(shell kubectl get svc -n consul api-gateway -o jsonpath="{.status.loadBalancer.ingress[0].hostname}")/promotions
