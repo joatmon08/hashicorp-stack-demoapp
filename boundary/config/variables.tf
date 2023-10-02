@@ -3,6 +3,17 @@ variable "tfc_organization" {
   description = "TFC Organization for remote state of infrastructure"
 }
 
+data "terraform_remote_state" "infrastructure" {
+  backend = "remote"
+
+  config = {
+    organization = var.tfc_organization
+    workspaces = {
+      name = "infrastructure"
+    }
+  }
+}
+
 data "terraform_remote_state" "boundary_setup" {
   backend = "remote"
 
@@ -15,13 +26,13 @@ data "terraform_remote_state" "boundary_setup" {
 }
 
 locals {
-  vault_addr        = data.terraform_remote_state.boundary_setup.outputs.vault.address
-  vault_namespace   = data.terraform_remote_state.boundary_setup.outputs.vault.namespace
-  vault_admin_token = data.terraform_remote_state.boundary_setup.outputs.vault.token
+  vault_addr        = data.terraform_remote_state.infrastructure.outputs.hcp_vault_public_address
+  vault_namespace   = data.terraform_remote_state.infrastructure.outputs.hcp_vault_namespace
+  vault_admin_token = data.terraform_remote_state.infrastructure.outputs.hcp_vault_token
 
-  url      = data.terraform_remote_state.boundary_setup.outputs.boundary.url
-  username = data.terraform_remote_state.boundary_setup.outputs.boundary.username
-  password = data.terraform_remote_state.boundary_setup.outputs.boundary.password
+  url      = data.terraform_remote_state.infrastructure.outputs.hcp_boundary_endpoint
+  username = data.terraform_remote_state.infrastructure.outputs.hcp_boundary_username
+  password = data.terraform_remote_state.infrastructure.outputs.hcp_boundary_password
 
   boundary_worker_mount   = data.terraform_remote_state.boundary_setup.outputs.boundary_worker_mount
   boundary_worker_eks_dns = data.terraform_remote_state.boundary_setup.outputs.boundary_worker_eks.private_dns

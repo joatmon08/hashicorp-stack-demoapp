@@ -25,24 +25,6 @@ output "boundary_endpoint" {
   value = local.url
 }
 
-output "boundary" {
-  value = {
-    url      = local.url
-    username = local.username
-    password = local.password
-  }
-  sensitive = true
-}
-
-output "vault" {
-  value = {
-    address   = local.vault_addr
-    namespace = local.vault_namespace
-    token     = local.vault_admin_token
-  }
-  sensitive = true
-}
-
 output "boundary_worker_mount" {
   value = local.boundary_worker_mount
 }
