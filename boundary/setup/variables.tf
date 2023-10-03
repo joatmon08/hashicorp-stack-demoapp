@@ -35,17 +35,8 @@ variable "operations_team" {
   type = set(string)
 }
 
-variable "products_team" {
-  type = set(string)
-}
-
 variable "leadership_team" {
   type = set(string)
-}
-
-variable "products_frontend_address" {
-  type    = string
-  default = ""
 }
 
 data "aws_instances" "eks" {

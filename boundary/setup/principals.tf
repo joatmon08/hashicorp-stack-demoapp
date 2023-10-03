@@ -6,14 +6,6 @@ resource "boundary_user" "operations" {
   scope_id    = boundary_scope.org.id
 }
 
-resource "boundary_user" "products" {
-  for_each    = var.products_team
-  name        = each.key
-  description = "Products user: ${each.key}"
-  account_ids = [boundary_account_password.products_user_acct[each.value].id]
-  scope_id    = boundary_scope.org.id
-}
-
 resource "boundary_user" "leadership" {
   for_each    = var.leadership_team
   name        = each.key
@@ -34,21 +26,6 @@ resource "boundary_account_password" "operations_user_acct" {
   description    = "User account for ${each.key}"
   login_name     = lower(each.key)
   password       = random_password.operations_team.result
-  auth_method_id = boundary_auth_method.password.id
-}
-
-resource "random_password" "products_team" {
-  length           = 16
-  special          = true
-  override_special = "_%@"
-}
-
-resource "boundary_account_password" "products_user_acct" {
-  for_each       = var.products_team
-  name           = each.key
-  description    = "User account for ${each.key}"
-  login_name     = lower(each.key)
-  password       = random_password.products_team.result
   auth_method_id = boundary_auth_method.password.id
 }
 
@@ -83,10 +60,3 @@ resource "boundary_group" "operations_team" {
   scope_id    = boundary_scope.core_infra.id
 }
 
-// project level group for operations management of products infra
-resource "boundary_group" "products_team" {
-  name        = "products"
-  description = "Products team group"
-  member_ids  = [for user in boundary_user.products : user.id]
-  scope_id    = boundary_scope.products_infra.id
-}

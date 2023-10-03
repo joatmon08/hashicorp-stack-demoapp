@@ -7,11 +7,6 @@ output "boundary_operations_password" {
   sensitive = true
 }
 
-output "boundary_products_password" {
-  value     = random_password.products_team.result
-  sensitive = true
-}
-
 output "boundary_leadership_password" {
   value     = random_password.leadership_team.result
   sensitive = true
@@ -38,13 +33,17 @@ output "boundary_worker_eks" {
 
 ## For applications to use
 
-output "products_infra_scope_id" {
-  value = boundary_scope.products_infra.id
-}
-
 output "boundary_worker_rds" {
   value = {
     public_ip   = module.boundary_worker_rds.worker.public_ip
     private_dns = module.boundary_worker_rds.worker.private_dns
   }
+}
+
+output "boundary_org_id" {
+  value = boundary_scope.org.id
+}
+
+output "boundary_password_auth_method_id" {
+  value = boundary_auth_method.password.id
 }
