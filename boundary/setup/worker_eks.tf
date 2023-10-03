@@ -31,7 +31,16 @@ resource "aws_security_group_rule" "allow_ssh_worker" {
   security_group_id = data.aws_security_group.boundary_worker.id
 }
 
-resource "aws_security_group_rule" "allow_boundary_worker_to_eks" {
+resource "aws_security_group_rule" "allow_8080_worker" {
+  type              = "ingress"
+  from_port         = 8080
+  to_port           = 8080
+  protocol          = "tcp"
+  cidr_blocks       = var.client_cidr_block
+  security_group_id = data.aws_security_group.boundary_worker.id
+}
+
+resource "aws_security_group_rule" "allow_boundary_worker_to_eks_ssh" {
   type                     = "ingress"
   from_port                = 22
   to_port                  = 22
@@ -40,3 +49,11 @@ resource "aws_security_group_rule" "allow_boundary_worker_to_eks" {
   security_group_id        = local.eks_cluster_security_group_id
 }
 
+resource "aws_security_group_rule" "allow_boundary_worker_to_eks_test" {
+  type                     = "ingress"
+  from_port                = 8080
+  to_port                  = 8080
+  protocol                 = "tcp"
+  source_security_group_id = data.aws_security_group.boundary_worker.id
+  security_group_id        = local.eks_cluster_security_group_id
+}

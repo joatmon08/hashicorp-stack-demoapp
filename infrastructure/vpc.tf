@@ -55,31 +55,26 @@ resource "aws_security_group" "database" {
   description = "Allow inbound traffic to database"
   vpc_id      = module.vpc.vpc_id
 
-  ingress {
-    description = "Allow inbound from VPC"
-    from_port   = 5432
-    to_port     = 5432
-    protocol    = "tcp"
-    cidr_blocks = [module.vpc.vpc_cidr_block]
-  }
-
-  ingress {
-    description = "Allow inbound from HCP Vault"
-    from_port   = 5432
-    to_port     = 5432
-    protocol    = "tcp"
-    cidr_blocks = [var.hcp_cidr_block]
-  }
-
-  egress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
   tags = {
     Name    = "${var.name}-database"
     Purpose = "database"
   }
+}
+
+resource "aws_security_group_rule" "allow_database_from_vpc" {
+  type              = "ingress"
+  from_port         = 5432
+  to_port           = 5432
+  protocol          = "tcp"
+  cidr_blocks       = [var.hcp_cidr_block, module.vpc.vpc_cidr_block]
+  security_group_id = aws_security_group.database.id
+}
+
+resource "aws_security_group_rule" "allow_database_egress" {
+  type              = "egress"
+  from_port         = 0
+  to_port           = 0
+  protocol          = "-1"
+  cidr_blocks       = ["0.0.0.0/0"]
+  security_group_id = aws_security_group.database.id
 }
