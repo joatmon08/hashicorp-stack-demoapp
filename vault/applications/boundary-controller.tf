@@ -57,9 +57,9 @@ resource "vault_token" "boundary_controller" {
   policies          = [vault_policy.boundary_controller.name, vault_policy.database[each.value].id]
   no_default_policy = true
   no_parent         = true
-  ttl               = "20m"
-  explicit_max_ttl  = "40m"
-  period            = "20m"
+  ttl               = "3d"
+  explicit_max_ttl  = "6d"
+  period            = "3d"
   renewable         = true
   num_uses          = 0
 }
