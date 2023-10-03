@@ -102,7 +102,7 @@ resource "vault_kubernetes_secret_backend" "boundary" {
   disable_local_ca_jwt      = false
 }
 
-resource "vault_kubernetes_secret_backend_role" "kuberrnetes" {
+resource "vault_kubernetes_secret_backend_role" "boundary" {
   backend                       = vault_kubernetes_secret_backend.boundary.path
   name                          = local.boundary_access_cluster_role
   allowed_kubernetes_namespaces = ["*"]
@@ -111,4 +111,47 @@ resource "vault_kubernetes_secret_backend_role" "kuberrnetes" {
   generated_role_rules          = <<EOT
 {"rules":[{"apiGroups":[""],"resources":["pods"],"verbs":["list"]}]}
 EOT
+}
+
+resource "vault_policy" "boundary_controller" {
+  name   = "boundary-controller"
+  policy = <<EOT
+ path "auth/token/lookup-self" {
+   capabilities = ["read"]
+ }
+
+ path "auth/token/renew-self" {
+   capabilities = ["update"]
+ }
+
+ path "auth/token/revoke-self" {
+   capabilities = ["update"]
+ }
+
+ path "sys/leases/renew" {
+   capabilities = ["update"]
+ }
+
+ path "sys/leases/revoke" {
+   capabilities = ["update"]
+ }
+
+ path "sys/capabilities-self" {
+   capabilities = ["update"]
+ }
+
+ path "${vault_kubernetes_secret_backend.boundary.path}/creds/${vault_kubernetes_secret_backend_role.boundary.name}" {
+   capabilities = ["update"]
+ }
+EOT
+}
+
+resource "vault_token" "boundary_controller" {
+  policies          = [vault_policy.boundary_controller.name]
+  no_default_policy = true
+  no_parent         = false
+  ttl               = "20m"
+  explicit_max_ttl  = "40m"
+  renewable         = true
+  num_uses          = 0
 }

@@ -11,3 +11,8 @@ output "boundary_worker_token" {
   value     = vault_token.boundary_worker.client_token
   sensitive = true
 }
+
+output "boundary_controller_token" {
+  value     = vault_token.boundary_controller.client_token
+  sensitive = true
+}
