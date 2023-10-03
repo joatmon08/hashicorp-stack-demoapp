@@ -25,12 +25,16 @@ metadata:
   name: payments-processor
   labels:
     app: payments-processor
+  annotations:
+    service.beta.kubernetes.io/aws-load-balancer-type: "internal"
+    service.beta.kubernetes.io/aws-load-balancer-nlb-target-type: "ip"
 spec:
   ports:
     - port: 8080
       targetPort: 8080
   selector:
     app: payments-processor
+  type: LoadBalancer
 ---
 apiVersion: apps/v1
 kind: Deployment
