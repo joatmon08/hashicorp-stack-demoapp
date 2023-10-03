@@ -10,7 +10,7 @@ resource "boundary_target" "kubernetes" {
   ingress_worker_filter    = "\"eks\" in \"/tags/type\""
   egress_worker_filter     = "\"${local.name}\" in \"/tags/type\""
   address                  = replace(data.aws_eks_cluster.cluster.endpoint, "https://", "")
-  session_connection_limit = 1
+  session_connection_limit = -1
   default_port             = 443
   brokered_credential_source_ids = [
     boundary_credential_library_vault.application["payments-app"].id
