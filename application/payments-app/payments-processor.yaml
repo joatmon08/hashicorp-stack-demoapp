@@ -36,8 +36,6 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: payments-processor
-  annotations:
-    argocd.argoproj.io/sync-wave: "4"
 spec:
   replicas: 1
   selector:
