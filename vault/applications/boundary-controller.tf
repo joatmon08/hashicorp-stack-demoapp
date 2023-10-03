@@ -46,7 +46,7 @@ resource "vault_policy" "database" {
   for_each = toset(keys(var.tfc_team_ids))
   name     = "database-${each.value}"
   policy   = <<EOT
-path "${each.value}/database/creds/*" {
+path "${each.value}/static/data/*" {
   capabilities = ["read"]
 }
 EOT
