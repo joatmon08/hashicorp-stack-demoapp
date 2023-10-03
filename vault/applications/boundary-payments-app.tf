@@ -7,6 +7,8 @@ resource "boundary_target" "kubernetes" {
   name                     = "kubernetes"
   description              = "Kubernetes API"
   scope_id                 = boundary_scope.apps["payments-app"].id
+  ingress_worker_filter    = "\"eks\" in \"/tags/type\""
+  egress_worker_filter     = "\"${local.name}\" in \"/tags/type\""
   address                  = replace(data.aws_eks_cluster.cluster.endpoint, "https://", "")
   session_connection_limit = 1
   default_port             = 443
