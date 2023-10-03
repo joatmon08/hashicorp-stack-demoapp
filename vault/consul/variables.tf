@@ -4,18 +4,6 @@ variable "use_vault_root_ca" {
   default     = false
 }
 
-variable "consul_gossip_key" {
-  type        = string
-  sensitive   = true
-  description = "Consul's Gossip Encryption Key. Generate with `consul keygen`."
-}
-
-variable "consul_datacenter" {
-  type        = string
-  description = "Consul datacenter in Kubernetes cluster"
-  default     = "dc1"
-}
-
 variable "consul_namespace" {
   type        = string
   description = "Kubernetes namespace for Consul cluster"
