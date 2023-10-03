@@ -22,10 +22,6 @@ output "eks_cluster_security_group_id" {
   value = module.eks.node_security_group_id
 }
 
-output "eks_cluster_api_security_group_id" {
-  value = module.eks.cluster_security_group_id
-}
-
 output "kubernetes_endpoint" {
   value = module.eks.cluster_endpoint
 }
