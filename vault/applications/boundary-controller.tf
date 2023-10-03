@@ -81,7 +81,7 @@ resource "boundary_credential_library_vault" "application" {
   credential_store_id = boundary_credential_store_vault.application[each.value].id
   path                = "${local.vault_kubernetes_secrets_engine_path}/creds/${vault_kubernetes_secret_backend_role.boundary.name}"
   http_request_body   = <<EOT
-{\"kubernetes_namespace\": \"${each.value}\"}
+{"kubernetes_namespace": "${each.value}"}
 EOT
   http_method         = "POST"
 }

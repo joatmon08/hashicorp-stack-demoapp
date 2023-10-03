@@ -57,6 +57,9 @@ locals {
 
   boundary_org_id                  = data.terraform_remote_state.boundary_setup.outputs.boundary_org_id
   boundary_password_auth_method_id = data.terraform_remote_state.boundary_setup.outputs.boundary_password_auth_method_id
+
+  region           = data.terraform_remote_state.infrastructure.outputs.region
+  eks_cluster_name = data.terraform_remote_state.infrastructure.outputs.eks_cluster_id
 }
 
 variable "tfc_organization_token" {
