@@ -31,3 +31,12 @@ spec:
       name: payments-app
       namespace: payments-app
       port: 8081
+  - matches:
+    - path:
+        type: PathPrefix
+        value: /processor
+    backendRefs:
+    - kind: Service
+      name: payments-processor
+      namespace: payments-processor
+      port: 8080

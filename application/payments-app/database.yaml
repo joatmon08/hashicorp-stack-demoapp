@@ -25,7 +25,9 @@ spec:
     - name: db_name
       value: payments
     - name: boundary_scope_id
-      value: p_93cKyO0Yiw
+      value: p_k1rJmnpctP
+    - name: boundary_credentials_store_id
+      value: csvlt_ebttjBJEs1
     - name: boundary_address
       valueFrom:
         secretKeyRef:
@@ -98,13 +100,14 @@ spec:
   destroyOnDeletion: true
   module:
     source:  "app.terraform.io/hashicorp-stack-demoapp/postgres/aws"
-    version: "0.0.2"
+    version: "0.0.3"
   variables:
     - name: org_name
     - name: business_unit
     - name: environment
     - name: db_name
     - name: boundary_scope_id
+    - name: boundary_credentials_store_id
     - name: boundary_address
     - name: boundary_username
     - name: boundary_password
