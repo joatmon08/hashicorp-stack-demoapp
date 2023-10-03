@@ -25,6 +25,17 @@ data "terraform_remote_state" "vault_setup" {
   }
 }
 
+data "terraform_remote_state" "boundary_setup" {
+  backend = "remote"
+
+  config = {
+    organization = var.tfc_organization
+    workspaces = {
+      name = "boundary-setup"
+    }
+  }
+}
+
 locals {
   boundary_address  = data.terraform_remote_state.infrastructure.outputs.hcp_boundary_endpoint
   boundary_username = data.terraform_remote_state.infrastructure.outputs.hcp_boundary_username
@@ -40,7 +51,12 @@ locals {
 
   vault_private_address = data.terraform_remote_state.infrastructure.outputs.hcp_vault_private_address
 
-  vault_kubernetes_auth_path = data.terraform_remote_state.vault_setup.outputs.vault_kubernetes_auth_path
+  vault_kubernetes_auth_path           = data.terraform_remote_state.vault_setup.outputs.vault_kubernetes_auth_path
+  vault_kubernetes_secrets_engine_path = data.terraform_remote_state.vault_setup.outputs.vault_kubernetes_secrets_engine_path
+  boundary_cluster_role                = data.terraform_remote_state.vault_setup.outputs.boundary_cluster_role
+
+  boundary_org_id                  = data.terraform_remote_state.boundary_setup.outputs.boundary_org_id
+  boundary_password_auth_method_id = data.terraform_remote_state.boundary_setup.outputs.boundary_password_auth_method_id
 }
 
 variable "tfc_organization_token" {
@@ -51,4 +67,8 @@ variable "tfc_organization_token" {
 variable "tfc_team_ids" {
   type        = map(string)
   description = "TFC Team IDs to enable for Vault secrets engine"
+}
+
+variable "products_team" {
+  type = set(string)
 }

@@ -9,6 +9,10 @@ terraform {
       source  = "hashicorp/consul"
       version = "~> 2.18"
     }
+    boundary = {
+      source  = "hashicorp/boundary"
+      version = "~> 1.0"
+    }
   }
 }
 
@@ -22,4 +26,10 @@ provider "consul" {
   address    = local.consul_address
   token      = local.consul_token
   datacenter = local.consul_datacenter
+}
+
+provider "boundary" {
+  addr                   = local.boundary_address
+  auth_method_login_name = local.boundary_username
+  auth_method_password   = local.boundary_password
 }
