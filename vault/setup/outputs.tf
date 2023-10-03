@@ -12,7 +12,10 @@ output "boundary_worker_token" {
   sensitive = true
 }
 
-output "boundary_controller_token" {
-  value     = vault_token.boundary_controller.client_token
-  sensitive = true
+output "vault_kubernetes_secrets_engine_path" {
+  value = vault_kubernetes_secret_backend.boundary.path
+}
+
+output "boundary_cluster_role" {
+  value = local.boundary_access_cluster_role
 }
