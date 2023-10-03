@@ -74,10 +74,10 @@ resource "boundary_credential_store_vault" "application" {
   scope_id    = boundary_scope.apps[each.value].id
 }
 
-resource "boundary_credential_library_vault" "database" {
+resource "boundary_credential_library_vault" "application" {
   for_each            = toset(keys(var.tfc_team_ids))
   name                = "vault-kubernetes-${each.value}"
-  description         = "Credential library for ${each.value} databases"
+  description         = "Credential library for ${each.value} application debugging"
   credential_store_id = boundary_credential_store_vault.application[each.value].id
   path                = "${local.vault_kubernetes_secrets_engine_path}/creds/${vault_kubernetes_secret_backend_role.boundary.name}"
   http_request_body   = <<EOT
