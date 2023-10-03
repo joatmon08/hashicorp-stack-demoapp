@@ -37,7 +37,7 @@ configure-application:
 	kubectl apply -f argocd/applications/hashicups.yaml
 
 configure-db: boundary-appdev-auth
-	bash database/configure.sh
+	bash application/payments-app/database/configure.sh
 
 hashicups:
 	kubectl apply -f application/hashicups/intentions.yaml
@@ -80,22 +80,16 @@ boundary-operations-auth:
 
 boundary-appdev-auth:
 	mkdir -p secrets
-	@echo "$(shell cd boundary/setup && terraform output -raw boundary_products_password)" > secrets/appdev
+	@echo "$(shell cd vault/applications && terraform output -raw boundary_products_password)" > secrets/appdev
 	boundary authenticate password -login-name=appdev \
 		-password file://secrets/appdev \
-		-auth-method-id=$(shell cd boundary/setup && terraform output -raw boundary_auth_method_id)
+		-auth-method-id=$(shell cd vault/applications && terraform output -raw boundary_auth_method_id)
 
 ssh-k8s-nodes:
 	boundary connect ssh -username=ec2-user -target-name eks_nodes_ssh -target-scope-name core_infra -- -i secrets/id_rsa.pem
 
 postgres-operations:
-	boundary connect postgres \
-		-username=$(shell vault kv get -field=username payments-app/static/payments) \
-		-dbname=payments -target-name payments-app-database-postgres -target-scope-name=products_infra
-
-frontend-products:
-	boundary connect -target-id \
-		$(shell cd boundary/setup && terraform output -raw boundary_target_frontend)
+	PGUSER=$(shell vault kv get -field=username payments-app/static/payments) boundary connect postgres -dbname=payments -target-name=payments-app-database-postgres -target-scope-name=payments-app
 
 clean-application:
 	kubectl delete app payments-app -n argocd
@@ -147,7 +141,7 @@ terraform-test-fixture:
 	curl --header "Content-Type: application/vnd.api+json" --header "Authorization: Bearer ${TF_TOKEN}" --location https://app.terraform.io/api/v2/plans/${TF_PLAN_ID}/json-output > infrastructure/policy/fixtures/terraform.json
 
 run-module:
-	kubectl patch module database -n promotions --type=merge --patch '{"spec": {"restartedAt": "'`date -u -Iseconds`'"}}'
+	kubectl patch module database -n payments-app --type=merge --patch '{"spec": {"restartedAt": "'`date -u -Iseconds`'"}}'
 
 test-promotions:
 	curl -k -H "Host:gateway.hashiconf.example.com" https://$(shell kubectl get svc -n consul api-gateway -o jsonpath="{.status.loadBalancer.ingress[0].hostname}")/promotions
