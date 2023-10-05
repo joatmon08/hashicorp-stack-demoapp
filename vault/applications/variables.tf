@@ -80,5 +80,5 @@ variable "products_team" {
 variable "change_to_rotate_password" {
   type        = bool
   description = "Update the reverse of this value to rotate payments-processor password"
-  default     = true
+  default     = false
 }
