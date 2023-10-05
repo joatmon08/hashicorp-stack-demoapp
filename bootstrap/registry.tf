@@ -7,7 +7,7 @@ resource "tfe_registry_module" "terraform_aws_postgres" {
   }
 }
 
-resource "tfe_no_code_module" "terraform_aws_postgres" {
-  organization    = tfe_organization.demo.name
-  registry_module = tfe_registry_module.terraform_aws_postgres.id
-}
+# resource "tfe_no_code_module" "terraform_aws_postgres" {
+#   organization    = tfe_organization.demo.name
+#   registry_module = tfe_registry_module.terraform_aws_postgres.id
+# }

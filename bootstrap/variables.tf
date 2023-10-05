@@ -1,7 +1,7 @@
 variable "terraform_version" {
   type        = string
   description = "Terraform version for all workspaces"
-  default     = "1.5.6"
+  default     = "1.6.0"
 }
 
 variable "tfc_organization" {
