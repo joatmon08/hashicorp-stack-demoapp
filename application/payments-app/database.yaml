@@ -100,7 +100,7 @@ spec:
   destroyOnDeletion: true
   module:
     source:  "app.terraform.io/hashicorp-stack-demoapp/postgres/aws"
-    version: "0.0.2"
+    version: "0.0.5"
   variables:
     - name: org_name
     - name: business_unit
