@@ -26,11 +26,9 @@ metadata:
   labels:
     app: payments-processor
 spec:
-  type: NodePort
   ports:
     - port: 8080
       targetPort: 8080
-      nodePort: 31280
   selector:
     app: payments-processor
 ---
