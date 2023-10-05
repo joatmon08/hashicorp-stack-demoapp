@@ -13,6 +13,9 @@ resource "random_password" "payments_processor" {
   min_special      = 2
   special          = true
   override_special = "`~!#$%^&*?"
+  keepers = {
+    rotate_password = var.change_to_rotate_password
+  }
 }
 
 resource "vault_kv_secret_v2" "payments_processor" {
