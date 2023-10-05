@@ -49,6 +49,10 @@ resource "vault_policy" "database" {
 path "${each.value}/static/data/*" {
   capabilities = ["read"]
 }
+
+path "${each.value}/database/creds/*" {
+  capabilities = ["read"]
+}
 EOT
 }
 
