@@ -52,7 +52,7 @@ spec:
       annotations:
         consul.hashicorp.com/connect-inject: "true"
         consul.hashicorp.com/connect-service-upstreams: "payments-app-database:5432"
-        consul.hashicorp.com/transparent-proxy-exclude-outbound-ports: "8200"
+        consul.hashicorp.com/transparent-proxy: "false"
 
         vault.hashicorp.com/agent-inject: "true"
         vault.hashicorp.com/namespace: "admin"
