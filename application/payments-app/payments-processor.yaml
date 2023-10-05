@@ -50,6 +50,7 @@ spec:
         app: payments-processor
       annotations:
         "consul.hashicorp.com/connect-inject": "true"
+        "consul.hashicorp.com/transparent-proxy-exclude-inbound-ports": "8080"
     spec:
       serviceAccountName: payments-processor
       containers:

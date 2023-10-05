@@ -145,3 +145,7 @@ run-module:
 
 test-promotions:
 	curl -k -H "Host:gateway.hashiconf.example.com" https://$(shell kubectl get svc -n consul api-gateway -o jsonpath="{.status.loadBalancer.ingress[0].hostname}")/promotions
+
+boundary_connect:
+	boundary connect -target-id=ttcp_cqxeBoCkOv # payments-processor
+	boundary connect -target-id=ttcp_KteiYSxO15 # database
