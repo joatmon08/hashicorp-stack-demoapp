@@ -79,3 +79,8 @@ variable "github_organization" {
   type        = string
   description = "GitHub organization for auth backend"
 }
+
+variable "github_organization_id" {
+  type        = string
+  description = "GitHub organization ID for auth backend"
+}
