@@ -3,7 +3,7 @@ resource "tfe_workspace" "vault_setup" {
   organization              = tfe_organization.demo.name
   project_id                = tfe_project.platform.id
   description               = "Step 3 - Set up Vault on Kubernetes"
-  terraform_version         = var.terraform_version
+  terraform_version         = "1.5.7"
   working_directory         = "vault/setup"
   trigger_prefixes          = ["vault/setup"]
   queue_all_runs            = false
@@ -14,11 +14,6 @@ resource "tfe_workspace" "vault_setup" {
     oauth_token_id = tfe_oauth_client.github.oauth_token_id
   }
 }
-
-# resource "tfe_workspace_variable_set" "vault_setup_aws" {
-#   workspace_id    = tfe_workspace.vault_setup.id
-#   variable_set_id = tfe_variable_set.aws.id
-# }
 
 resource "tfe_workspace_variable_set" "vault_setup_hcp" {
   workspace_id    = tfe_workspace.vault_setup.id

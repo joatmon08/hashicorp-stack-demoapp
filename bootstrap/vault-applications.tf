@@ -28,17 +28,16 @@ resource "tfe_variable" "github_user" {
 }
 
 locals {
-  backstage = tomap({
+  team_ids = merge({
+    for key, value in tfe_team.business_units : key => tfe_team.business_units[key].id
+  }, {
     "${tfe_team.backstage.name}" = tfe_team.backstage.id
   })
-  team_ids = {
-    for key, value in tfe_team.business_units : key => tfe_team.business_units[key].id
-  }
 }
 
 resource "tfe_variable" "team_ids" {
   key          = "tfc_team_ids"
-  value        = jsonencode(merge(local.team_ids, local.backstage))
+  value        = jsonencode(local.team_ids)
   category     = "terraform"
   hcl          = true
   workspace_id = tfe_workspace.vault_applications.id
