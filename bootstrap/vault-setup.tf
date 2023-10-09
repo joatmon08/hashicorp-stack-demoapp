@@ -29,3 +29,19 @@ resource "tfe_workspace_variable_set" "vault_setup_common" {
   workspace_id    = tfe_workspace.vault_setup.id
   variable_set_id = tfe_variable_set.common.id
 }
+
+resource "tfe_variable" "github_organization" {
+  key          = "github_organization"
+  value        = var.github_organization
+  category     = "terraform"
+  workspace_id = tfe_workspace.vault_setup.id
+  description  = "GitHub Organization for Vault auth method"
+}
+
+resource "tfe_variable" "github_team" {
+  key          = "github_team"
+  value        = var.github_team
+  category     = "terraform"
+  workspace_id = tfe_workspace.vault_setup.id
+  description  = "GitHub team for Vault auth method"
+}

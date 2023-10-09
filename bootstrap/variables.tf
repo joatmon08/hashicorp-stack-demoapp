@@ -33,6 +33,16 @@ variable "github_branch" {
   default     = "main"
 }
 
+variable "github_organization" {
+  type        = string
+  description = "GitHub organization for Vault auth method"
+}
+
+variable "github_team" {
+  type        = string
+  description = "GitHub team for Vault auth method"
+}
+
 variable "hcp_client_id" {
   type        = string
   description = "HashiCorp Cloud Platform client ID. Create using https://developer.hashicorp.com/hcp/docs/hcp/security/service-principals"

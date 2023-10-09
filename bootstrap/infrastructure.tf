@@ -9,6 +9,7 @@ resource "tfe_workspace" "infrastructure" {
   trigger_prefixes    = ["infrastructure"]
   queue_all_runs      = false
   global_remote_state = true
+  auto_apply          = true
   vcs_repo {
     identifier     = var.github_repository
     branch         = var.github_branch
