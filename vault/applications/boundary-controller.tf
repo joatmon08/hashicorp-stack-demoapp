@@ -5,7 +5,7 @@ resource "vault_kubernetes_secret_backend_role" "boundary" {
   token_max_ttl                 = 7200
   token_default_ttl             = 3600
   generated_role_rules          = <<EOT
-{"rules":[{"apiGroups":[""],"resources":["pods","services"],"verbs":["get","list"]},{"apiGroups":[""],"resources":["pods/portforward", "services/portforward"],"verbs":["get","create"]}]}
+{"rules":[{"apiGroups":[""],"resources":["pods","services","secrets"],"verbs":["get","list"]},{"apiGroups":[""],"resources":["pods/portforward", "services/portforward"],"verbs":["get","create"]}]}
 EOT
 }
 
