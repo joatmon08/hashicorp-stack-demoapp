@@ -55,6 +55,8 @@ locals {
   vault_kubernetes_secrets_engine_path = data.terraform_remote_state.vault_setup.outputs.vault_kubernetes_secrets_engine_path
   boundary_cluster_role                = data.terraform_remote_state.vault_setup.outputs.boundary_cluster_role
 
+  vault_github_auth_path = data.terraform_remote_state.vault_setup.outputs.vault_github_auth_path
+
   boundary_org_id                  = data.terraform_remote_state.boundary_setup.outputs.boundary_org_id
   boundary_password_auth_method_id = data.terraform_remote_state.boundary_setup.outputs.boundary_password_auth_method_id
 
@@ -81,4 +83,9 @@ variable "change_to_rotate_password" {
   type        = bool
   description = "Update the reverse of this value to rotate payments-processor password"
   default     = false
+}
+
+variable "github_user" {
+  type        = string
+  description = "GitHub user for auth backend"
 }
