@@ -148,27 +148,27 @@ data "terraform_remote_state" "infrastructure" {
 
 resource "tfe_variable" "vault_address" {
   count           = lookup(data.terraform_remote_state.infrastructure.outputs, "hcp_vault_public_address", null) == null ? 0 : 1
-  key             = "VAULT_ADDR"
+  key             = "vault_address"
   value           = data.terraform_remote_state.infrastructure.outputs.hcp_vault_public_address
-  category        = "env"
+  category        = "terraform"
   description     = "HCP Vault address for configuration"
   variable_set_id = tfe_variable_set.applications.id
 }
 
 resource "tfe_variable" "vault_namespace" {
   count           = lookup(data.terraform_remote_state.infrastructure.outputs, "hcp_vault_namespace", null) == null ? 0 : 1
-  key             = "VAULT_NAMESPACE"
+  key             = "vault_namespace"
   value           = data.terraform_remote_state.infrastructure.outputs.hcp_vault_namespace
-  category        = "env"
+  category        = "terraform"
   description     = "HCP Vault namespace for configuration"
   variable_set_id = tfe_variable_set.applications.id
 }
 
 resource "tfe_variable" "vault_token" {
   count           = lookup(data.terraform_remote_state.infrastructure.outputs, "hcp_vault_token", null) == null ? 0 : 1
-  key             = "VAULT_TOKEN"
+  key             = "vault_token"
   value           = data.terraform_remote_state.infrastructure.outputs.hcp_vault_token
-  category        = "env"
+  category        = "terraform"
   description     = "HCP Vault token for configuration"
   variable_set_id = tfe_variable_set.applications.id
   sensitive       = true
@@ -227,9 +227,9 @@ resource "tfe_variable" "consul_datacenter" {
 
 resource "tfe_variable" "consul_token" {
   count           = lookup(data.terraform_remote_state.infrastructure.outputs, "hcp_consul_token", null) == null ? 0 : 1
-  key             = "CONSUL_HTTP_TOKEN"
+  key             = "consul_token"
   value           = data.terraform_remote_state.infrastructure.outputs.hcp_consul_token
-  category        = "env"
+  category        = "terraform"
   hcl             = false
   description     = "HCP Consul token for configuration"
   variable_set_id = tfe_variable_set.applications.id
