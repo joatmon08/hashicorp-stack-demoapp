@@ -39,38 +39,6 @@ configure-application:
 configure-db: boundary-appdev-auth
 	bash application/payments-app/database/configure.sh
 
-hashicups:
-	kubectl apply -f application/hashicups/intentions.yaml
-	kubectl apply -f application/hashicups/product-api.yaml
-	kubectl rollout status deployment product
-	kubectl apply -f application/hashicups/payments.yaml
-	kubectl rollout status deployment payments
-	kubectl apply -f application/hashicups/public-api.yaml
-	kubectl rollout status deployment public
-	kubectl apply -f application/hashicups/frontend.yaml
-	kubectl rollout status deployment frontend
-	kubectl apply -f application/hashicups/nginx.yaml
-	kubectl rollout status deployment nginx
-	kubectl apply -f application/hashicups/route.yaml
-
-clean-hashicups:
-	kubectl delete -f application/hashicups/
-
-expense-report:
-	kubectl apply -f application/expense-report/intentions.yaml
-	kubectl apply -f application/expense-report/expense.yaml
-	kubectl rollout status deployment expense
-	kubectl apply -f application/expense-report/report.yaml
-	kubectl rollout status deployment report
-	kubectl apply -f application/expense-report/route.yaml
-	kubectl apply -f application/expense-report/reconciliation.yaml
-	kubectl rollout status deployment reconciliation
-
-clean-expense-report:
-	kubectl delete -f application/expense-report/
-
-clean-applications: clean-expense-report clean-hashicups
-
 boundary-operations-auth:
 	mkdir -p secrets
 	@echo "$(shell cd boundary/setup && terraform output -raw boundary_operations_password)" > secrets/ops
@@ -90,6 +58,10 @@ ssh-k8s-nodes:
 
 postgres-operations:
 	PGUSER=$(shell vault kv get -field=username payments-app/static/payments) boundary connect postgres -dbname=payments -target-name=payments-app-database-postgres -target-scope-name=payments-app
+
+clean-vault-leases:
+	vault lease revoke --force --prefix payments-app/database
+	vault delete transit/keys/payments-app
 
 clean-application:
 	kubectl delete app payments-app -n argocd
