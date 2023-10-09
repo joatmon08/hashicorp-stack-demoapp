@@ -18,3 +18,11 @@ resource "tfe_workspace_variable_set" "vault_applications_common" {
   workspace_id    = tfe_workspace.vault_applications.id
   variable_set_id = tfe_variable_set.common.id
 }
+
+resource "tfe_variable" "github_user" {
+  key          = "github_user"
+  value        = var.github_user
+  category     = "terraform"
+  workspace_id = tfe_workspace.vault_applications.id
+  description  = "GitHub user for Vault auth method"
+}
