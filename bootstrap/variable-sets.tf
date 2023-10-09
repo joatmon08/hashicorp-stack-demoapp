@@ -132,6 +132,7 @@ resource "tfe_variable_set" "applications" {
   description  = "Variable set for application teams to use"
   organization = tfe_organization.demo.name
   global       = false
+
 }
 
 data "terraform_remote_state" "infrastructure" {

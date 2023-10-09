@@ -30,9 +30,18 @@ resource "tfe_variable" "github_user" {
 locals {
   team_ids = merge({
     for key, value in tfe_team.business_units : key => tfe_team.business_units[key].id
-  }, {
+    }, {
     "${tfe_team.backstage.name}" = tfe_team.backstage.id
   })
+}
+
+resource "tfe_variable" "tfc_organization_token" {
+  workspace_id = tfe_workspace.vault_applications.id
+  key          = "tfc_organization_token"
+  value        = tfe_organization_token.demo.token
+  category     = "terraform"
+  hcl          = false
+  sensitive    = true
 }
 
 resource "tfe_variable" "team_ids" {
