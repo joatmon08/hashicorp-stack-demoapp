@@ -74,3 +74,8 @@ variable "vault_operator_helm_version" {
   description = "Secrets Store CSI Driver Helm chart version"
   default     = "0.3.1"
 }
+
+variable "github_organization" {
+  type        = string
+  description = "GitHub organization for auth backend"
+}

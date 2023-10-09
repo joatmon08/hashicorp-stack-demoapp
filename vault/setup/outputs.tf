@@ -19,3 +19,7 @@ output "vault_kubernetes_secrets_engine_path" {
 output "boundary_cluster_role" {
   value = local.boundary_access_cluster_role
 }
+
+output "vault_github_auth_path" {
+  value = vault_github_auth_backend.demo.path
+}
