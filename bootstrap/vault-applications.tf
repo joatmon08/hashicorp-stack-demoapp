@@ -26,3 +26,21 @@ resource "tfe_variable" "github_user" {
   workspace_id = tfe_workspace.vault_applications.id
   description  = "GitHub user for Vault auth method"
 }
+
+locals {
+  backstage = tomap({
+    "${tfe_team.backstage.name}" = tfe_team.backstage.id
+  })
+  team_ids = {
+    for key, value in tfe_team.business_units : key => tfe_team.business_units[key].id
+  }
+}
+
+resource "tfe_variable" "team_ids" {
+  key          = "tfc_team_ids"
+  value        = jsonencode(merge(local.team_ids, local.backstage))
+  category     = "terraform"
+  hcl          = true
+  workspace_id = tfe_workspace.vault_applications.id
+  description  = "Terraform Cloud team IDs to add to Vault secrets engine"
+}
