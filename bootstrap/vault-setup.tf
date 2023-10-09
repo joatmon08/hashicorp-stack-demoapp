@@ -32,3 +32,11 @@ resource "tfe_variable" "github_organization" {
   workspace_id = tfe_workspace.vault_setup.id
   description  = "GitHub Organization for Vault auth method"
 }
+
+resource "tfe_variable" "github_organization_id" {
+  key          = "github_organization_id"
+  value        = var.github_organization_id
+  category     = "terraform"
+  workspace_id = tfe_workspace.vault_setup.id
+  description  = "GitHub Organization ID for Vault auth method"
+}

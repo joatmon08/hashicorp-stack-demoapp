@@ -38,6 +38,11 @@ variable "github_organization" {
   description = "GitHub organization for Vault auth method"
 }
 
+variable "github_organization_id" {
+  type        = string
+  description = "GitHub organization ID for Vault auth method"
+}
+
 variable "github_user" {
   type        = string
   description = "GitHub user for Vault auth method"
