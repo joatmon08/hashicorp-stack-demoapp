@@ -34,7 +34,7 @@ configure-tfc:
 configure-application:
 	kubectl apply -f argocd/applications/promotions.yaml
 	kubectl apply -f argocd/applications/payments-app.yaml
-	kubectl apply -f argocd/applications/hashicups.yaml
+	# kubectl apply -f argocd/applications/hashicups.yaml
 
 configure-db: boundary-appdev-auth
 	bash application/payments-app/database/configure.sh
@@ -57,15 +57,18 @@ ssh-k8s-nodes:
 	boundary connect ssh -username=ec2-user -target-name eks_nodes_ssh -target-scope-name core_infra -- -i secrets/id_rsa.pem
 
 postgres-operations:
-	PGUSER=$(shell vault kv get -field=username payments-app/static/payments) boundary connect postgres -dbname=payments -target-name=payments-app-database-postgres -target-scope-name=payments-app
+	boundary connect postgres -dbname=payments -target-name=database-app -target-scope-name=payments-app
 
 clean-vault-leases:
 	vault lease revoke --force --prefix payments-app/database
 	vault delete transit/keys/payments-app
 
 clean-application:
+	kubectl patch app payments-app -n argocd -p '{"metadata": {"finalizers": ["resources-finalizer.argocd.argoproj.io"]}}' --type merge
 	kubectl delete app payments-app -n argocd
+	kubectl patch app promotions -n argocd -p '{"metadata": {"finalizers": ["resources-finalizer.argocd.argoproj.io"]}}' --type merge
 	kubectl delete app promotions -n argocd
+	kubectl patch app hashicups -n argocd -p '{"metadata": {"finalizers": ["resources-finalizer.argocd.argoproj.io"]}}' --type merge
 	kubectl delete app hashicups -n argocd
 
 clean-tfc:
@@ -115,8 +118,8 @@ terraform-test-fixture:
 run-module:
 	kubectl patch module database -n payments-app --type=merge --patch '{"spec": {"restartedAt": "'`date -u -Iseconds`'"}}'
 
-test-promotions:
-	curl -k -H "Host:gateway.hashiconf.example.com" https://$(shell kubectl get svc -n consul api-gateway -o jsonpath="{.status.loadBalancer.ingress[0].hostname}")/promotions
+test-app:
+	curl -k -H "Host:gateway.hashiconf.example.com" https://$(shell kubectl get svc -n consul api-gateway -o jsonpath="{.status.loadBalancer.ingress[0].hostname}")/payments
 
 boundary_connect:
 	boundary connect -target-id=ttcp_cqxeBoCkOv # payments-processor

@@ -24,9 +24,8 @@ Each folder contains a few different configurations.
 
   - `infrastructure/`: All the infrastructure to run the system.
      - VPC (3 private subnets, 3 public subnets)
-     - Boundary cluster (controllers, workers, and AWS RDS PostgreSQL database)
+     - HCP Boundary
      - AWS Elastic Kubernetes Service cluster
-     - AWS RDS (PostgreSQL) database for demo application
      - HashiCorp Virtual Network (peered to VPC)
      - HCP Consul
      - HCP Vault
@@ -34,13 +33,13 @@ Each folder contains a few different configurations.
    - `vault/setup/`: Deploy a Vault cluster via Helm chart and set up Kubernetes auth method
 
    - `boundary/setup`: Configures Boundary with two projects, one for operations
-      and the other for development teams.
+      and the other for development teams. Includes two self-managed workers.
 
    - `boundary/config`: Update Boundary self-managed workers after they initiate registration.
 
-   - `argocd/setup/`: Deploys an ArgoCD cluster to configure applications
+   - `argocd/setup/`: Deploys an ArgoCD cluster to configure applications.
 
-   - `argocd/config/`: Deploys an ArgoCD proejcts
+   - `argocd/config/`: Deploys an ArgoCD projects.
 
    - `certs/`: Sets up offline root CA and signs intermediate CA in Vault for Consul-related
       certificates.
@@ -63,6 +62,8 @@ Each folder contains a few different configurations.
    - `argocd/applications/`: Describes Argo CD applications to deploy
 
    - `database/`: Configures HashiCorp Demo Application database
+
+   - `application/`: Kubernetes manifests for applications, referenced by 
 
 ## Prerequisites
 
@@ -299,7 +300,7 @@ network. You need to use Boundary to proxy to the database.
 If you try to log in as a user of the `products` team, you can print
 out the tables.
 ```shell
-make postgres-products
+make postgres-operations
 ```
 
 ### Deploy Example Application
@@ -309,32 +310,17 @@ To deploy the example application, run `make configure-application`.
 You can check if everything by checking the pods in Kubernetes.
 
 ```shell
-$ kubectl get pods
-
-NAME                                                          READY   STATUS    RESTARTS   AGE
-## omitted for clarity
-frontend-5d7f97456b-2fznv                      2/2     Running   0          15m
-nginx-59c9dbb9ff-j9xhc                         2/2     Running   0          15m
-payments-67c89b9bc9-kbb9r                      2/2     Running   0          16m
-product-55989bf685-ll5t7                       3/3     Running   0          5m5s
-public-64ccfc4fc7-jd7v7                        2/2     Running   0          8m17s
+$ kubectl get pods -n payments-app
 ```
 
-Port forward the `nginx` service to [http://localhost:8080](http://localhost:8080).
+Argo CD will deploy an `HTTPRoute` that
+Consul API gateway uses to connect
+to the application.
 
 ```shell
-kubectl port-forward svc/nginx 8080:80
-```
+$ make test-app
 
-You'll get a UI where you can order your coffee.
-
-### Set up a route to the frontend through the API Gateway
-
-To set up a route on the API gateway, deploy
-an `HTTPRoute`.
-
-```shell
-make configure-route
+[{"id":"2310d6be-0e80-11ed-861d-0242ac120002","name":"Red Panda","billing_address":"8 Eastern Himalayas Drive","created_at":"2023-10-12T00:00:00.000+00:00"}]
 ```
 
 ## Explore
@@ -389,6 +375,9 @@ make clean-consul
 
 Go into Terraform Cloud and destroy resources
 for the `consul-setup` workspace.
+
+Go into Terraform Cloud and destroy resources
+for the `vault-applications` workspace.
 
 Go into Terraform Cloud and destroy resources
 for the `vault-consul` workspace.
