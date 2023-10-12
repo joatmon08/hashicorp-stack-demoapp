@@ -14,7 +14,7 @@ spec:
   name: payments-app-database
   description: Workspace for database automated via TFC Operator
   applyMethod: auto
-  terraformVersion: 1.5.6
+  terraformVersion: 1.5.7
   terraformVariables:
     - name: org_name
       value: hashicups

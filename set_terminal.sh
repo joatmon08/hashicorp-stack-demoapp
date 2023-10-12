@@ -7,4 +7,3 @@ export CONSUL_HTTP_TOKEN=$(cd infrastructure && terraform output -raw hcp_consul
 
 export ARGOCD_SERVER="https://$(kubectl get svc -n argocd argocd-server -o jsonpath='{.status.loadBalancer.ingress[0].hostname}')"
 export ARGOCD_AUTH_TOKEN=$(kubectl get secrets -n argocd argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d)
-export PGPASSWORD=$(vault kv get -field=password payments-app/static/payments)
