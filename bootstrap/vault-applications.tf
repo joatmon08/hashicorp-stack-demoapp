@@ -7,6 +7,7 @@ resource "tfe_workspace" "vault_applications" {
   working_directory = "vault/applications"
   trigger_prefixes  = ["vault/applications"]
   queue_all_runs    = false
+  auto_apply        = true
   vcs_repo {
     identifier     = var.github_repository
     branch         = var.github_branch
