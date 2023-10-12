@@ -28,6 +28,8 @@ spec:
       value: p_k1rJmnpctP
     - name: boundary_credentials_store_id
       value: csvlt_ebttjBJEs1
+    - name: initial_provision
+      value: "false"
     - name: boundary_address
       valueFrom:
         secretKeyRef:
@@ -100,8 +102,9 @@ spec:
   destroyOnDeletion: true
   module:
     source:  "app.terraform.io/hashicorp-stack-demoapp/postgres/aws"
-    version: "13.11.0"
+    version: "14.9.0"
   variables:
+    - name: initial_provision
     - name: org_name
     - name: business_unit
     - name: environment
