@@ -72,7 +72,7 @@ clean-application:
 	kubectl delete app hashicups -n argocd
 
 clean-tfc:
-	kubectl delete app terraform-cloud-operator -n argocd -p '{"metadata": {"finalizers": ["resources-finalizer.argocd.argoproj.io"]}}' --type merge
+	kubectl patch app terraform-cloud-operator -n argocd -p '{"metadata": {"finalizers": ["resources-finalizer.argocd.argoproj.io"]}}' --type merge
 	kubectl delete app terraform-cloud-operator -n argocd
 
 clean-consul:

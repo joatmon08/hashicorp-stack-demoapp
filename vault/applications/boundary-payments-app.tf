@@ -85,7 +85,7 @@ resource "boundary_target" "payments_processor" {
   scope_id                 = boundary_scope.apps["payments-app"].id
   ingress_worker_filter    = "\"eks\" in \"/tags/type\""
   egress_worker_filter     = "\"${local.name}\" in \"/tags/type\""
-  address                  = data.kubernetes_service.payments_processor.status.0.load_balancer.0.ingress.0.hostname
+  address                  = try(data.kubernetes_service.payments_processor.status.0.load_balancer.0.ingress.0.hostname, "")
   session_connection_limit = -1
   default_port             = 8080
   brokered_credential_source_ids = [
