@@ -40,6 +40,13 @@ output "boundary_worker_rds" {
   }
 }
 
+output "boundary_worker_database" {
+  value = {
+    public_ip   = module.boundary_worker_database.worker.public_ip
+    private_dns = module.boundary_worker_database.worker.private_dns
+  }
+}
+
 output "boundary_org_id" {
   value = boundary_scope.org.id
 }
