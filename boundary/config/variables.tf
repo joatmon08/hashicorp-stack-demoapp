@@ -34,7 +34,8 @@ locals {
   username = data.terraform_remote_state.infrastructure.outputs.hcp_boundary_username
   password = data.terraform_remote_state.infrastructure.outputs.hcp_boundary_password
 
-  boundary_worker_mount   = data.terraform_remote_state.boundary_setup.outputs.boundary_worker_mount
-  boundary_worker_eks_dns = data.terraform_remote_state.boundary_setup.outputs.boundary_worker_eks.private_dns
-  boundary_worker_rds_dns = data.terraform_remote_state.boundary_setup.outputs.boundary_worker_rds.private_dns
+  boundary_worker_mount        = data.terraform_remote_state.boundary_setup.outputs.boundary_worker_mount
+  boundary_worker_eks_dns      = data.terraform_remote_state.boundary_setup.outputs.boundary_worker_eks.private_dns
+  boundary_worker_rds_dns      = data.terraform_remote_state.boundary_setup.outputs.boundary_worker_rds.private_dns
+  boundary_worker_database_dns = data.terraform_remote_state.boundary_setup.outputs.boundary_worker_database.private_dns
 }
