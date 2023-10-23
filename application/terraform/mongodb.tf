@@ -30,3 +30,9 @@ path "${vault_mount.mongo.path}/creds/${each.value}" {
 }
 EOT
 }
+
+resource "mongodbatlas_project_ip_access_list" "allow_tfc" {
+  project_id = var.mongodbatlas_project_id
+  cidr_block = "0.0.0.0/0"
+  comment    = "cidr block for Terraform configuration"
+}

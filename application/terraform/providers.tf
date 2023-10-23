@@ -21,6 +21,10 @@ terraform {
       source  = "hashicorp/aws"
       version = "~> 5.0"
     }
+    mongodbatlas = {
+      source  = "mongodb/mongodbatlas"
+      version = "~> 1.12"
+    }
   }
 }
 
@@ -58,4 +62,9 @@ provider "boundary" {
   addr                   = local.boundary_address
   auth_method_login_name = local.boundary_username
   auth_method_password   = local.boundary_password
+}
+
+provider "mongodbatlas" {
+  public_key  = var.mongodbatlas_public_key
+  private_key = var.mongodbatlas_private_key
 }
