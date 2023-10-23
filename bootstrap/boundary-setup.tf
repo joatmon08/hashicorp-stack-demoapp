@@ -2,12 +2,12 @@ resource "tfe_workspace" "boundary_setup" {
   name                          = "boundary-setup"
   organization                  = tfe_organization.demo.name
   project_id                    = tfe_project.platform.id
-  description                   = "Step 2 - Configure Boundary"
+  description                   = "Set up Boundary scopes and groups"
   terraform_version             = var.terraform_version
   working_directory             = "boundary/setup"
   trigger_prefixes              = ["boundary/setup"]
   queue_all_runs                = false
-  remote_state_consumer_ids     = [tfe_workspace.boundary_config.id, tfe_workspace.vault_applications.id]
+  remote_state_consumer_ids     = [tfe_workspace.boundary_config.id, tfe_workspace.applications.id]
   speculative_enabled           = false
   structured_run_output_enabled = false
 

@@ -1,11 +1,11 @@
-resource "tfe_workspace" "vault_applications" {
-  name              = "vault-applications"
+resource "tfe_workspace" "applications" {
+  name              = "applications"
   organization      = tfe_organization.demo.name
   project_id        = tfe_project.platform.id
-  description       = "Step 5 - Configure Vault for Applications"
+  description       = "Configure Platform Components for Applications"
   terraform_version = var.terraform_version
-  working_directory = "vault/applications"
-  trigger_prefixes  = ["vault/applications"]
+  working_directory = "application/terraform"
+  trigger_prefixes  = ["application/terraform"]
   queue_all_runs    = false
   auto_apply        = true
   vcs_repo {
@@ -15,8 +15,8 @@ resource "tfe_workspace" "vault_applications" {
   }
 }
 
-resource "tfe_workspace_variable_set" "vault_applications_common" {
-  workspace_id    = tfe_workspace.vault_applications.id
+resource "tfe_workspace_variable_set" "applications_common" {
+  workspace_id    = tfe_workspace.applications.id
   variable_set_id = tfe_variable_set.common.id
 }
 
@@ -24,7 +24,7 @@ resource "tfe_variable" "github_user" {
   key          = "github_user"
   value        = var.github_user
   category     = "terraform"
-  workspace_id = tfe_workspace.vault_applications.id
+  workspace_id = tfe_workspace.applications.id
   description  = "GitHub user for Vault auth method"
 }
 
@@ -37,7 +37,7 @@ locals {
 }
 
 resource "tfe_variable" "tfc_organization_token" {
-  workspace_id = tfe_workspace.vault_applications.id
+  workspace_id = tfe_workspace.applications.id
   key          = "tfc_organization_token"
   value        = tfe_organization_token.demo.token
   category     = "terraform"
@@ -50,6 +50,6 @@ resource "tfe_variable" "team_ids" {
   value        = jsonencode(local.team_ids)
   category     = "terraform"
   hcl          = true
-  workspace_id = tfe_workspace.vault_applications.id
+  workspace_id = tfe_workspace.applications.id
   description  = "Terraform Cloud team IDs to add to Vault secrets engine"
 }

@@ -2,7 +2,7 @@ resource "tfe_workspace" "boundary_config" {
   name                          = "boundary-config"
   organization                  = tfe_organization.demo.name
   project_id                    = tfe_project.platform.id
-  description                   = "Step 2 - Configure Boundary"
+  description                   = "Register workers into Boundary"
   terraform_version             = var.terraform_version
   working_directory             = "boundary/config"
   trigger_prefixes              = ["boundary/config"]

@@ -3,7 +3,7 @@ resource "tfe_workspace" "infrastructure" {
   assessments_enabled = true
   organization        = tfe_organization.demo.name
   project_id          = tfe_project.platform.id
-  description         = "Step 1 - Create infrastructure resources"
+  description         = "Create infrastructure resources"
   terraform_version   = var.terraform_version
   working_directory   = "infrastructure"
   trigger_prefixes    = ["infrastructure"]

@@ -2,12 +2,12 @@ resource "tfe_workspace" "vault_setup" {
   name                      = "vault-setup"
   organization              = tfe_organization.demo.name
   project_id                = tfe_project.platform.id
-  description               = "Step 3 - Set up Vault on Kubernetes"
+  description               = "Set up Vault on Kubernetes"
   terraform_version         = "1.5.7"
   working_directory         = "vault/setup"
   trigger_prefixes          = ["vault/setup"]
   queue_all_runs            = false
-  remote_state_consumer_ids = [tfe_workspace.boundary_setup.id, tfe_workspace.vault_consul.id, tfe_workspace.vault_applications.id]
+  remote_state_consumer_ids = [tfe_workspace.boundary_setup.id, tfe_workspace.vault_consul.id, tfe_workspace.applications.id]
   vcs_repo {
     identifier     = var.github_repository
     branch         = var.github_branch

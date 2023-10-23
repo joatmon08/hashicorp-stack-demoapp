@@ -2,7 +2,7 @@ resource "tfe_workspace" "argocd" {
   name              = "argocd-setup"
   organization      = tfe_organization.demo.name
   project_id        = tfe_project.platform.id
-  description       = "Step 3 - Set up ArgoCD on Kubernetes"
+  description       = "Set up ArgoCD on Kubernetes"
   terraform_version = var.terraform_version
   working_directory = "argocd/setup"
   trigger_prefixes  = ["argocd/setup"]
