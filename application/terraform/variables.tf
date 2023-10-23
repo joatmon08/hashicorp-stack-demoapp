@@ -89,3 +89,22 @@ variable "github_user" {
   type        = string
   description = "GitHub user for auth backend"
 }
+
+variable "mongodbatlas_public_key" {
+  type        = string
+  description = "MongoDB Atlas public key"
+  default     = null
+}
+
+variable "mongodbatlas_private_key" {
+  type        = string
+  description = "MongoDB Atlas private key"
+  default     = null
+  sensitive   = true
+}
+
+variable "mongodbatlas_project_id" {
+  type        = string
+  description = "MongoDB Atlas project ID"
+  default     = null
+}
