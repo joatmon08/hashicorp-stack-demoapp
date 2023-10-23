@@ -53,3 +53,9 @@ resource "tfe_variable" "team_ids" {
   workspace_id = tfe_workspace.applications.id
   description  = "Terraform Cloud team IDs to add to Vault secrets engine"
 }
+
+resource "tfe_workspace_variable_set" "mongodb" {
+  count           = var.mongodb_atlas != null ? 1 : 0
+  workspace_id    = tfe_workspace.applications.id
+  variable_set_id = tfe_variable_set.mongodb.0.id
+}

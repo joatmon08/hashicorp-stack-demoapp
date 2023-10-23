@@ -139,3 +139,14 @@ variable "region" {
   description = "Region for AWS infrastructure and HCP"
   default     = "us-east-1"
 }
+
+variable "mongodb_atlas" {
+  type = object({
+    public_key  = string
+    private_key = string
+    project_id  = string
+  })
+  description = "MongoDB Atlas variables"
+  sensitive   = true
+  default     = null
+}
