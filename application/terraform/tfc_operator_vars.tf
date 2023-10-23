@@ -81,7 +81,9 @@ resource "vault_kv_secret_v2" "postgres_module" {
   "consul_datacenter": "${local.consul_datacenter}",
   "vault_address": "${local.vault_address}",
   "vault_token": "${vault_token.module[each.value].client_token}",
-  "vault_namespace": "${local.vault_namespace}"
+  "vault_namespace": "${local.vault_namespace}",
+  "mongodbatlas_project_id": "${var.mongodbatlas_project_id}",
+  "mongodbatlas_region": "${var.mongodbatlas_region}"
 }
 EOT
 }

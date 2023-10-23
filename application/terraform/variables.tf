@@ -108,3 +108,9 @@ variable "mongodbatlas_project_id" {
   description = "MongoDB Atlas project ID"
   default     = null
 }
+
+variable "mongodbatlas_region" {
+  type        = string
+  description = "MongoDB Atlas provider region"
+  default     = null
+}

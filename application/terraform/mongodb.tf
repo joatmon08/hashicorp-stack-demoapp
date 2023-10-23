@@ -12,13 +12,13 @@ resource "vault_mongodbatlas_secret_backend" "config" {
 }
 
 resource "vault_mongodbatlas_secret_role" "role" {
-  for_each      = toset(keys(var.tfc_team_ids))
-  mount         = vault_mount.mongo.path
-  name          = each.value
-  project_id    = var.mongodbatlas_project_id
-  roles         = ["GROUP_OWNER"]
-  ttl           = "3600"
-  max_ttl       = "7200"
+  for_each   = toset(keys(var.tfc_team_ids))
+  mount      = vault_mount.mongo.path
+  name       = each.value
+  project_id = var.mongodbatlas_project_id
+  roles      = ["GROUP_OWNER"]
+  ttl        = "3600"
+  max_ttl    = "7200"
 }
 
 resource "vault_policy" "mongodbatlas_creds" {
