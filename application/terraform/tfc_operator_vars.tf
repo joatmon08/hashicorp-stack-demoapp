@@ -43,7 +43,7 @@ EOT
 resource "vault_token_auth_backend_role" "module" {
   for_each               = toset(keys(var.tfc_team_ids))
   role_name              = each.value
-  allowed_policies       = [vault_policy.module[each.value].name]
+  allowed_policies       = [vault_policy.module[each.value].name, vault_policy.mongodbatlas_creds[each.value].name]
   disallowed_policies    = ["default"]
   orphan                 = true
   token_period           = "86400"
@@ -54,7 +54,7 @@ resource "vault_token_auth_backend_role" "module" {
 resource "vault_token" "module" {
   for_each  = toset(keys(var.tfc_team_ids))
   role_name = vault_token_auth_backend_role.module[each.value].role_name
-  policies  = [vault_policy.module[each.value].name]
+  policies  = [vault_policy.module[each.value].name, vault_policy.mongodbatlas_creds[each.value].name]
 }
 
 resource "vault_mount" "tfc_operator_vars" {
