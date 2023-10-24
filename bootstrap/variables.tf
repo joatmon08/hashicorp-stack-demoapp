@@ -124,7 +124,8 @@ variable "business_units" {
     "promotions",
     "hashicups",
     "expense-report",
-    "payments-app"
+    "payments-app",
+    "bookstore"
   ]
 }
 
