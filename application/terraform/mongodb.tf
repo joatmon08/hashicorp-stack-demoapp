@@ -16,9 +16,9 @@ resource "vault_mongodbatlas_secret_role" "role" {
   mount      = vault_mount.mongo.path
   name       = each.value
   project_id = var.mongodbatlas_project_id
-  roles      = ["GROUP_OWNER"]
-  ttl        = "3600"
-  max_ttl    = "7200"
+  roles      = ["GROUP_OWNER", "ORG_READ_ONLY"]
+  ttl        = "7200"
+  max_ttl    = "14400"
 }
 
 resource "vault_policy" "mongodbatlas_creds" {
