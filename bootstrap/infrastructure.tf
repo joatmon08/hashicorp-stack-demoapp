@@ -17,6 +17,11 @@ resource "tfe_workspace" "infrastructure" {
   }
 }
 
+resource "tfe_workspace_variable_set" "infrastructure_common" {
+  workspace_id    = tfe_workspace.infrastructure.id
+  variable_set_id = tfe_variable_set.common.id
+}
+
 resource "tfe_workspace_variable_set" "infrastructure_hcp" {
   workspace_id    = tfe_workspace.infrastructure.id
   variable_set_id = tfe_variable_set.hcp.id
