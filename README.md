@@ -325,15 +325,6 @@ $ make test-app
 
 ## Explore
 
-To log into any of the machines in this demo, you'll need the SSH key.
-
-```shell
-make get-ssh
-```
-
-This will save the private SSH key into `id_rsa.pem` at the top level
-of this repository.
-
 Set the `BOUNDARY_ADDR` environment variable to the Boundary endpoint.
 ```shell
 source set_terminal.sh

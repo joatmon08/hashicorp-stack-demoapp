@@ -13,12 +13,6 @@ kubeconfig:
 		update-kubeconfig \
 		--name $(shell cd infrastructure && terraform output -raw eks_cluster_name)
 
-get-ssh:
-	rm -rf secrets
-	mkdir -p secrets
-	cd infrastructure && terraform output -raw boundary_worker_ssh | base64 -d > ../secrets/id_rsa.pem
-	chmod 400 secrets/id_rsa.pem
-
 configure-certs:
 	bash certs/ca_root.sh
 
@@ -54,7 +48,7 @@ boundary-appdev-auth:
 		-auth-method-id=$(shell cd vault/applications && terraform output -raw boundary_auth_method_id)
 
 ssh-k8s-nodes:
-	boundary connect ssh -username=ec2-user -target-name eks_nodes_ssh -target-scope-name core_infra -- -i secrets/id_rsa.pem
+	boundary connect ssh -target-name eks-ssh -target-scope-name core-infra
 
 postgres-operations:
 	boundary connect postgres -dbname=payments -target-name=database-app -target-scope-name=payments-app

@@ -7,7 +7,7 @@ resource "tfe_workspace" "boundary_setup" {
   working_directory             = "boundary/setup"
   trigger_prefixes              = ["boundary/setup"]
   queue_all_runs                = false
-  remote_state_consumer_ids     = [tfe_workspace.boundary_config.id, tfe_workspace.applications.id]
+  remote_state_consumer_ids     = [tfe_workspace.applications.id]
   speculative_enabled           = false
   structured_run_output_enabled = false
 
