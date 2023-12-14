@@ -86,3 +86,9 @@ variable "github_organization_id" {
   type        = string
   description = "GitHub organization ID for auth backend"
 }
+
+variable "boundary_worker_username" {
+  type        = string
+  description = "Username for Boundary worker SSH"
+  default     = "ec2-user"
+}

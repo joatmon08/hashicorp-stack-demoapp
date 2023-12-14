@@ -6,8 +6,10 @@ output "vault_kubernetes_auth_path" {
 output "boundary_worker_ssh" {
   value = {
     path   = "${vault_kv_secret_v2.boundary_worker_keypair.mount}/${vault_kv_secret_v2.boundary_worker_keypair.name}"
-    policy = vault_policy.boundary_worker.name
+    policy = vault_policy.boundary_worker_ssh.name
+    token  = vault_token.boundary_worker_ssh.client_token
   }
+  sensitive = true
 }
 
 output "vault_kubernetes_secrets_engine_path" {
