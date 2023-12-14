@@ -7,7 +7,7 @@ data "aws_security_group" "database" {
 
 module "boundary_worker_rds" {
   source  = "joatmon08/hcp/aws//modules/boundary-worker"
-  version = "4.0.0"
+  version = "4.0.1"
 
   name                     = "${local.name}-boundary-worker-rds"
   boundary_addr            = local.url

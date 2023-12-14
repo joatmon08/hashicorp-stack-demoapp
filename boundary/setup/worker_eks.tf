@@ -7,7 +7,7 @@ data "aws_security_group" "boundary_worker" {
 
 module "boundary_worker_eks" {
   source  = "joatmon08/hcp/aws//modules/boundary-worker"
-  version = "4.0.0"
+  version = "4.0.1"
 
   name                     = "${local.name}-boundary-worker-eks"
   boundary_addr            = local.url
