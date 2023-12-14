@@ -14,7 +14,7 @@ module "boundary_worker_rds" {
   worker_prefix            = "rds-"
   worker_keypair_name      = local.boundary_key_pair_name
   worker_public_subnet_id  = local.public_subnets.0
-  worker_security_group_id = data.aws_security_group.boundary_worker.id
+  worker_security_group_id = data.aws_security_group.database.id
   worker_tags              = [local.name, "rds", "ingress"]
   vpc_id                   = local.vpc_id
 
