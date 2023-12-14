@@ -24,6 +24,8 @@ locals {
   hcp_vault_private_address = data.terraform_remote_state.infrastructure.outputs.hcp_vault_private_address
   hcp_vault_namespace       = data.terraform_remote_state.infrastructure.outputs.hcp_vault_namespace
   hcp_vault_cluster_token   = var.hcp_vault_cluster_token == "" ? data.terraform_remote_state.infrastructure.outputs.hcp_vault_token : var.hcp_vault_cluster_token
+
+  boundary_worker_ssh = data.terraform_remote_state.infrastructure.outputs.boundary_worker_ssh
 }
 
 variable "hcp_vault_cluster_id" {
