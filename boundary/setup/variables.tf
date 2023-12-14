@@ -46,21 +46,22 @@ data "aws_instances" "eks" {
 }
 
 locals {
-  vpc_id                        = data.terraform_remote_state.infrastructure.outputs.vpc_id
-  public_subnets                = data.terraform_remote_state.infrastructure.outputs.public_subnets
-  eks_cluster_name              = data.terraform_remote_state.infrastructure.outputs.eks_cluster_name
-  region                        = data.terraform_remote_state.infrastructure.outputs.region
-  name                          = data.terraform_remote_state.infrastructure.outputs.hcp_boundary_cluster
-  url                           = data.terraform_remote_state.infrastructure.outputs.hcp_boundary_endpoint
-  username                      = data.terraform_remote_state.infrastructure.outputs.hcp_boundary_username
-  password                      = data.terraform_remote_state.infrastructure.outputs.hcp_boundary_password
+  vpc_id           = data.terraform_remote_state.infrastructure.outputs.vpc_id
+  public_subnets   = data.terraform_remote_state.infrastructure.outputs.public_subnets
+  eks_cluster_name = data.terraform_remote_state.infrastructure.outputs.eks_cluster_name
+  region           = data.terraform_remote_state.infrastructure.outputs.region
+  name             = data.terraform_remote_state.infrastructure.outputs.hcp_boundary_cluster
+  url              = data.terraform_remote_state.infrastructure.outputs.hcp_boundary_endpoint
+  username         = data.terraform_remote_state.infrastructure.outputs.hcp_boundary_username
+  password         = data.terraform_remote_state.infrastructure.outputs.hcp_boundary_password
+
   eks_cluster_security_group_id = data.terraform_remote_state.infrastructure.outputs.eks_cluster_security_group_id
   eks_target_ips                = toset(data.aws_instances.eks.private_ips)
-  vault_addr                    = data.terraform_remote_state.infrastructure.outputs.hcp_vault_public_address
-  vault_namespace               = data.terraform_remote_state.infrastructure.outputs.hcp_vault_namespace
-  vault_worker_token            = data.terraform_remote_state.vault_setup.outputs.boundary_worker_token
-  vault_boundary_path           = data.terraform_remote_state.vault_setup.outputs.boundary_worker_path
-  vault_admin_token             = data.terraform_remote_state.infrastructure.outputs.hcp_vault_token
-  boundary_worker_mount         = data.terraform_remote_state.vault_setup.outputs.boundary_worker_path
-  boundary_key_pair_name        = data.terraform_remote_state.infrastructure.outputs.boundary_worker_key_pair_name
+
+  vault_addr          = data.terraform_remote_state.infrastructure.outputs.hcp_vault_public_address
+  vault_namespace     = data.terraform_remote_state.infrastructure.outputs.hcp_vault_namespace
+  vault_admin_token   = data.terraform_remote_state.infrastructure.outputs.hcp_vault_token
+
+  boundary_key_pair_name = data.terraform_remote_state.infrastructure.outputs.boundary_worker_key_pair_name
+  boundary_worker_ssh    = data.terraform_remote_state.vault_setup.outputs.boundary_worker_ssh
 }
