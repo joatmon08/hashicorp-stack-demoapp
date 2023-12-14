@@ -58,9 +58,9 @@ locals {
   eks_cluster_security_group_id = data.terraform_remote_state.infrastructure.outputs.eks_cluster_security_group_id
   eks_target_ips                = toset(data.aws_instances.eks.private_ips)
 
-  vault_addr          = data.terraform_remote_state.infrastructure.outputs.hcp_vault_public_address
-  vault_namespace     = data.terraform_remote_state.infrastructure.outputs.hcp_vault_namespace
-  vault_admin_token   = data.terraform_remote_state.infrastructure.outputs.hcp_vault_token
+  vault_addr        = data.terraform_remote_state.infrastructure.outputs.hcp_vault_public_address
+  vault_namespace   = data.terraform_remote_state.infrastructure.outputs.hcp_vault_namespace
+  vault_admin_token = data.terraform_remote_state.infrastructure.outputs.hcp_vault_token
 
   boundary_key_pair_name = data.terraform_remote_state.infrastructure.outputs.boundary_worker_key_pair_name
   boundary_worker_ssh    = data.terraform_remote_state.vault_setup.outputs.boundary_worker_ssh
