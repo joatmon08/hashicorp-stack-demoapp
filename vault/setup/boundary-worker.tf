@@ -32,7 +32,7 @@ resource "vault_policy" "boundary_worker_ssh" {
 
 resource "vault_token_auth_backend_role" "boundary_worker_ssh" {
   role_name              = "boundary-worker-ssh"
-  allowed_policies       = [vault_policy.boundary_worker_ssh.name]
+  allowed_policies       = [vault_policy.boundary_worker_ssh.name, vault_policy.boundary_credentials_store.name]
   disallowed_policies    = ["default"]
   orphan                 = true
   token_period           = "86400"
@@ -42,5 +42,5 @@ resource "vault_token_auth_backend_role" "boundary_worker_ssh" {
 
 resource "vault_token" "boundary_worker_ssh" {
   role_name = vault_token_auth_backend_role.boundary_worker_ssh.role_name
-  policies  = [vault_policy.boundary_worker_ssh.name]
+  policies  = [vault_policy.boundary_worker_ssh.name, vault_policy.boundary_credentials_store.name]
 }
