@@ -30,17 +30,13 @@ resource "vault_policy" "boundary_worker_ssh" {
   policy = data.vault_policy_document.boundary_worker_ssh.hcl
 }
 
-resource "vault_token_auth_backend_role" "boundary_worker_ssh" {
-  role_name              = "boundary-worker-ssh"
-  allowed_policies       = [vault_policy.boundary_worker_ssh.name, vault_policy.boundary_credentials_store.name]
-  disallowed_policies    = ["default"]
-  orphan                 = true
-  token_period           = "86400"
-  renewable              = true
-  token_explicit_max_ttl = "115200"
-}
-
 resource "vault_token" "boundary_worker_ssh" {
-  role_name = vault_token_auth_backend_role.boundary_worker_ssh.role_name
-  policies  = [vault_policy.boundary_worker_ssh.name, vault_policy.boundary_credentials_store.name]
+  policies          = [vault_policy.boundary_worker_ssh.name, vault_policy.boundary_credentials_store.name]
+  no_default_policy = true
+  no_parent         = true
+  ttl               = "3d"
+  explicit_max_ttl  = "6d"
+  period            = "3d"
+  renewable         = true
+  num_uses          = 0
 }
