@@ -11,7 +11,7 @@ resource "vault_kv_secret_v2" "boundary_worker_keypair" {
   delete_all_versions = true
   data_json = jsonencode(
     {
-      private_key = local.boundary_worker_ssh
+      private_key = base64decode(local.boundary_worker_ssh)
       username    = var.boundary_worker_username
     }
   )
@@ -19,8 +19,8 @@ resource "vault_kv_secret_v2" "boundary_worker_keypair" {
 
 data "vault_policy_document" "boundary_worker_ssh" {
   rule {
-    path         = "${vault_kv_secret_v2.boundary_worker_keypair.mount}/${vault_kv_secret_v2.boundary_worker_keypair.name}"
-    capabilities = ["read", "list"]
+    path         = "${vault_kv_secret_v2.boundary_worker_keypair.mount}/data/${vault_kv_secret_v2.boundary_worker_keypair.name}"
+    capabilities = ["read"]
     description  = "Get SSH keys for Boundary worker"
   }
 }
