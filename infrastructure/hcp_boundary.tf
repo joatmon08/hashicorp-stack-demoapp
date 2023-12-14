@@ -59,3 +59,12 @@ resource "aws_security_group_rule" "allow_boundary_worker_to_eks_api" {
   source_security_group_id = aws_security_group.boundary_worker.id
   security_group_id        = module.eks.cluster_security_group_id
 }
+
+resource "aws_security_group_rule" "allow_boundary_worker_egress" {
+  type              = "egress"
+  from_port         = 0
+  to_port           = 0
+  protocol          = "-1"
+  cidr_blocks       = ["0.0.0.0/0"]
+  security_group_id = aws_security_group.boundary_worker.id
+}
