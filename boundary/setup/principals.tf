@@ -46,7 +46,7 @@ resource "boundary_account_password" "leadership_user_acct" {
 
 // organiation level group for the leadership team
 resource "boundary_group" "leadership" {
-  name        = "leadership_team"
+  name        = "leadership-team"
   description = "Organization group for leadership team"
   member_ids  = [for user in boundary_user.leadership : user.id]
   scope_id    = boundary_scope.org.id

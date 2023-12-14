@@ -44,7 +44,7 @@ resource "boundary_role" "org_readonly" {
 
 # Adds an org-level role granting administrative permissions within the core_infra project
 resource "boundary_role" "project_admin" {
-  name           = "core_infra_admin"
+  name           = "${boundary_scope.core_infra.name}-admin"
   description    = "Administrator role for core infra"
   scope_id       = boundary_scope.org.id
   grant_scope_id = boundary_scope.core_infra.id
