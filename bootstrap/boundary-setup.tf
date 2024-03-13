@@ -5,7 +5,7 @@ resource "tfe_workspace" "boundary_setup" {
   description                   = "Set up Boundary scopes and groups"
   terraform_version             = var.terraform_version
   working_directory             = "boundary/setup"
-  trigger_prefixes              = ["boundary/setup"]
+  trigger_patterns              = ["boundary/setup/**/*"]
   queue_all_runs                = false
   remote_state_consumer_ids     = [tfe_workspace.applications.id]
   speculative_enabled           = false

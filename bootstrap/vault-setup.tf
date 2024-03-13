@@ -3,7 +3,7 @@ resource "tfe_workspace" "vault_setup" {
   organization              = tfe_organization.demo.name
   project_id                = tfe_project.platform.id
   description               = "Set up Vault on Kubernetes"
-  terraform_version         = "latest"
+  terraform_version         = var.terraform_version
   working_directory         = "vault/setup"
   trigger_patterns          = ["vault/setup/**/*"]
   queue_all_runs            = false
