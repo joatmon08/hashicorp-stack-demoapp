@@ -5,7 +5,7 @@ resource "tfe_workspace" "argocd" {
   description       = "Set up ArgoCD on Kubernetes"
   terraform_version = var.terraform_version
   working_directory = "argocd/setup"
-  trigger_prefixes  = ["argocd/setup"]
+  trigger_patterns  = ["argocd/setup/**/*"]
   queue_all_runs    = false
   vcs_repo {
     identifier                 = var.github_repository

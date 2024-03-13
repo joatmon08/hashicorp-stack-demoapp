@@ -36,3 +36,9 @@ variable "argocd_helm_version" {
   description = "ArgoCD Helm version"
   default     = "5.45.2"
 }
+
+variable "terraform_cloud_operator_version" {
+  type        = string
+  description = "Terraform Cloud Operator Helm chart version"
+  default     = "2.1.0"
+}

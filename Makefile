@@ -22,9 +22,6 @@ configure-hcp-certs:
 configure-consul:
 	bash consul/config/configure.sh
 
-configure-tfc:
-	kubectl apply -f argocd/applications/terraform-operator/
-
 configure-application:
 	kubectl apply -f argocd/applications/promotions.yaml
 	kubectl apply -f argocd/applications/payments-app.yaml
