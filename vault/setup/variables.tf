@@ -62,19 +62,19 @@ variable "region" {
 variable "vault_helm_version" {
   type        = string
   description = "Vault Helm chart version"
-  default     = "0.25.0"
+  default     = "0.27.0"
 }
 
 variable "csi_helm_version" {
   type        = string
   description = "Secrets Store CSI Driver Helm chart version"
-  default     = "1.3.4"
+  default     = "1.4.1"
 }
 
 variable "vault_operator_helm_version" {
   type        = string
-  description = "Secrets Store CSI Driver Helm chart version"
-  default     = "0.3.1"
+  description = "Vault Secrets Operator Helm chart version"
+  default     = "0.5.1"
 }
 
 variable "github_organization" {
