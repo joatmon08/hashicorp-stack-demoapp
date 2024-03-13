@@ -8,9 +8,9 @@ resource "tfe_workspace" "argocd" {
   trigger_prefixes  = ["argocd/setup"]
   queue_all_runs    = false
   vcs_repo {
-    identifier     = var.github_repository
-    branch         = var.github_branch
-    oauth_token_id = tfe_oauth_client.github.oauth_token_id
+    identifier                 = var.github_repository
+    branch                     = var.github_branch
+    github_app_installation_id = data.tfe_github_app_installation.gha_installation.id
   }
 }
 

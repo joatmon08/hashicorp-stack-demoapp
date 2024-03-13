@@ -10,9 +10,9 @@ resource "tfe_workspace" "vault_consul" {
   # remote_state_consumer_ids = [tfe_workspace.consul_setup.id, tfe_workspace.consul_config.id]
   remote_state_consumer_ids = [tfe_workspace.consul_setup.id]
   vcs_repo {
-    identifier     = var.github_repository
-    branch         = var.github_branch
-    oauth_token_id = tfe_oauth_client.github.oauth_token_id
+    identifier                 = var.github_repository
+    branch                     = var.github_branch
+    github_app_installation_id = data.tfe_github_app_installation.gha_installation.id
   }
 }
 

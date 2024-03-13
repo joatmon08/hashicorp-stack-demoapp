@@ -4,13 +4,8 @@ resource "tfe_organization" "demo" {
   email                         = var.email
 }
 
-resource "tfe_oauth_client" "github" {
-  name             = "github"
-  organization     = tfe_organization.demo.name
-  api_url          = "https://api.github.com"
-  http_url         = "https://github.com"
-  oauth_token      = var.github_token
-  service_provider = "github"
+data "tfe_github_app_installation" "gha_installation" {
+  name = var.github_user
 }
 
 resource "tfe_organization_token" "demo" {

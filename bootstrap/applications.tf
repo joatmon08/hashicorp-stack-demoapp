@@ -9,9 +9,9 @@ resource "tfe_workspace" "applications" {
   queue_all_runs    = false
   auto_apply        = true
   vcs_repo {
-    identifier     = var.github_repository
-    branch         = var.github_branch
-    oauth_token_id = tfe_oauth_client.github.oauth_token_id
+    identifier                 = var.github_repository
+    branch                     = var.github_branch
+    github_app_installation_id = data.tfe_github_app_installation.gha_installation.id
   }
 }
 

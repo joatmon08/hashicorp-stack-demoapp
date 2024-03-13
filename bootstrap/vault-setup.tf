@@ -9,9 +9,9 @@ resource "tfe_workspace" "vault_setup" {
   queue_all_runs            = false
   remote_state_consumer_ids = [tfe_workspace.boundary_setup.id, tfe_workspace.vault_consul.id, tfe_workspace.applications.id]
   vcs_repo {
-    identifier     = var.github_repository
-    branch         = var.github_branch
-    oauth_token_id = tfe_oauth_client.github.oauth_token_id
+    identifier                 = var.github_repository
+    branch                     = var.github_branch
+    github_app_installation_id = data.tfe_github_app_installation.gha_installation.id
   }
 }
 

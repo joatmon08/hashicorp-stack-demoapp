@@ -6,14 +6,14 @@ resource "tfe_workspace" "infrastructure" {
   description         = "Create infrastructure resources"
   terraform_version   = var.terraform_version
   working_directory   = "infrastructure"
-  trigger_prefixes    = ["infrastructure"]
+  trigger_patterns    = ["infrastructure/*.tf"]
   queue_all_runs      = false
   global_remote_state = true
   auto_apply          = true
   vcs_repo {
-    identifier     = var.github_repository
-    branch         = var.github_branch
-    oauth_token_id = tfe_oauth_client.github.oauth_token_id
+    identifier                 = var.github_repository
+    branch                     = var.github_branch
+    github_app_installation_id = data.tfe_github_app_installation.gha_installation.id
   }
 }
 
