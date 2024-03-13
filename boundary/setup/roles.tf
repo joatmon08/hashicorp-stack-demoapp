@@ -14,8 +14,8 @@ resource "boundary_role" "org_anon_listing" {
 # Creates a role in the global scope that's granting administrative access to
 # resources in the org scope for all operations users
 resource "boundary_role" "org_admin" {
-  scope_id       = "global"
-  grant_scope_id = boundary_scope.org.id
+  scope_id        = "global"
+  grant_scope_ids = [boundary_scope.org.id]
   grant_strings = [
     "id=*;type=*;actions=*"
   ]
@@ -38,16 +38,16 @@ resource "boundary_role" "org_readonly" {
     "id=*;type=target;actions=read,list,authorize-session",
     "id=*;type=session;actions=read,list"
   ]
-  scope_id       = "global"
-  grant_scope_id = boundary_scope.org.id
+  scope_id        = "global"
+  grant_scope_ids = [boundary_scope.org.id]
 }
 
 # Adds an org-level role granting administrative permissions within the core_infra project
 resource "boundary_role" "project_admin" {
-  name           = "${boundary_scope.core_infra.name}-admin"
-  description    = "Administrator role for core infra"
-  scope_id       = boundary_scope.org.id
-  grant_scope_id = boundary_scope.core_infra.id
+  name            = "${boundary_scope.core_infra.name}-admin"
+  description     = "Administrator role for core infra"
+  scope_id        = boundary_scope.org.id
+  grant_scope_ids = [boundary_scope.core_infra.id]
   grant_strings = [
     "id=*;type=*;actions=*"
   ]

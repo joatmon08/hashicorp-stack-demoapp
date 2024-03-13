@@ -3,17 +3,17 @@ terraform {
   required_providers {
     aws = {
       source  = "hashicorp/aws"
-      version = "~> 5.0"
+      version = "~> 5.40"
     }
 
     boundary = {
       source  = "hashicorp/boundary"
-      version = "~> 1.0"
+      version = "~> 1.1"
     }
 
     vault = {
       source  = "hashicorp/vault"
-      version = "~> 3.17"
+      version = "~> 3.25"
     }
   }
 }
