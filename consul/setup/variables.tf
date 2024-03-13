@@ -26,7 +26,7 @@ data "terraform_remote_state" "vault_consul" {
 }
 
 locals {
-  paths             = data.terraform_remote_state.vault_consul.outputs.paths
+  paths = data.terraform_remote_state.vault_consul.outputs.paths
 
   vault_public_addr     = data.terraform_remote_state.infrastructure.outputs.hcp_vault_public_address
   vault_addr            = data.terraform_remote_state.infrastructure.outputs.hcp_vault_private_address

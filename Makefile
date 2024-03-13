@@ -1,12 +1,5 @@
 fmt:
-	cd vault/setup && terraform fmt
-	cd vault/app && terraform fmt
-	cd consul && terraform fmt
-	cd boundary/setup && terraform fmt
-	cd boundary/setup-deployment && terraform fmt
-	cd infrastructure && terraform fmt
-	cd kubernetes && terraform fmt
-	terraform fmt
+	terraform fmt -recursive
 
 kubeconfig:
 	aws eks --region $(shell cd infrastructure && terraform output -raw region) \

@@ -34,11 +34,11 @@ variable "region" {
 variable "argocd_helm_version" {
   type        = string
   description = "ArgoCD Helm version"
-  default     = "5.45.2"
+  default     = "6.7.1"
 }
 
 variable "terraform_cloud_operator_version" {
   type        = string
   description = "Terraform Cloud Operator Helm chart version"
-  default     = "2.1.0"
+  default     = "2.2.0"
 }
