@@ -4,9 +4,9 @@
 resource "boundary_role" "org_anon_listing" {
   scope_id = boundary_scope.org.id
   grant_strings = [
-    "id=*;type=auth-method;actions=list,authenticate",
+    "ids=*;type=auth-method;actions=list,authenticate",
     "type=scope;actions=list",
-    "id={{account.id}};actions=read,change-password"
+    "ids={{account.id}};actions=read,change-password"
   ]
   principal_ids = ["u_anon"]
 }
@@ -17,7 +17,7 @@ resource "boundary_role" "org_admin" {
   scope_id        = "global"
   grant_scope_ids = [boundary_scope.org.id]
   grant_strings = [
-    "id=*;type=*;actions=*"
+    "ids=*;type=*;actions=*"
   ]
   principal_ids = [
     boundary_group.operations_team.id
@@ -34,9 +34,9 @@ resource "boundary_role" "org_readonly" {
     boundary_group.leadership.id,
   ]
   grant_strings = [
-    "id=*;type=*;actions=read",
-    "id=*;type=target;actions=read,list,authorize-session",
-    "id=*;type=session;actions=read,list"
+    "ids=*;type=*;actions=read",
+    "ids=*;type=target;actions=read,list,authorize-session",
+    "ids=*;type=session;actions=read,list"
   ]
   scope_id        = "global"
   grant_scope_ids = [boundary_scope.org.id]
@@ -49,7 +49,7 @@ resource "boundary_role" "project_admin" {
   scope_id        = boundary_scope.org.id
   grant_scope_ids = [boundary_scope.core_infra.id]
   grant_strings = [
-    "id=*;type=*;actions=*"
+    "ids=*;type=*;actions=*"
   ]
   principal_ids = [
     boundary_group.operations_team.id
