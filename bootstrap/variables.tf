@@ -129,12 +129,6 @@ variable "business_units" {
   ]
 }
 
-variable "terraform_aws_postgres_module_identifier" {
-  type        = string
-  description = "GitHub identifier for terraform-aws-postgres module"
-  default     = "joatmon08/terraform-aws-postgres"
-}
-
 variable "region" {
   type        = string
   description = "Region for AWS infrastructure and HCP"
