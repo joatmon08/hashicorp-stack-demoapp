@@ -5,7 +5,7 @@ resource "tfe_workspace" "vault_consul" {
   description       = "Configure Vault for Consul (PKI Secrets Engine)"
   terraform_version = var.terraform_version
   working_directory = "vault/consul"
-  trigger_prefixes  = ["vault/consul"]
+  trigger_patterns  = ["vault/consul/**/*"]
   queue_all_runs    = false
   # remote_state_consumer_ids = [tfe_workspace.consul_setup.id, tfe_workspace.consul_config.id]
   remote_state_consumer_ids = [tfe_workspace.consul_setup.id]

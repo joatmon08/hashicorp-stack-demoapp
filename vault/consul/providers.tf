@@ -3,11 +3,11 @@ terraform {
   required_providers {
     vault = {
       source  = "hashicorp/vault"
-      version = "~> 3.8"
+      version = "~> 4.0"
     }
     consul = {
       source  = "hashicorp/consul"
-      version = "~> 2.18"
+      version = "~> 2.20"
     }
   }
 }
