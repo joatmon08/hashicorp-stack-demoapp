@@ -5,7 +5,7 @@ resource "tfe_workspace" "argocd_config" {
   description       = "Configure Argo CD projects"
   terraform_version = var.terraform_version
   working_directory = "argocd/config"
-  trigger_prefixes  = ["argocd/config"]
+  trigger_patterns  = ["argocd/config/**/*"]
   queue_all_runs    = false
   vcs_repo {
     identifier                 = var.github_repository
