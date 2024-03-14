@@ -13,13 +13,6 @@ resource "boundary_target" "kubernetes" {
   ]
 }
 
-data "kubernetes_service" "payments_processor" {
-  metadata {
-    name      = "payments-processor"
-    namespace = "payments-app"
-  }
-}
-
 resource "vault_policy" "token_basics" {
   name   = "token-basics"
   policy = <<EOT
@@ -78,14 +71,23 @@ resource "boundary_credential_library_vault" "payments_processor" {
   credential_type     = "username_password"
 }
 
+data "kubernetes_service" "payments_processor" {
+  count = var.deployed_payments_processor ? 1 : 0
+  metadata {
+    name      = "payments-processor"
+    namespace = "payments-app"
+  }
+}
+
 resource "boundary_target" "payments_processor" {
+  count                    = var.deployed_payments_processor ? 1 : 0
   type                     = "tcp"
   name                     = "payments-processor"
   description              = "Payments processor API"
   scope_id                 = boundary_scope.apps["payments-app"].id
   ingress_worker_filter    = "\"eks\" in \"/tags/type\""
   egress_worker_filter     = "\"${local.name}\" in \"/tags/type\""
-  address                  = try(data.kubernetes_service.payments_processor.status.0.load_balancer.0.ingress.0.hostname, "")
+  address                  = try(data.kubernetes_service.payments_processor.0.status.0.load_balancer.0.ingress.0.hostname, "")
   session_connection_limit = -1
   default_port             = 8080
   brokered_credential_source_ids = [

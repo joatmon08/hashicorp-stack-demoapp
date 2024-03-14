@@ -114,3 +114,9 @@ variable "mongodbatlas_region" {
   description = "MongoDB Atlas provider region"
   default     = null
 }
+
+variable "deployed_payments_processor" {
+  type        = bool
+  description = "Enable if payments processor is deployed to set up Boundary target"
+  default     = false
+}

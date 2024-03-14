@@ -8,13 +8,13 @@ resource "boundary_scope" "apps" {
 }
 
 resource "boundary_role" "project_admin_products" {
-  for_each       = toset(keys(var.tfc_team_ids))
-  name           = "${each.value}_admin"
-  description    = "Administrator role for ${each.value}"
-  scope_id       = local.boundary_org_id
-  grant_scope_id = boundary_scope.apps[each.value].id
+  for_each        = toset(keys(var.tfc_team_ids))
+  name            = "${each.value}_admin"
+  description     = "Administrator role for ${each.value}"
+  scope_id        = local.boundary_org_id
+  grant_scope_ids = [boundary_scope.apps[each.value].id]
   grant_strings = [
-    "id=*;type=*;actions=*"
+    "ids=*;type=*;actions=*"
   ]
   principal_ids = [
     boundary_group.apps[each.value].id
@@ -26,10 +26,10 @@ resource "boundary_role" "org_readonly" {
   description   = "Apps can read other projects"
   principal_ids = [for key, value in boundary_group.apps : value.id]
   grant_strings = [
-    "id=*;type=*;actions=read",
-    "id=*;type=target;actions=read,list,authorize-session",
-    "id=*;type=session;actions=read,list"
+    "ids=*;type=*;actions=read",
+    "ids=*;type=target;actions=read,list,authorize-session",
+    "ids=*;type=session;actions=read,list"
   ]
-  scope_id       = "global"
-  grant_scope_id = local.boundary_org_id
+  scope_id        = "global"
+  grant_scope_ids = [local.boundary_org_id]
 }
