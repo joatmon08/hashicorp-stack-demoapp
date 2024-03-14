@@ -9,22 +9,26 @@ resource "tfe_team" "business_units" {
   organization = tfe_organization.demo.name
   visibility   = "organization"
   organization_access {
-    manage_workspaces = true
+    read_projects     = true
+    read_workspaces   = true
   }
 }
 
-resource "tfe_project" "hashicups" {
+resource "tfe_project" "business_units" {
+  for_each     = toset(var.business_units)
   organization = tfe_organization.demo.name
-  name         = "hashicups"
+  name         = each.value
 }
 
-resource "tfe_team_project_access" "hashicups" {
+resource "tfe_team_project_access" "business_units" {
+  for_each   = toset(var.business_units)
   access     = "admin"
-  team_id    = tfe_team.business_units["hashicups"].id
-  project_id = tfe_project.hashicups.id
+  team_id    = tfe_team.business_units[each.value].id
+  project_id = tfe_project.business_units[each.value].id
 }
 
-resource "tfe_project_variable_set" "hashicups" {
+resource "tfe_project_variable_set" "business_units" {
+  for_each        = toset(var.business_units)
   variable_set_id = tfe_variable_set.applications.id
-  project_id      = tfe_project.hashicups.id
+  project_id      = tfe_project.business_units[each.value].id
 }
