@@ -3,27 +3,27 @@ terraform {
   required_providers {
     kubernetes = {
       source  = "hashicorp/kubernetes"
-      version = "~> 2.13"
+      version = "~> 2.27"
     }
     vault = {
       source  = "hashicorp/vault"
-      version = "~> 3.6"
+      version = "~> 4.0"
     }
     consul = {
       source  = "hashicorp/consul"
-      version = "~> 2.18"
+      version = "~> 2.20"
     }
     boundary = {
       source  = "hashicorp/boundary"
-      version = "~> 1.0"
+      version = "~> 1.1"
     }
     aws = {
       source  = "hashicorp/aws"
-      version = "~> 5.0"
+      version = "~> 5.40"
     }
     mongodbatlas = {
       source  = "mongodb/mongodbatlas"
-      version = "~> 1.12"
+      version = "~> 1.15"
     }
   }
 }

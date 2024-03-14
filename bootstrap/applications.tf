@@ -5,7 +5,7 @@ resource "tfe_workspace" "applications" {
   description       = "Configure Platform Components for Applications"
   terraform_version = var.terraform_version
   working_directory = "application/terraform"
-  trigger_prefixes  = ["application/terraform"]
+  trigger_patterns  = ["application/terraform/**/*"]
   queue_all_runs    = false
   auto_apply        = true
   vcs_repo {
