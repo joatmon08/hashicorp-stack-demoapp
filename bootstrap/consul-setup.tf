@@ -5,7 +5,7 @@ resource "tfe_workspace" "consul_setup" {
   description       = "Set up Consul on Kubernetes"
   terraform_version = var.terraform_version
   working_directory = "consul/setup"
-  trigger_prefixes  = ["consul/setup"]
+  trigger_patterns  = ["consul/setup/**/*"]
   queue_all_runs    = false
   # remote_state_consumer_ids = [tfe_workspace.consul_config.id]
   vcs_repo {

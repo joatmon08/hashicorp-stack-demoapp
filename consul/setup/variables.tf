@@ -26,7 +26,8 @@ data "terraform_remote_state" "vault_consul" {
 }
 
 locals {
-  paths = data.terraform_remote_state.vault_consul.outputs.paths
+  paths            = data.terraform_remote_state.vault_consul.outputs.paths
+  eks_cluster_name = var.aws_eks_cluster_id == "" ? data.terraform_remote_state.infrastructure.outputs.eks_cluster_id : var.aws_eks_cluster_id
 
   vault_public_addr     = data.terraform_remote_state.infrastructure.outputs.hcp_vault_public_address
   vault_addr            = data.terraform_remote_state.infrastructure.outputs.hcp_vault_private_address
@@ -39,7 +40,7 @@ locals {
 variable "consul_helm_version" {
   type        = string
   description = "Consul Helm chart version"
-  default     = "1.2.2"
+  default     = "1.4.0"
 }
 
 variable "aws_eks_cluster_id" {
