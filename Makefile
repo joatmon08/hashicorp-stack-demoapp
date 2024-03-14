@@ -18,7 +18,6 @@ configure-consul:
 configure-application:
 	kubectl apply -f argocd/applications/promotions.yaml
 	kubectl apply -f argocd/applications/payments-app.yaml
-	# kubectl apply -f argocd/applications/hashicups.yaml
 
 configure-db: boundary-appdev-auth
 	bash application/payments-app/database/configure.sh
@@ -32,10 +31,10 @@ boundary-operations-auth:
 
 boundary-appdev-auth:
 	mkdir -p secrets
-	@echo "$(shell cd vault/applications && terraform output -raw boundary_products_password)" > secrets/appdev
+	@echo "$(shell cd application/terraform && terraform output -raw boundary_products_password)" > secrets/appdev
 	boundary authenticate password -login-name=appdev \
 		-password file://secrets/appdev \
-		-auth-method-id=$(shell cd vault/applications && terraform output -raw boundary_auth_method_id)
+		-auth-method-id=$(shell cd application/terraform && terraform output -raw boundary_auth_method_id)
 
 ssh-k8s-nodes:
 	boundary connect ssh -target-name eks-ssh -target-scope-name core-infra
@@ -54,10 +53,6 @@ clean-application:
 	kubectl delete app promotions -n argocd
 	kubectl patch app hashicups -n argocd -p '{"metadata": {"finalizers": ["resources-finalizer.argocd.argoproj.io"]}}' --type merge
 	kubectl delete app hashicups -n argocd
-
-clean-tfc:
-	kubectl patch app terraform-cloud-operator -n argocd -p '{"metadata": {"finalizers": ["resources-finalizer.argocd.argoproj.io"]}}' --type merge
-	kubectl delete app terraform-cloud-operator -n argocd
 
 clean-consul:
 	kubectl patch app consul-api-gateway -n argocd -p '{"metadata": {"finalizers": ["resources-finalizer.argocd.argoproj.io"]}}' --type merge
