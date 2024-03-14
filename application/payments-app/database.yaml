@@ -14,7 +14,7 @@ spec:
   name: payments-app-database
   description: Workspace for database automated via TFC Operator
   applyMethod: auto
-  terraformVersion: 1.5.7
+  terraformVersion: 1.7.4
   terraformVariables:
     - name: org_name
       value: hashicups
@@ -25,9 +25,15 @@ spec:
     - name: db_name
       value: payments
     - name: boundary_scope_id
-      value: p_k1rJmnpctP
+      valueFrom:
+        configMapKeyRef:
+          name: boundary
+          key: scope_id
     - name: boundary_credentials_store_id
-      value: csvlt_ebttjBJEs1
+      valueFrom:
+        configMapKeyRef:
+          name: boundary
+          key: credential_store_id
     - name: initial_provision
       value: "false"
     - name: boundary_address
@@ -101,7 +107,7 @@ spec:
       key: token
   destroyOnDeletion: true
   module:
-    source:  "app.terraform.io/hashicorp-stack-demoapp/postgres/aws"
+    source:  "joatmon08/postgres/aws"
     version: "14.9.0"
   variables:
     - name: initial_provision
