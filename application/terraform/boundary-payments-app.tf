@@ -94,3 +94,15 @@ resource "boundary_target" "payments_processor" {
     boundary_credential_library_vault.payments_processor.id
   ]
 }
+
+resource "kubernetes_config_map" "boundary" {
+  metadata {
+    name      = "boundary"
+    namespace = "payments-app"
+  }
+
+  data = {
+    scope_id            = boundary_scope.apps["payments-app"].id
+    credential_store_id = boundary_credential_store_vault.application["payments-app"].id
+  }
+}
