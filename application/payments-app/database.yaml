@@ -1,21 +1,5 @@
 ---
 apiVersion: app.terraform.io/v1alpha2
-kind: Project
-metadata:
-  name: payments-app
-spec:
-  organization: hashicorp-stack-demoapp
-  token:
-    secretKeyRef:
-      name: terraform-cloud-team-token
-      key: token
-  name: payments-app
-  teamAccess:
-  - team:
-      name: payments-app
-    access: admin
----
-apiVersion: app.terraform.io/v1alpha2
 kind: Workspace
 metadata:
   name: payments-app-database
@@ -53,7 +37,7 @@ spec:
           name: boundary
           key: credential_store_id
     - name: initial_provision
-      value: "false"
+      value: "true"
     - name: boundary_address
       valueFrom:
         secretKeyRef:

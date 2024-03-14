@@ -35,8 +35,6 @@ Each folder contains a few different configurations.
    - `boundary/setup`: Configures Boundary with two projects, one for operations
       and the other for development teams. Includes two self-managed workers.
 
-   - `boundary/config`: Update Boundary self-managed workers after they initiate registration.
-
    - `argocd/setup/`: Deploys an ArgoCD cluster to configure applications.
 
    - `argocd/config/`: Deploys an ArgoCD projects.
@@ -51,9 +49,6 @@ Each folder contains a few different configurations.
    - `consul/setup/`: Deploys a Consul cluster via Helm chart. For demonstration
       of Vault as a secrets backend, deploys Consul servers + clients.
 
-   - `vault/app/`: Set up secrets engines for applications.
-      Archived in favor of `consul/cts/`.
-
 - Other
 
    - `consul/config/`: Updates Consul ACL policies for terminating gateways and sets up Argo CD
@@ -63,7 +58,7 @@ Each folder contains a few different configurations.
 
    - `database/`: Configures HashiCorp Demo Application database
 
-   - `application/`: Kubernetes manifests for applications, referenced by 
+   - `application/`: Kubernetes manifests for applications
 
 ## Prerequisites
 
@@ -162,6 +157,17 @@ Commit it up to your fork.
 
 Start a new plan and apply it. It can take more than 15 minutes to provision!
 
+### Deploy Argo CD and Terraform Cloud Operator
+
+Go to the `argocd-setup` workspace in Terraform Cloud.
+
+Commit it up to your fork.
+
+This deploys an Argo CD HA cluster. You can get the initial `admin` password
+using the Argo CD CLI or from a Kubernetes secret.
+
+It also deploys the Terraform Cloud Operator to the `terraform-cloud-operator` namespace.
+
 ### Configure Vault (Kubernetes Auth Method)
 
 Go to the `vault/setup` workspace in Terraform Cloud.
@@ -182,34 +188,12 @@ a list of users and groups you'd like to add.
 
 Commit it up to your fork.
 
-> __NOTE__: Terraform will error out the first time you run it, as it
-> waits for the Boundary worker to start up and store its token into
-> Vault. Re-run after waiting a few moments.
-
 Start a new plan and apply it. This creates an organization with two scopes:
 - `core_infra`, which allows you to SSH into EKS nodes
 - `product_infra`, which allows you to access the PostgreSQL database
 
 Only `product` users will be able to access `product_infra`.
 `operations` users will be able to access both `core_infra`
-
-### Configure Boundary Workers
-
-Go to the `boundary/config` workspace in Terraform Cloud.
-
-Commit it up to your fork.
-
-This workspace registers the Boundary workers into Boundary by retrieving
-their worker registration token from Vault.
-
-### Configure Argo CD
-
-Go to the `argocd-setup` workspace in Terraform Cloud.
-
-Commit it up to your fork.
-
-This deploys an Argo CD HA cluster. You can get the initial `admin` password
-using the Argo CD CLI or from a Kubernetes secret.
 
 ### Configure Argo CD Projects
 
@@ -277,11 +261,15 @@ via the Consul Helm chart to the EKS cluster to join the HCP Consul servers.
 
 Run `make configure-consul` to deploy resources to set up the Consul API Gateway.
 
-### Configure Terraform Cloud Operator
+### Deploy Example Application
 
-Run `make configure-tfc` to deploy resources to set up the Consul API Gateway.
+To deploy the example application, run `make configure-application`.
 
-### Add Coffee Data to Database
+You can check if everything by checking the pods in Kubernetes.
+
+```shell
+$ kubectl get pods -n payments-app
+```
 
 To add data, you need to log into the PostgreSQL database. However, it's on a private
 network. You need to use Boundary to proxy to the database.
@@ -301,16 +289,6 @@ If you try to log in as a user of the `products` team, you can print
 out the tables.
 ```shell
 make postgres-operations
-```
-
-### Deploy Example Application
-
-To deploy the example application, run `make configure-application`.
-
-You can check if everything by checking the pods in Kubernetes.
-
-```shell
-$ kubectl get pods -n payments-app
 ```
 
 Argo CD will deploy an `HTTPRoute` that

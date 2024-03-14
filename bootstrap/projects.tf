@@ -26,9 +26,3 @@ resource "tfe_team_project_access" "business_units" {
   team_id    = tfe_team.business_units[each.value].id
   project_id = tfe_project.business_units[each.value].id
 }
-
-resource "tfe_project_variable_set" "business_units" {
-  for_each        = toset(var.business_units)
-  variable_set_id = tfe_variable_set.applications.id
-  project_id      = tfe_project.business_units[each.value].id
-}
