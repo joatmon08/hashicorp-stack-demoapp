@@ -51,7 +51,9 @@ spec:
         app: payments-app
       annotations:
         consul.hashicorp.com/connect-inject: "true"
+        consul.hashicorp.com/transparent-proxy-exclude-outbound-ports: "8200"
 
+        vault.hashicorp.com/agent-init-first: "true"
         vault.hashicorp.com/agent-inject: "true"
         vault.hashicorp.com/namespace: "admin"
         vault.hashicorp.com/role: "payments"
