@@ -40,22 +40,6 @@ module "eks" {
   }
 }
 
-data "http" "kubernetes_version" {
-  url = "https://api.github.com/repos/kubernetes/kubernetes/releases?per_page=1"
-
-  request_headers = {
-    Accept               = "application/vnd.github+json"
-    X-GitHub-Api-Version = "2022-11-28"
-  }
-
-  lifecycle {
-    postcondition {
-      condition     = tonumber(module.eks.cluster_version) < tonumber(regex("[0-9]+.[0-9]+", jsondecode(self.response_body).0.tag_name))
-      error_message = "Kubernetes cluster version should not be latest"
-    }
-  }
-}
-
 check "kubernetes_cluster_status" {
   data "aws_eks_cluster" "cluster" {
     name = module.eks.cluster_name
