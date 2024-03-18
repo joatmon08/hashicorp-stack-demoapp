@@ -51,8 +51,6 @@ spec:
         app: payments-app
       annotations:
         consul.hashicorp.com/connect-inject: "true"
-        consul.hashicorp.com/connect-service-upstreams: "payments-app-database:5432"
-        consul.hashicorp.com/transparent-proxy: "false"
 
         vault.hashicorp.com/agent-inject: "true"
         vault.hashicorp.com/namespace: "admin"
@@ -62,7 +60,7 @@ spec:
 
         vault.hashicorp.com/agent-inject-secret-database.properties: "payments-app/database/creds/payments"
         vault.hashicorp.com/agent-inject-template-database.properties: |
-          spring.datasource.url=jdbc:postgresql://127.0.0.1:5432/payments
+          spring.datasource.url=jdbc:postgresql://payments-app-database:5432/payments
           {{- with secret "payments-app/database/creds/payments" }}
           spring.datasource.username={{ .Data.username }}
           spring.datasource.password={{ .Data.password }}
