@@ -16,7 +16,6 @@ configure-consul:
 	bash consul/config/configure.sh
 
 configure-application:
-	kubectl apply -f argocd/applications/promotions.yaml
 	kubectl apply -f argocd/applications/payments-app.yaml
 
 configure-db: boundary-appdev-auth
@@ -49,10 +48,6 @@ clean-vault-leases:
 clean-application:
 	kubectl patch app payments-app -n argocd -p '{"metadata": {"finalizers": ["resources-finalizer.argocd.argoproj.io"]}}' --type merge
 	kubectl delete app payments-app -n argocd
-	kubectl patch app promotions -n argocd -p '{"metadata": {"finalizers": ["resources-finalizer.argocd.argoproj.io"]}}' --type merge
-	kubectl delete app promotions -n argocd
-	kubectl patch app hashicups -n argocd -p '{"metadata": {"finalizers": ["resources-finalizer.argocd.argoproj.io"]}}' --type merge
-	kubectl delete app hashicups -n argocd
 
 clean-consul:
 	kubectl patch app consul-api-gateway -n argocd -p '{"metadata": {"finalizers": ["resources-finalizer.argocd.argoproj.io"]}}' --type merge
