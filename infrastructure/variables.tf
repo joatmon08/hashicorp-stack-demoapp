@@ -123,9 +123,21 @@ variable "datadog_region" {
   default     = ""
 }
 
-variable "argocd_github_app_private_key" {
-  type        = string
-  description = "Base64 encoded private key for Argo CD GitHub App"
-  default     = null
-  sensitive   = true
+variable "argocd_github_app" {
+  type = object({
+    slug            = string
+    private_key     = string
+    id              = string
+    installation_id = string
+    url             = string
+  })
+  description = "Argo CD Github App, if enabled. Private key must be base64 encoded"
+  default = {
+    slug            = null
+    private_key     = null
+    id              = null
+    installation_id = null
+    url             = null
+  }
+  sensitive = true
 }
