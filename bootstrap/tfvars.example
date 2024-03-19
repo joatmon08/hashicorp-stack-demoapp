@@ -23,3 +23,5 @@ hcp_consul_observability_credentials = {
   client_secret = ""
   resource_id   = ""
 }
+
+argocd_github_app_private_key = ""

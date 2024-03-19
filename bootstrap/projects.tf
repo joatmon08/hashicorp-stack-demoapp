@@ -9,8 +9,8 @@ resource "tfe_team" "business_units" {
   organization = tfe_organization.demo.name
   visibility   = "organization"
   organization_access {
-    read_projects     = true
-    read_workspaces   = true
+    read_projects   = true
+    read_workspaces = true
   }
 }
 

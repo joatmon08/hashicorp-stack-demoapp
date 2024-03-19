@@ -145,3 +145,10 @@ variable "mongodb_atlas" {
   sensitive   = true
   default     = null
 }
+
+variable "argocd_github_app_private_key" {
+  type        = string
+  description = "Argo CD GitHub App private key"
+  sensitive   = true
+  default     = null
+}
