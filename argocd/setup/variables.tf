@@ -42,3 +42,13 @@ variable "terraform_cloud_operator_version" {
   description = "Terraform Cloud Operator Helm chart version"
   default     = "2.2.0"
 }
+
+variable "hcp_organization_id" {
+  type        = string
+  description = "HashiCorp Cloud Platform organization ID."
+}
+
+variable "hcp_project_id" {
+  type        = string
+  description = "HashiCorp Cloud Platform project ID."
+}
