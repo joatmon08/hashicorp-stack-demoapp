@@ -146,9 +146,21 @@ variable "mongodb_atlas" {
   default     = null
 }
 
-variable "argocd_github_app_private_key" {
-  type        = string
-  description = "Argo CD GitHub App private key"
-  sensitive   = true
-  default     = null
+variable "argocd_github_app" {
+  type = object({
+    slug            = string
+    private_key     = string
+    id              = string
+    installation_id = string
+    url             = string
+  })
+  description = "Argo CD Github App, if enabled. Private key must be base64 encoded"
+  default = {
+    slug            = null
+    private_key     = null
+    id              = null
+    installation_id = null
+    url             = null
+  }
+  sensitive = true
 }

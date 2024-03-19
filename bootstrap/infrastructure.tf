@@ -35,10 +35,11 @@ resource "tfe_variable" "region" {
   description  = "AWS region"
 }
 
-resource "tfe_variable" "argocd_github_app_private_key" {
-  key          = "argocd_github_app_private_key"
-  value        = var.argocd_github_app_private_key
+resource "tfe_variable" "argocd_github_app" {
+  key          = "argocd_github_app"
+  value        = jsonencode(var.argocd_github_app)
   category     = "terraform"
   workspace_id = tfe_workspace.infrastructure.id
-  description  = "Argo CD GitHub App private key"
+  description  = "Argo CD GitHub App details"
+  sensitive    = true
 }

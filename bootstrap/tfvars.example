@@ -24,4 +24,11 @@ hcp_consul_observability_credentials = {
   resource_id   = ""
 }
 
-argocd_github_app_private_key = ""
+## Enable private credentials for Argo CD. Github application must be manually created.
+argocd_github_app = {
+  slug            = ""
+  private_key     = ""
+  id              = ""
+  installation_id = ""
+  url             = ""
+}
