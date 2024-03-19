@@ -62,7 +62,7 @@ resource "kubernetes_manifest" "hvs_github_creds" {
       "destination" = {
         "create" = true
         "labels" = {
-          "argocd.argoproj.io/secret-type" = "repo-creds"
+          "argocd.argoproj.io/secret-type" = "repository"
           "hvs"                            = "true"
         }
         "name" = "github-creds"
