@@ -122,3 +122,10 @@ variable "datadog_region" {
   description = "Region for Datadog"
   default     = ""
 }
+
+variable "argocd_github_app_private_key" {
+  type        = string
+  description = "Base64 encoded private key for Argo CD GitHub App"
+  default     = null
+  sensitive   = true
+}
