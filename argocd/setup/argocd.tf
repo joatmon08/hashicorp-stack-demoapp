@@ -4,6 +4,11 @@ resource "kubernetes_namespace" "argocd" {
   }
 }
 
+import {
+  to = kubernetes_namespace.argocd
+  id = "argocd"
+}
+
 resource "hcp_service_principal" "argocd" {
   name = "argocd"
 }
