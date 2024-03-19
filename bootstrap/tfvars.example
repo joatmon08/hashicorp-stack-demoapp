@@ -8,8 +8,10 @@ github_repository = "<your-fork>/hashicorp-stack-demoapp" ## set to your fork
 github_branch     = "tfc-bootstrap"                       ## can leave blank, defaults to `main`
 github_token      = ""                                    ## generate GitHub personal access token
 
-hcp_client_id     = ""
-hcp_client_secret = ""
+hcp_client_id       = ""
+hcp_client_secret   = ""
+hcp_project_id      = ""
+hcp_organization_id = ""
 
 allow_cidr_blocks = [""] ## use `curl ifconfig.me` to find your machine's public IP
 

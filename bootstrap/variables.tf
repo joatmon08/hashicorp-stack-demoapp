@@ -59,6 +59,11 @@ variable "hcp_client_secret" {
   sensitive   = true
 }
 
+variable "hcp_organization_id" {
+  type        = string
+  description = "HashiCorp Cloud Platform organization ID."
+}
+
 variable "hcp_project_id" {
   type        = string
   description = "HashiCorp Cloud Platform project ID."

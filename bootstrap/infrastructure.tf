@@ -39,6 +39,7 @@ resource "tfe_variable" "argocd_github_app" {
   key          = "argocd_github_app"
   value        = jsonencode(var.argocd_github_app)
   category     = "terraform"
+  hcl          = true
   workspace_id = tfe_workspace.infrastructure.id
   description  = "Argo CD GitHub App details"
   sensitive    = true
