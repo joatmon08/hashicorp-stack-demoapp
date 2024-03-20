@@ -157,17 +157,6 @@ Commit it up to your fork.
 
 Start a new plan and apply it. It can take more than 15 minutes to provision!
 
-### Deploy Argo CD and Terraform Cloud Operator
-
-Go to the `argocd-setup` workspace in Terraform Cloud.
-
-Commit it up to your fork.
-
-This deploys an Argo CD HA cluster. You can get the initial `admin` password
-using the Argo CD CLI or from a Kubernetes secret.
-
-It also deploys the Terraform Cloud Operator to the `terraform-cloud-operator` namespace.
-
 ### Configure Vault (Kubernetes Auth Method)
 
 Go to the `vault/setup` workspace in Terraform Cloud.
@@ -178,6 +167,17 @@ Terraform will set up [Kubernetes authentication method](https://www.vaultprojec
 and deploy the [Vault Helm chart](https://github.com/hashicorp/vault-helm) to the cluster.
 
 It also sets up a key-value secrets engine to store the Boundary worker token.
+
+### Deploy Argo CD and Terraform Cloud Operator
+
+Go to the `argocd-setup` workspace in Terraform Cloud.
+
+Commit it up to your fork.
+
+This deploys an Argo CD HA cluster. You can get the initial `admin` password
+using the Argo CD CLI or from a Kubernetes secret.
+
+It also deploys the Terraform Cloud Operator to the `terraform-cloud-operator` namespace.
 
 ### Set up Boundary
 
