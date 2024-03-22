@@ -48,53 +48,53 @@ resource "kubernetes_manifest" "hvs_auth" {
   }
 }
 
-# resource "kubernetes_manifest" "hvs_github_creds" {
-#   manifest = {
-#     "apiVersion" = "secrets.hashicorp.com/v1beta1"
-#     "kind"       = "HCPVaultSecretsApp"
-#     "metadata" = {
-#       "name"      = "github-creds"
-#       "namespace" = kubernetes_namespace.argocd.metadata.0.name
-#     }
-#     "spec" = {
-#       "hcpAuthRef" = kubernetes_manifest.hvs_auth.manifest.metadata.name
-#       "appName"    = "argocd"
-#       "destination" = {
-#         "create" = true
-#         "labels" = {
-#           "argocd.argoproj.io/secret-type" = "repository"
-#           "hvs"                            = "true"
-#         }
-#         "name" = "github-creds"
-#         "transformation" = {
-#           "templates" = {
-#             githubAppID = {
-#               name = "githubAppID"
-#               text = "{{- get .Secrets \"githubAppID\" -}}"
-#             },
-#             githubAppInstallationID = {
-#               name = "githubAppInstallationID"
-#               text = "{{- get .Secrets \"githubAppInstallationID\" -}}"
-#             },
-#             githubAppPrivateKey = {
-#               name = "githubAppPrivateKey"
-#               text = "{{- get .Secrets \"githubAppPrivateKey\" -}}"
-#             },
-#             type = {
-#               name = "type"
-#               text = "git"
-#             },
-#             url = {
-#               name = "url"
-#               text = "{{- get .Secrets \"url\" -}}"
-#             },
-#           }
-#         }
-#       }
-#       "refreshAfter" = "1h"
-#     }
-#   }
-# }
+resource "kubernetes_manifest" "hvs_github_creds" {
+  manifest = {
+    "apiVersion" = "secrets.hashicorp.com/v1beta1"
+    "kind"       = "HCPVaultSecretsApp"
+    "metadata" = {
+      "name"      = "github-creds"
+      "namespace" = kubernetes_namespace.argocd.metadata.0.name
+    }
+    "spec" = {
+      "hcpAuthRef" = kubernetes_manifest.hvs_auth.manifest.metadata.name
+      "appName"    = "argocd"
+      "destination" = {
+        "create" = true
+        "labels" = {
+          "argocd.argoproj.io/secret-type" = "repository"
+          "hvs"                            = "true"
+        }
+        "name" = "github-creds"
+        "transformation" = {
+          "templates" = {
+            githubAppID = {
+              name = "githubAppID"
+              text = "{{- get .Secrets \"githubAppID\" -}}"
+            },
+            githubAppInstallationID = {
+              name = "githubAppInstallationID"
+              text = "{{- get .Secrets \"githubAppInstallationID\" -}}"
+            },
+            githubAppPrivateKey = {
+              name = "githubAppPrivateKey"
+              text = "{{- get .Secrets \"githubAppPrivateKey\" -}}"
+            },
+            type = {
+              name = "type"
+              text = "git"
+            },
+            url = {
+              name = "url"
+              text = "{{- get .Secrets \"url\" -}}"
+            },
+          }
+        }
+      }
+      "refreshAfter" = "1h"
+    }
+  }
+}
 
 
 resource "helm_release" "argocd" {
