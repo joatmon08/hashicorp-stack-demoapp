@@ -6,12 +6,6 @@ variable "name" {
 variable "region" {
   type        = string
   description = "AWS Region"
-
-  validation {
-    condition     = can(regex("^us-", var.region))
-    error_message = "AWS Region must be in United States"
-  }
-
 }
 
 variable "hcp_region" {

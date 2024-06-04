@@ -126,18 +126,14 @@ variable "business_units" {
   type        = list(string)
   description = "Business units lined up with projects and teams"
   default = [
-    "promotions",
-    "hashicups",
-    "expense-report",
     "payments-app",
-    "bookstore"
   ]
 }
 
 variable "region" {
   type        = string
   description = "Region for AWS infrastructure and HCP"
-  default     = "us-east-1"
+  default     = "eu-west-1"
 }
 
 variable "mongodb_atlas" {
