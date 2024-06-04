@@ -43,7 +43,6 @@ resource "vault_kubernetes_auth_backend_role" "tfc_token" {
   token_ttl                        = 86400
   token_policies = [
     vault_policy.tfc_secrets_engine[each.value].name,
-    vault_policy.tfc_module_variables[each.value].name,
-    vault_policy.mongodbatlas_creds[each.value].name,
+    vault_policy.tfc_module_variables[each.value].name
   ]
 }

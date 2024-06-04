@@ -127,6 +127,7 @@ variable "business_units" {
   description = "Business units lined up with projects and teams"
   default = [
     "payments-app",
+    "hashicups"
   ]
 }
 

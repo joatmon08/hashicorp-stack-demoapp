@@ -43,7 +43,7 @@ EOT
 resource "vault_token_auth_backend_role" "module" {
   for_each               = toset(keys(var.tfc_team_ids))
   role_name              = each.value
-  allowed_policies       = [vault_policy.module[each.value].name, vault_policy.mongodbatlas_creds[each.value].name]
+  allowed_policies       = [vault_policy.module[each.value].name]
   disallowed_policies    = ["default"]
   orphan                 = true
   token_period           = "86400"
@@ -54,7 +54,7 @@ resource "vault_token_auth_backend_role" "module" {
 resource "vault_token" "module" {
   for_each  = toset(keys(var.tfc_team_ids))
   role_name = vault_token_auth_backend_role.module[each.value].role_name
-  policies  = [vault_policy.module[each.value].name, vault_policy.mongodbatlas_creds[each.value].name]
+  policies  = [vault_policy.module[each.value].name]
 }
 
 resource "vault_mount" "tfc_operator_vars" {
@@ -81,9 +81,7 @@ resource "vault_kv_secret_v2" "postgres_module" {
   "consul_datacenter": "${local.consul_datacenter}",
   "vault_address": "${local.vault_address}",
   "vault_token": "${vault_token.module[each.value].client_token}",
-  "vault_namespace": "${local.vault_namespace}",
-  "mongodbatlas_project_id": "${var.mongodbatlas_project_id}",
-  "mongodbatlas_region": "${var.mongodbatlas_region}"
+  "vault_namespace": "${local.vault_namespace}"
 }
 EOT
 }
