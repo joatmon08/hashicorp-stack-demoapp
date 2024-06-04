@@ -95,10 +95,16 @@ resource "boundary_target" "payments_processor" {
   ]
 }
 
+resource "kubernetes_namespace" "payments_app" {
+  metadata {
+    name      = "payments-app"
+  }
+}
+
 resource "kubernetes_config_map" "boundary" {
   metadata {
     name      = "boundary"
-    namespace = "payments-app"
+    namespace = kubernetes_namespace.payments_app.metadata.0.name
   }
 
   data = {
