@@ -44,3 +44,11 @@ resource "tfe_variable" "argocd_github_app" {
   description  = "Argo CD GitHub App details"
   sensitive    = true
 }
+
+resource "tfe_variable" "waypoint_terraform_project_id" {
+  key          = "waypoint_terraform_project_id"
+  value        = tfe_project.business_units["payments-app"].id
+  category     = "terraform"
+  workspace_id = tfe_workspace.infrastructure.id
+  description  = "Terraform project to connect to HCP Waypoint"
+}
