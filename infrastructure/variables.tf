@@ -135,3 +135,8 @@ variable "argocd_github_app" {
   }
   sensitive = true
 }
+
+variable "waypoint_terraform_project_id" {
+  type        = string
+  description = "Terraform project to use for HCP Waypoint"
+}
