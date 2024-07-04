@@ -1,6 +1,6 @@
 resource "tfe_workspace" "argocd_config" {
   name              = "argocd-config"
-  organization      = tfe_organization.demo.name
+  organization      = "kalam-rsa"
   project_id        = tfe_project.platform.id
   description       = "Configure Argo CD projects"
   terraform_version = var.terraform_version
